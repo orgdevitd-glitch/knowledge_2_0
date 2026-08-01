@@ -25,8 +25,15 @@ describe("architecture: admin mutations Phase 5B", () => {
       const text = readFileSync(file, "utf8");
       const isGetOnly =
         /\brunAdminGet\b/.test(text) && !/\bPOST\b|\bPATCH\b|\bPUT\b|\bDELETE\b/.test(text);
+      // Memory-mode binary upload proxy: admin auth + Origin + rate limit (not JSON CSRF body).
+      const isMediaUploadProxy = file.includes(
+        `${join("media", "upload-proxy")}`,
+      );
       if (isGetOnly) {
         expect(text).toMatch(/runAdminGet/);
+      } else if (isMediaUploadProxy) {
+        expect(text).toMatch(/requireAdminPrincipalForApi/);
+        expect(text).toMatch(/isAllowedOrigin/);
       } else {
         expect(text).toMatch(/runAdminMutation|runAdminGet/);
       }

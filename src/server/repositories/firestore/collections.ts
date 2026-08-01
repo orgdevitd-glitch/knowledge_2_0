@@ -12,6 +12,7 @@ export const FIRESTORE_COLLECTIONS = {
   sourceConnections: "sourceConnections",
   importJobs: "importJobs",
   idempotencyRecords: "idempotencyRecords",
+  mediaAssets: "mediaAssets",
 } as const;
 
 export const FIRESTORE_SCHEMA_VERSION = 1 as const;

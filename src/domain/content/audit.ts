@@ -42,6 +42,13 @@ export const AUDIT_EVENT_TYPES = [
   "integration.import.failed",
   "article.imported",
   "prompt.batch_imported",
+  "media.created",
+  "media.upload.started",
+  "media.upload.completed",
+  "media.upload.failed",
+  "media.metadata.updated",
+  "media.archived",
+  "media.restored",
 ] as const;
 
 export type AuditEventType = (typeof AUDIT_EVENT_TYPES)[number];
@@ -55,7 +62,8 @@ export type AuditEntityType =
   | "audience"
   | "version"
   | "source-connection"
-  | "import-job";
+  | "import-job"
+  | "media";
 
 export type AuditMetadata = Record<string, unknown>;
 
@@ -77,6 +85,12 @@ const FORBIDDEN_META_KEYS = new Set([
   "token",
   "secret",
   "authorization",
+  "storageKey",
+  "signedUrl",
+  "uploadUrl",
+  "bucket",
+  "credentials",
+  "privateKey",
 ]);
 
 export function sanitizeAuditMetadata(

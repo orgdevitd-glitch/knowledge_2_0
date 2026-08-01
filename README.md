@@ -6,12 +6,13 @@ Public users read **published** content without registration. Administrators sig
 
 ## Current status
 
-**Phase 8A — Prompt administration** is the current admin CMS slice after Phase 7A Taxonomy admin.
+**Phase 7B — Media Library** is the current admin CMS slice (after Phase 8A Prompt admin and Phase 7A Taxonomy).
 
-- Create / edit prompts (manual save, revision conflicts)
-- Preview, atomic publish, hide, archive, version restore
-- Prompt list with dashboard, filters, and source/review metadata
-- Article editor retained
+- Upload images and documents (signed URL → sniff → ready)
+- Media admin list, metadata edit, archive/restore, retry failed uploads
+- Public delivery via `/media/[mediaId]` for ready assets
+- Article publish validates referenced media is ready
+- Prompt admin and article editor retained
 - Mutation APIs protected by session + CSRF
 
 **Google Workspace**
@@ -33,7 +34,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Admin (with Firebase configured): `/admin/sign-in` → `/admin/articles`, `/admin/prompts`, `/admin/taxonomy`.
+Admin (with Firebase configured): `/admin/sign-in` → `/admin/articles`, `/admin/prompts`, `/admin/media`, `/admin/taxonomy`.
 
 ## Verification
 

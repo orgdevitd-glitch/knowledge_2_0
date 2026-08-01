@@ -6,10 +6,16 @@ import type { ContentPorts } from "@/features/content/application/ports";
 import { SystemClock } from "@/domain/shared/clock";
 import type { IdGenerator } from "@/domain/shared/id-generator";
 import { getAdminPersistence } from "@/server/composition/admin-persistence";
+import {
+  getMediaRepository,
+  getMediaStorage,
+  getMemoryMediaRepositoryForTests,
+} from "@/server/composition/media-ports";
 import { MemoryPromptRepository } from "@/server/repositories/memory/memory-prompt-repository";
 import { MemoryVideoRepository } from "@/server/repositories/memory/memory-video-repository";
 import { MemoryAuditRepository } from "@/server/repositories/memory/memory-audit-repository";
 import { MemoryVersionRepository } from "@/server/repositories/memory/memory-version-repository";
+import { MemoryMediaRepository } from "@/server/repositories/memory/memory-media-repository";
 import { MemoryPromptUnitOfWork } from "@/server/repositories/memory/memory-prompt-unit-of-work";
 import { FirestorePromptRepository } from "@/server/repositories/firestore/firestore-prompt-repository";
 import {
@@ -46,6 +52,8 @@ export function getContentPorts(): ContentPorts {
 
   let uow: UnitOfWork;
   let prompts;
+  let media = getMediaRepository();
+  const mediaStorage = getMediaStorage();
 
   if (persistence.mode === "firestore") {
     uow = new FirestoreUnitOfWork();
@@ -56,10 +64,16 @@ export function getContentPorts(): ContentPorts {
     persistence.audit instanceof MemoryAuditRepository
   ) {
     prompts = persistence.prompts;
+    const memoryMedia =
+      media instanceof MemoryMediaRepository
+        ? media
+        : getMemoryMediaRepositoryForTests();
+    media = memoryMedia;
     uow = new MemoryPromptUnitOfWork(
       persistence.prompts,
       persistence.versions,
       persistence.audit,
+      memoryMedia,
     );
   } else {
     prompts = persistence.prompts ?? new MemoryPromptRepository();
@@ -78,6 +92,8 @@ export function getContentPorts(): ContentPorts {
     clock: new SystemClock(),
     ids: new UuidIdGenerator(),
     uow,
+    media,
+    mediaStorage,
   };
 }
 

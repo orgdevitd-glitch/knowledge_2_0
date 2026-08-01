@@ -8,6 +8,7 @@ import {
 } from "@/domain/shared/errors";
 import type {
   AtomicArticlePublishBundle,
+  AtomicMediaMutationBundle,
   AtomicPromptMutationBundle,
   AtomicPromptPublishBundle,
   AtomicTaxonomyMutationBundle,
@@ -19,10 +20,12 @@ import {
   fromArticleDoc,
   fromAudienceDoc,
   fromCategoryDoc,
+  fromMediaDoc,
   fromPromptDoc,
   fromTagDoc,
   toArticleDoc,
   toAuditDoc,
+  toMediaDoc,
   toPromptDoc,
   toTaxonomyDoc,
   toVersionDoc,
@@ -30,6 +33,7 @@ import {
 
 export type {
   AtomicArticlePublishBundle,
+  AtomicMediaMutationBundle,
   AtomicPromptMutationBundle,
   AtomicPromptPublishBundle,
   AtomicTaxonomyMutationBundle,
@@ -283,6 +287,59 @@ export class FirestoreUnitOfWork implements UnitOfWork {
         throw error;
       }
       throw new RepositoryError("Atomic taxonomy mutation failed", {
+        cause: error instanceof Error ? error.message : "unknown",
+      });
+    }
+  }
+
+  async runAtomicMediaMutation(
+    bundle: AtomicMediaMutationBundle,
+  ): Promise<void> {
+    if (!bundle.audits.length) {
+      throw new RepositoryError("Atomic media mutation requires at least one audit");
+    }
+    const db = getFirebaseAdminFirestore();
+    const mediaRef = db
+      .collection(FIRESTORE_COLLECTIONS.mediaAssets)
+      .doc(bundle.media.id);
+    const auditRefs = bundle.audits.map((audit) =>
+      db.collection(FIRESTORE_COLLECTIONS.auditEvents).doc(audit.id),
+    );
+
+    try {
+      await db.runTransaction(async (tx) => {
+        const mediaSnap = await tx.get(mediaRef);
+        const auditSnaps = await Promise.all(auditRefs.map((ref) => tx.get(ref)));
+
+        if (!mediaSnap.exists) {
+          if (bundle.expectedRevision !== 0) {
+            throw new ConflictError("Media asset not found for mutation");
+          }
+        } else {
+          const existing = fromMediaDoc(mediaSnap.id, mediaSnap.data());
+          if (existing.revision !== bundle.expectedRevision) {
+            throw new ConflictError("Optimistic concurrency conflict", {
+              expectedRevision: bundle.expectedRevision,
+              actualRevision: existing.revision,
+            });
+          }
+        }
+        for (const auditSnap of auditSnaps) {
+          if (auditSnap.exists) {
+            throw new ConflictError("Audit event already exists");
+          }
+        }
+
+        tx.set(mediaRef, toMediaDoc(bundle.media));
+        for (let i = 0; i < bundle.audits.length; i += 1) {
+          tx.create(auditRefs[i]!, toAuditDoc(bundle.audits[i]!));
+        }
+      });
+    } catch (error) {
+      if (error instanceof ConflictError) {
+        throw error;
+      }
+      throw new RepositoryError("Atomic media mutation transaction failed", {
         cause: error instanceof Error ? error.message : "unknown",
       });
     }

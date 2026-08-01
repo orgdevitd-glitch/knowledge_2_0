@@ -1,0 +1,10 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // All application media access uses Admin SDK + signed URLs / same-origin delivery.
+    // Direct client SDK read/write is denied.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -7,8 +7,11 @@ import {
   deserializeContentVersion,
   serializePrompt,
   deserializePrompt,
+  serializeMediaAsset,
+  deserializeMediaAsset,
 } from "@/domain/content/serialize";
 import type { Article } from "@/domain/content/article";
+import type { MediaAsset } from "@/domain/content/media";
 import type { Prompt } from "@/domain/content/prompt";
 import type { Audience, Category, Tag } from "@/domain/content/taxonomy";
 import type { ContentVersion } from "@/domain/content/versioning";
@@ -192,4 +195,34 @@ export function fromPromptDoc(docId: string, raw: unknown): Prompt {
     });
   }
   return prompt;
+}
+
+export function toMediaDoc(media: MediaAsset): Record<string, unknown> {
+  return {
+    schemaVersion: FIRESTORE_SCHEMA_VERSION,
+    ...serializeMediaAsset(media),
+    // Queryable denormalized fields (stripped on read).
+    status: media.status,
+    kind: media.kind,
+    mimeType: media.mimeType,
+    titleLower: String(media.title).toLowerCase(),
+    updatedAt: media.updatedAt,
+    createdAt: media.createdAt,
+  };
+}
+
+export function fromMediaDoc(docId: string, raw: unknown): MediaAsset {
+  const data = assertObject(raw);
+  assertSchemaVersion(data);
+  const rest = { ...data };
+  delete rest.schemaVersion;
+  delete rest.titleLower;
+  const media = deserializeMediaAsset(rest);
+  if (media.id !== docId) {
+    throw new ValidationError("Media document id mismatch", {
+      docId,
+      entityId: media.id,
+    });
+  }
+  return media;
 }

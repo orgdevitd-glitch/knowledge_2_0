@@ -10,6 +10,18 @@ Interfaces: `src/server/repositories/interfaces`.
 
 Taxonomy: `CategoryRepository`, `TagRepository`, `AudienceRepository` (+ `listAll` where needed for tree/title checks; bounded by `maxTaxonomyTreeItems`). Usage analysis is an application service over content repositories, not a separate Firestore collection.
 
+## Media (Phase 7B)
+
+`MediaRepository`:
+
+- `getById`, `save`, `listAdmin` (cursor pagination, status/kind filters, bounded search)
+
+`MediaStoragePort` (infrastructure, not Firestore):
+
+- `createSignedUploadUrl`, `readPrefix`, `stat`, `readObject`, `deleteObject`
+
+See [MEDIA-MODEL.md](./MEDIA-MODEL.md) and ADR 0011.
+
 ## Versions
 
 `VersionRepository`:
@@ -37,7 +49,7 @@ Taxonomy: `CategoryRepository`, `TagRepository`, `AudienceRepository` (+ `listAl
 
 ## Unit of work
 
-`UnitOfWork` / `FirestoreUnitOfWork.runAtomicArticlePublish` and `runAtomicPromptPublish` support atomic entity + version + audit writes. Transaction callbacks keep reads before writes and avoid external side effects.
+`UnitOfWork` / `FirestoreUnitOfWork.runAtomicArticlePublish`, `runAtomicPromptPublish`, and `runAtomicMediaMutation` support atomic entity + version/audit writes. Transaction callbacks keep reads before writes and avoid external side effects.
 
 ## In-memory (TEST_ONLY)
 

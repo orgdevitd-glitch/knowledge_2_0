@@ -13,6 +13,8 @@ import {
   MemoryTagRepository,
   MemoryVersionRepository,
   MemoryVideoRepository,
+  MemoryMediaRepository,
+  MemoryMediaStorage,
 } from "@/server/repositories/memory";
 import { MemoryPromptUnitOfWork } from "@/server/repositories/memory/memory-prompt-unit-of-work";
 
@@ -23,11 +25,15 @@ export function createTestPorts(): ContentPorts & {
   articleRepo: MemoryArticleRepository;
   versionRepo: MemoryVersionRepository;
   promptRepo: MemoryPromptRepository;
+  mediaRepo: MemoryMediaRepository;
+  mediaStorage: MemoryMediaStorage;
 } {
   const articleRepo = new MemoryArticleRepository();
   const auditRepo = new MemoryAuditRepository();
   const versionRepo = new MemoryVersionRepository();
   const promptRepo = new MemoryPromptRepository();
+  const mediaRepo = new MemoryMediaRepository();
+  const mediaStorage = new MemoryMediaStorage();
   return {
     articles: articleRepo,
     prompts: promptRepo,
@@ -39,11 +45,19 @@ export function createTestPorts(): ContentPorts & {
     audit: auditRepo,
     clock: new FixedClock(TEST_NOW),
     ids: new SequentialIdGenerator(),
-    uow: new MemoryPromptUnitOfWork(promptRepo, versionRepo, auditRepo),
+    uow: new MemoryPromptUnitOfWork(
+      promptRepo,
+      versionRepo,
+      auditRepo,
+      mediaRepo,
+    ),
+    media: mediaRepo,
+    mediaStorage,
     auditRepo,
     articleRepo,
     versionRepo,
     promptRepo,
+    mediaRepo,
   };
 }
 

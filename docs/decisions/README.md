@@ -23,6 +23,7 @@ This directory is the journal of architectural decisions for the Corporate Knowl
 | 0008 | Google Workspace manual import | Accepted |
 | 0009 | Taxonomy administration | Accepted |
 | 0010 | Prompt administration | Accepted |
+| 0011 | Media Library (Phase 7B) | Accepted |
 
 ## When an ADR is required
 

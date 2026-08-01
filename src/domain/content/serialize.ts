@@ -19,10 +19,14 @@ import {
 } from "./versioning";
 import type { Video } from "./video";
 import { createVideo } from "./video";
+import type { MediaAsset, MediaStorageProvider } from "./media";
+import { rehydrateMediaAsset } from "./media";
 import type { IsoDateTime, Revision } from "../shared/value-objects";
 import { parseIsoDateTime, parseRevision } from "../shared/value-objects";
 import type { ContentStatus } from "../shared/status";
 import { VersionId } from "../shared/ids";
+
+export type SerializedMediaAsset = Record<string, unknown>;
 
 const CONTENT_STATUSES = new Set([
   "draft",
@@ -404,6 +408,88 @@ export function restorePromptFromSnapshot(
   now: IsoDateTime,
 ): Prompt {
   return applyPromptVersionSnapshot(prompt, snapshot, now);
+}
+
+export function serializeMediaAsset(media: MediaAsset): SerializedMediaAsset {
+  return JSON.parse(JSON.stringify({ ...media })) as SerializedMediaAsset;
+}
+
+export function deserializeMediaAsset(raw: unknown): MediaAsset {
+  const obj = assertPlainObject(raw, "MediaAsset");
+  const knownKeys = new Set([
+    "id",
+    "title",
+    "description",
+    "defaultAltText",
+    "kind",
+    "mimeType",
+    "originalFileName",
+    "fileExtension",
+    "sizeBytes",
+    "width",
+    "height",
+    "storageProvider",
+    "storageKey",
+    "providerGeneration",
+    "providerChecksum",
+    "providerEtag",
+    "status",
+    "source",
+    "ownerId",
+    "failureReasonCode",
+    "createdAt",
+    "updatedAt",
+    "uploadedAt",
+    "archivedAt",
+    "revision",
+  ]);
+  for (const key of Object.keys(obj)) {
+    if (!knownKeys.has(key)) {
+      throw new ValidationError("Unknown media field", { key });
+    }
+  }
+  const provider = requireString(obj, "storageProvider");
+  if (provider !== "gcs" && provider !== "memory") {
+    throw new ValidationError("Invalid storageProvider");
+  }
+  return rehydrateMediaAsset({
+    id: requireString(obj, "id"),
+    title: requireString(obj, "title"),
+    description: optionalString(obj, "description"),
+    defaultAltText: optionalString(obj, "defaultAltText"),
+    kind: requireString(obj, "kind"),
+    mimeType: optionalString(obj, "mimeType"),
+    originalFileName: requireString(obj, "originalFileName"),
+    fileExtension: requireString(obj, "fileExtension"),
+    sizeBytes:
+      typeof obj.sizeBytes === "number" || obj.sizeBytes === null
+        ? (obj.sizeBytes as number | null)
+        : null,
+    width:
+      typeof obj.width === "number" || obj.width === null
+        ? (obj.width as number | null)
+        : null,
+    height:
+      typeof obj.height === "number" || obj.height === null
+        ? (obj.height as number | null)
+        : null,
+    storageProvider: provider as MediaStorageProvider,
+    storageKey: requireString(obj, "storageKey"),
+    providerGeneration: optionalString(obj, "providerGeneration"),
+    providerChecksum: optionalString(obj, "providerChecksum"),
+    providerEtag: optionalString(obj, "providerEtag"),
+    status: requireString(obj, "status"),
+    source: obj.source
+      ? parseSourceReference(obj.source)
+      : { type: "portal" },
+    ownerId: requireString(obj, "ownerId"),
+    failureReasonCode: optionalString(obj, "failureReasonCode"),
+    createdAt: requireString(obj, "createdAt"),
+    updatedAt: requireString(obj, "updatedAt"),
+    uploadedAt: optionalString(obj, "uploadedAt"),
+    archivedAt: optionalString(obj, "archivedAt"),
+    revision: parseRevision(obj.revision ?? 0),
+  });
 }
 
 export type { Revision };

@@ -22,6 +22,10 @@ credentials*.json
 # Logs & caches
 *.log
 npm-debug.log*
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+storage-debug.log
 .eslintcache
 .cache/
 coverage/
@@ -29,6 +33,11 @@ playwright-report/
 test-results/
 tsconfig.tsbuildinfo
 *.tsbuildinfo
+
+# Firebase emulator local data
+.emulator-data/
+*-debug.log
+*.emulator.json
 
 # OS / IDE
 .DS_Store

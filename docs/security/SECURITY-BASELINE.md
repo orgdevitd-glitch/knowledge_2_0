@@ -60,9 +60,11 @@ Security decisions must never be enforced only on the client.
 
 ## File uploads
 
-- Allowlist MIME types and extensions
-- Enforce maximum sizes
-- Prefer storing published binaries in Cloud Storage after validation
+- Allowlist MIME types and extensions (Phase 7B: images jpeg/png/webp; documents pdf/txt/csv)
+- Enforce maximum sizes per kind (`MEDIA_IMAGE_MAX_BYTES`, `MEDIA_DOCUMENT_MAX_BYTES`)
+- Server-side magic-byte / text sniff on complete — client Content-Type is not trusted
+- Private GCS bucket; Firebase Storage client rules deny all direct access
+- Signed PUT URLs for admin upload; public delivery via same-origin `/media/[mediaId]` only for `ready` assets
 - Do not execute or reflect uploaded HTML as trusted script
 
 ## Headers & transport

@@ -16,7 +16,7 @@
     "test:watch": "vitest",
     "firebase:emulators": "npx firebase-tools emulators:start --only firestore --project demo-ckp",
     "test:firestore": "npx firebase-tools emulators:exec --only firestore --project demo-ckp \"vitest run src/tests/firestore --no-file-parallelism\"",
-    "test:rules": "npx firebase-tools emulators:exec --only firestore --project demo-ckp \"vitest run src/tests/rules --no-file-parallelism\"",
+    "test:rules": "npx firebase-tools emulators:exec --only firestore,storage --project demo-ckp \"vitest run src/tests/rules --no-file-parallelism\"",
     "check": "npm run typecheck && npm run lint && npm run test && npm run build"
   },
   "dependencies": {

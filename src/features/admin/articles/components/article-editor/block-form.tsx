@@ -7,6 +7,7 @@ import {
   Button,
   Checkbox,
   Input,
+  Link,
   NativeSelect,
   Textarea,
 } from "@/components/ui";
@@ -184,9 +185,23 @@ function SharedSettings({
 function MediaPlaceholder({ type }: { type: string }) {
   return (
     <Alert tone="information" title="Медиатека">
-      Выбор {type} будет доступен после подключения медиатеки. Пока укажите ID
-      вручную.
+      Загрузите {type} в{" "}
+      <Link href="/admin/media" variant="standalone">
+        медиатеке
+      </Link>{" "}
+      и вставьте Media ID вручную.
     </Alert>
+  );
+}
+
+function MediaIdHint() {
+  return (
+    <p style={{ margin: "0.25rem 0 0", fontSize: "0.8125rem" }}>
+      <Link href="/admin/media" variant="subtle">
+        Открыть медиатеку
+      </Link>{" "}
+      для загрузки и копирования ID.
+    </p>
   );
 }
 
@@ -953,6 +968,7 @@ export function BlockForm({ block, onChange }: BlockFormProps) {
                 })
               }
             />
+            <MediaIdHint />
             <Input
               label="Alt-текст"
               value={block.data.alt}
@@ -987,6 +1003,7 @@ export function BlockForm({ block, onChange }: BlockFormProps) {
         return (
           <div className={styles.formSection}>
             <MediaPlaceholder type="галереи" />
+            <MediaIdHint />
             <ul className={styles.itemList}>
               {block.data.items.map((item, idx) => (
                 <li key={idx} className={styles.itemRow}>
@@ -1111,6 +1128,7 @@ export function BlockForm({ block, onChange }: BlockFormProps) {
                 })
               }
             />
+            <MediaIdHint />
             <Input
               label="Название"
               value={block.data.title}

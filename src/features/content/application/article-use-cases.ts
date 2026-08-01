@@ -153,6 +153,10 @@ export async function publishArticle(
     assertStatusTransition(existing.status, "published");
   }
   assertArticlePublishable(existing);
+  const { assertArticleMediaReadyForPublish } = await import(
+    "./article-media-validation"
+  );
+  await assertArticleMediaReadyForPublish(ports, existing);
   const now = resolveNow(ports, ctx);
   const latest = await ports.versions.getLatestByEntity("article", articleId);
   const versionNumber = nextVersionNumber(
