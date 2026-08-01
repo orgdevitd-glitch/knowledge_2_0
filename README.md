@@ -11,8 +11,13 @@ Public users read **published** content without registration. Administrators sig
 - Create / edit prompts (manual save, revision conflicts)
 - Preview, atomic publish, hide, archive, version restore
 - Prompt list with dashboard, filters, and source/review metadata
-- Article editor and Google import (Phase 6A) retained
+- Article editor retained
 - Mutation APIs protected by session + CSRF
+
+**Google Workspace**
+
+- Phase 6A — manual Google Workspace integration (Drive/Docs/Sheets preview → confirm into drafts) is **complete**
+- Phase 6B — automatic sync is **not started**
 
 ## Requirements
 

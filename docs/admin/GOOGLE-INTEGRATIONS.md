@@ -18,7 +18,9 @@ When `GOOGLE_WORKSPACE_MODE=disabled`, pages show a safe unavailable state and d
 
 **Implemented:** service-account ADC, read-only scopes, Shared Drive + root boundary, Drive browser, Docs→Article draft, Sheets→Prompt drafts, preview TTL, structural diff, ready-only Sheets mode, idempotency, audit.
 
-**Deferred (Phase 6B+):** automatic sync, changes feed, Scheduler, write-back, media import, Picker, full Prompt editor.
+**Deferred (Phase 6B+):** automatic sync, changes feed, Scheduler, write-back, media import, Picker.
+
+Prompt Admin editing of imported drafts is Phase 8A (complete); it is not part of Phase 6B.
 
 ## Automated coverage
 

@@ -20,7 +20,7 @@ Architecture → security → CMS simplicity → maintainability → a11y → pe
 
 ## Stack (approved)
 
-Next.js App Router, React, TypeScript strict, Zod, Firebase Auth, Firestore, GCS, Cloud Run, Secret Manager, Cloud Logging, Cloud Scheduler, Google Drive/Docs/Sheets (import only — later).
+Next.js App Router, React, TypeScript strict, Zod, Firebase Auth, Firestore, GCS, Cloud Run, Secret Manager, Cloud Logging, Cloud Scheduler, Google Drive/Docs/Sheets (Phase 6A manual import complete; Phase 6B automatic sync not started).
 
 Phase 5A: Admin SDK Firestore + deny-all rules; public may use empty/demo/firestore sources.
 

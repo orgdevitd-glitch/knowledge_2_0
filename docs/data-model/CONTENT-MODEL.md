@@ -88,13 +88,18 @@ See entity modules. Prompt stores `promptText` (never user-filled runtime data).
 
 Types: `portal` | `google-docs` | `google-sheets` | `google-drive` | `manual-import`.
 
-Describes origin/sync metadata only. No OAuth secrets. Published versions always belong to the portal (`type: portal` on publish).
+Describes origin/sync metadata only. No OAuth secrets.
+
+Two distinct uses:
+
+1. **Entity provenance** (e.g. `Prompt.source`) — import/manual origin. For Prompt, publish **preserves** Sheets/import provenance (`markPromptPublished` does not wipe it).
+2. **`ContentVersion.source`** — why that immutable version was created. Portal publish sets this to `portal` (`portalSource()`); it is not a replacement for entity provenance.
 
 ## Versioning
 
 `ContentVersion`: `id`, `entityType`, `entityId`, `versionNumber` (from 1), `snapshot` (JSON-compatible), `changeSummary`, `source`, `createdBy`, `createdAt`.
 
-Versions are immutable. Restore loads snapshot into a new draft revision; does not mutate history; does not auto-publish.
+Versions are immutable. Restore loads snapshot into a new draft revision; does not mutate history; does not auto-publish. Prompt version restore does not replace entity `Prompt.source` from the snapshot (`PromptSnapshot` has no source).
 
 ## Optimistic concurrency
 
