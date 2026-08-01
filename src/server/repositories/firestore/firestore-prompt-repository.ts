@@ -124,6 +124,19 @@ export class FirestorePromptRepository implements PromptRepository {
           : [filter.status];
         items = items.filter((i) => statuses.includes(i.status));
       }
+      if (filter?.categoryId) {
+        items = items.filter((i) =>
+          i.categoryIds.includes(filter.categoryId as never),
+        );
+      }
+      if (filter?.tagId) {
+        items = items.filter((i) => i.tagIds.includes(filter.tagId as never));
+      }
+      if (filter?.audienceId) {
+        items = items.filter((i) =>
+          i.audienceIds.includes(filter.audienceId as never),
+        );
+      }
       let start = 0;
       if (cursor) {
         const idx = items.findIndex((i) => i.id === cursor);

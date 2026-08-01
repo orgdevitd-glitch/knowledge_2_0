@@ -72,6 +72,11 @@ export default async function AdminHomePage() {
           </Link>
         </p>
         <p>
+          <Link href="/admin/taxonomy" variant="standalone">
+            Таксономия
+          </Link>
+        </p>
+        <p>
           <Link href="/admin/integrations" variant="standalone">
             Интеграции
           </Link>

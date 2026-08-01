@@ -63,7 +63,7 @@ firestore.rules
 firestore.indexes.json
 ```
 
-Phase 5A admin routes: `/admin/sign-in`, `/admin`, `/admin/articles`.  
+Admin routes include `/admin/sign-in`, `/admin`, `/admin/articles`, `/admin/integrations`, `/admin/taxonomy` (Phase 7A).
 Public routes unchanged from Phase 4.
 
 ## Placement rules

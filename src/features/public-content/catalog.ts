@@ -188,19 +188,30 @@ export function buildCatalogPage(
   };
 }
 
+/**
+ * Public filter policy (ADR 0009):
+ * Counts come from catalog materials already hydrated from publishedVersion
+ * snapshots (not working drafts). Therefore:
+ * - active taxonomy with published-snapshot usage → filter option
+ * - archived taxonomy with published-snapshot usage → legacy filter option
+ * - archived with draft-only usage (not in snapshots) → omitted
+ * - archiving never hides materials; metadata titles still resolve by id
+ */
 function buildCategoryOptions(
   categories: readonly Category[],
   items: MaterialSummary[],
 ): TaxonomyOption[] {
   return categories
-    .filter((c) => c.status === "active")
     .map((c) => ({
       id: c.id,
       slug: c.slug,
       title: c.title,
+      status: c.status,
       count: items.filter((i) => i.category?.id === c.id).length,
     }))
+    // Include archived only when still used by visible catalog items (legacy).
     .filter((o) => o.count > 0)
+    .map(({ id, slug, title, count }) => ({ id, slug, title, count }))
     .sort((a, b) => a.title.localeCompare(b.title, "ru"));
 }
 
@@ -209,14 +220,15 @@ function buildAudienceOptions(
   items: MaterialSummary[],
 ): TaxonomyOption[] {
   return audiences
-    .filter((a) => a.status === "active")
     .map((a) => ({
       id: a.id,
       slug: a.slug,
       title: a.title,
+      status: a.status,
       count: items.filter((i) => i.audiences.some((x) => x.id === a.id)).length,
     }))
     .filter((o) => o.count > 0)
+    .map(({ id, slug, title, count }) => ({ id, slug, title, count }))
     .sort((a, b) => a.title.localeCompare(b.title, "ru"));
 }
 

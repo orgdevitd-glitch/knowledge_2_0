@@ -196,17 +196,69 @@ export async function listAdminTaxonomyOptions(): Promise<{
       title: string;
       status: string;
     }>,
+    selectedIds: readonly string[] = [],
   ): AdminTaxonomyOption[] =>
-    items.map((i) => ({
-      id: i.id as string,
-      slug: i.slug as string,
-      title: i.title as string,
-      status: i.status,
-    }));
+    items
+      .filter(
+        (i) => i.status === "active" || selectedIds.includes(i.id as string),
+      )
+      .map((i) => ({
+        id: i.id as string,
+        slug: i.slug as string,
+        title: i.title as string,
+        status: i.status,
+      }));
+  // Callers that need linked archived values should pass selected ids via
+  // listAdminTaxonomyOptionsForArticle. Default export stays active-only.
   return {
     categories: map(categories),
     tags: map(tags),
     audiences: map(audiences),
+  };
+}
+
+/** Active values plus currently linked archived values for editor display. */
+export async function listAdminTaxonomyOptionsForArticle(selected: {
+  categoryIds: readonly string[];
+  tagIds: readonly string[];
+  audienceIds: readonly string[];
+}): Promise<{
+  categories: AdminTaxonomyOption[];
+  tags: AdminTaxonomyOption[];
+  audiences: AdminTaxonomyOption[];
+}> {
+  if (!isContentPersistenceAvailable()) {
+    return { categories: [], tags: [], audiences: [] };
+  }
+  const ports = getContentPorts();
+  const [categories, tags, audiences] = await Promise.all([
+    ports.categories.listAll(),
+    ports.tags.listAll(),
+    ports.audiences.listAll(),
+  ]);
+  const map = (
+    items: Array<{
+      id: string;
+      slug: string;
+      title: string;
+      status: string;
+    }>,
+    selectedIds: readonly string[],
+  ): AdminTaxonomyOption[] =>
+    items
+      .filter(
+        (i) => i.status === "active" || selectedIds.includes(i.id as string),
+      )
+      .map((i) => ({
+        id: i.id as string,
+        slug: i.slug as string,
+        title: i.title as string,
+        status: i.status,
+      }));
+  return {
+    categories: map(categories, selected.categoryIds),
+    tags: map(tags, selected.tagIds),
+    audiences: map(audiences, selected.audienceIds),
   };
 }
 

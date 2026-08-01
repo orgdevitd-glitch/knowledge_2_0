@@ -130,7 +130,19 @@ Execute **one phase per assignment**. After each phase: typecheck → lint → t
 - Conflict notifications
 - Still no auto-publish without admin policy
 
-## Phase 7 — Media
+## Phase 7A — Taxonomy administration
+
+**Status:** implemented in this repository pass (see ADR 0009).
+
+- Admin UI for Category / Tag / Audience
+- Hierarchy move/reorder, archive/restore, usage panel
+- Mutation APIs with CSRF, revision, audit, public invalidation
+- Article editor + Sheets resolver consume live taxonomy
+- No physical delete, no merge tags, no material mass-rewrite
+
+**Out of scope:** Prompt/Video admin, Media, Google automatic sync (Phase 6B).
+
+## Phase 7B — Media (later)
 
 - Images, video, files
 - Captions, transcripts

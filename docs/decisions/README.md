@@ -20,6 +20,8 @@ This directory is the journal of architectural decisions for the Corporate Knowl
 | 0005 | Public read model and demo source | Accepted |
 | 0006 | Firebase admin session and Firestore | Accepted |
 | 0007 | Admin article editor | Accepted |
+| 0008 | Google Workspace manual import | Accepted |
+| 0009 | Taxonomy administration | Accepted |
 
 ## When an ADR is required
 

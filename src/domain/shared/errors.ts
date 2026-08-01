@@ -4,6 +4,7 @@ export type DomainErrorCode =
   | "CONFLICT"
   | "INVALID_STATUS_TRANSITION"
   | "DUPLICATE_SLUG"
+  | "DUPLICATE_TITLE"
   | "UNKNOWN_BLOCK_TYPE"
   | "UNSUPPORTED_BLOCK_SCHEMA_VERSION"
   | "REPOSITORY";
@@ -58,6 +59,13 @@ export class DuplicateSlugError extends DomainError {
   constructor(message: string, details: DomainErrorDetails = {}) {
     super("DUPLICATE_SLUG", message, details);
     this.name = "DuplicateSlugError";
+  }
+}
+
+export class DuplicateTitleError extends DomainError {
+  constructor(message: string, details: DomainErrorDetails = {}) {
+    super("DUPLICATE_TITLE", message, details);
+    this.name = "DuplicateTitleError";
   }
 }
 

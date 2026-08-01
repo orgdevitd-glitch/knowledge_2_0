@@ -12,7 +12,13 @@ import {
   createArticleUseCase,
   publishArticle,
   replaceArticleBlocks,
+  updateArticleMetadata,
 } from "@/features/content/application/article-use-cases";
+import {
+  archiveCategoryUseCase,
+  createCategoryUseCase,
+} from "@/features/content/application/taxonomy-use-cases";
+import { buildCatalogPage } from "@/features/public-content/catalog";
 import { isPubliclyVisible } from "@/features/public-content/visibility";
 import {
   createTestPorts,
@@ -128,5 +134,85 @@ describe("published working copy vs public snapshot", () => {
     const blob = JSON.stringify(docs);
     expect(blob).toContain("PublishedPhraseAlpha");
     expect(blob).not.toContain("DraftPhraseBetaOnly");
+  });
+
+  it("public filters include archived taxonomy only via published snapshot usage", async () => {
+    const ports = createTestPorts();
+    const ctx = testCtx();
+    const archivedLegacy = await createCategoryUseCase(ports, ctx, {
+      slug: "legacy-cat",
+      title: "Legacy Cat",
+    });
+    const draftOnlyCat = await createCategoryUseCase(ports, ctx, {
+      slug: "draft-cat",
+      title: "Draft Cat",
+    });
+    const activeCat = await createCategoryUseCase(ports, ctx, {
+      slug: "active-cat",
+      title: "Active Cat",
+    });
+
+    const published = await createArticleUseCase(ports, ctx, {
+      slug: "legacy-article",
+      title: "Legacy Article",
+      ownerId: "user_1",
+      categoryIds: [archivedLegacy.id],
+      blocks: [paragraphBlock("p1", "Body")],
+    });
+    const pub = await publishArticle(
+      ports,
+      ctx,
+      published.id,
+      published.revision,
+      "v1",
+    );
+    await updateArticleMetadata(ports, ctx, published.id, pub.article.revision, {
+      categoryIds: [activeCat.id],
+    });
+
+    await createArticleUseCase(ports, ctx, {
+      slug: "draft-article",
+      title: "Draft Article",
+      ownerId: "user_1",
+      categoryIds: [draftOnlyCat.id],
+    });
+
+    const archived = await archiveCategoryUseCase(
+      ports,
+      ctx,
+      archivedLegacy.id,
+      (await ports.categories.getById(archivedLegacy.id))!.revision,
+    );
+    await archiveCategoryUseCase(
+      ports,
+      ctx,
+      draftOnlyCat.id,
+      (await ports.categories.getById(draftOnlyCat.id))!.revision,
+    );
+
+    const version = await ports.versions.getById(pub.versionId);
+    const live = await ports.articles.getById(published.id);
+    const publicArticle = articleFromPublishedSnapshot(
+      live!,
+      version!.snapshot as unknown as ReturnType<typeof toArticleSnapshot>,
+    );
+
+    const draftOnlyArchived = await ports.categories.getById(draftOnlyCat.id);
+    expect(draftOnlyArchived).not.toBeNull();
+
+    const page = buildCatalogPage(
+      [publicArticle],
+      [],
+      [archived, draftOnlyArchived!, activeCat],
+      [],
+      [],
+      "2024-06-15T12:00:00.000Z",
+      {},
+    );
+
+    const optionIds = page.categoryOptions.map((o) => o.id);
+    expect(optionIds).toContain(archivedLegacy.id);
+    expect(optionIds).not.toContain(draftOnlyCat.id);
+    expect(optionIds).not.toContain(activeCat.id);
   });
 });

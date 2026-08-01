@@ -1,11 +1,13 @@
 import "server-only";
 
 import type { Audience, Category, Tag } from "@/domain/content/taxonomy";
+import { assertTaxonomyTreeSize } from "@/domain/content/taxonomy";
 import {
   ConflictError,
   DuplicateSlugError,
   RepositoryError,
 } from "@/domain/shared/errors";
+import { CONTENT_LIMITS } from "@/domain/shared/limits";
 import type {
   AudienceRepository,
   CategoryRepository,
@@ -118,8 +120,18 @@ abstract class FirestoreTaxonomyBase<
   }
 
   async listAll(): Promise<T[]> {
-    const snap = await this.col().limit(500).get();
-    return snap.docs.map((d) => this.fromDoc(d.id, d.data()));
+    const max = CONTENT_LIMITS.maxTaxonomyTreeItems;
+    const snap = await this.col()
+      .orderBy("title", "asc")
+      .limit(max + 1)
+      .get();
+    const items = snap.docs.map((d) => this.fromDoc(d.id, d.data()));
+    assertTaxonomyTreeSize(items.length > max ? max + 1 : items.length);
+    return items.sort((a, b) => {
+      const byTitle = a.title.localeCompare(b.title, "ru");
+      if (byTitle !== 0) return byTitle;
+      return a.id.localeCompare(b.id);
+    });
   }
 }
 

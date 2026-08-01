@@ -13,7 +13,7 @@ allow read, write: if false;
 | Collection | Phase 5A adapter |
 |------------|------------------|
 | `articles/{articleId}` | full |
-| `categories/{categoryId}` | full |
+| `categories/{categoryId}` | full (Phase 7A admin; archive not delete) |
 | `tags/{tagId}` | full |
 | `audiences/{audienceId}` | full |
 | `contentVersions/{versionId}` | full (immutable save) |

@@ -6,7 +6,7 @@ Public users read **published** content without registration. Administrators sig
 
 ## Current status
 
-**Phase 6A — Google Workspace connections and manual import** is complete for this pass.
+**Phase 7A — Taxonomy administration** (Category / Tag / Audience admin) is the current admin CMS slice after Phase 6A Google import.
 
 - Create / edit articles with block editor (manual save, revision conflicts)
 - Preview, atomic publish, hide, archive, version restore
@@ -29,7 +29,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Admin (with Firebase configured): `/admin/sign-in` → `/admin/articles`.
+Admin (with Firebase configured): `/admin/sign-in` → `/admin/articles`, `/admin/taxonomy`.
 
 ## Verification
 
