@@ -1,0 +1,48 @@
+---
+description: Approved design tokens, palette, UI character, and animation constraints. Use when building UI components, styles, layouts, or motion.
+globs: src/components/**/*,src/styles/**/*,src/app/**/*.tsx,src/app/**/*.css
+alwaysApply: false
+---
+
+# Design System
+
+Full detail: `docs/design/DESIGN-SYSTEM.md`. Skill: `emil-design-eng` (do not change palette/architecture).
+
+## Approved palette
+
+```text
+background: #FFFFFF
+foreground: #010101
+accent: #F8BC03
+secondary: #1F4E79
+surface-muted: #F6F6F4
+border: #E7E7E3
+text-muted: #6B6B67
+surface-dark: #2A2A28
+```
+
+## Color rules
+
+- White background; near-black text; yellow primary accent; navy secondary.
+- Yellow text on white is forbidden; dark text on yellow.
+- No new brand colors without an ADR.
+- Status colors need contrast and must not rely on color alone.
+
+## Character
+
+Clean, modern, high-contrast, functional, businesslike, calm. Not a generic admin dashboard. Avoid glass, heavy shadows, and decorative gradients.
+
+## Tokens only
+
+All values via tokens: colors, spacing, radii, typography, shadows, duration, easing, z-index, breakpoints. No scattered magic values.
+
+## Animation
+
+Allowed purposes only: feedback, spatial consistency, state indication, avoiding jarring change, explanation, rare delight.
+
+- Prefer `transform` / `opacity`; never `transition: all`; no `ease-in` for UI entrance; no entrance from `scale(0)`.
+- Honor `prefers-reduced-motion`; hover motion only with fine pointer hover.
+- Do not add Motion for simple hover/fade. Springs only for gestures/momentum/interruptible interactions.
+- Dense informational UIs: no decorative animation.
+- After functional UI: analyze with `find-animation-opportunities`; plan with `improve-animations`; review changed motion with `review-animations`.
+- DnD / sheets / physics: `apple-design` (behavior only, not Apple visuals).

@@ -1,0 +1,61 @@
+.progress {
+  display: grid;
+  gap: var(--space-2);
+  font-family: var(--font-sans);
+}
+
+.progressLabel {
+  font-size: var(--text-caption-size);
+  color: var(--color-text-muted);
+}
+
+.track {
+  height: 0.45rem;
+  background: var(--color-border);
+  border-radius: var(--radius-round);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: inherit;
+  transform-origin: left center;
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    transition: none;
+  }
+}
+
+.pathCard {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-background);
+  font-family: var(--font-sans);
+}
+
+.pathTitle {
+  margin: 0;
+  font-size: var(--text-h3-size);
+  font-weight: 650;
+}
+
+.pathMeta {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-body-sm-size);
+}
+
+.checklist {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-3);
+  align-items: start;
+  font-family: var(--font-sans);
+}

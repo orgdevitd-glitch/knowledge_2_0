@@ -1,0 +1,18 @@
+---
+alwaysApply: false
+---
+
+# Phase Completion Checklist
+
+Invoke manually with `@phase-completion-checklist` when finishing a phase or vertical slice.
+
+- [ ] Scope limited to the assigned phase/slice only
+- [ ] No hardcoded content, IDs, secrets, or env values in app code
+- [ ] Layers respected (UI does not call Firestore/Google APIs directly)
+- [ ] Security: server role checks for any admin mutation introduced
+- [ ] Design tokens only; approved palette unchanged without ADR
+- [ ] Typecheck / lint / tests / production build (Phase 1+)
+- [ ] Manual verification of changed surfaces
+- [ ] Motion review skill used if motion code changed
+- [ ] Report written in the required format
+- [ ] Stopped — next phase not started

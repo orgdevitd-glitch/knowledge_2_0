@@ -1,0 +1,35 @@
+/* Shared interaction utilities — transform/opacity only */
+.ds-pressable:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ds-hover-lift:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.ds-fade-in {
+  animation: ds-fade-in var(--duration-normal) var(--ease-out) both;
+}
+
+@keyframes ds-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-fade-in {
+    animation: none;
+  }
+
+  .ds-pressable:active:not(:disabled) {
+    transform: none;
+  }
+}

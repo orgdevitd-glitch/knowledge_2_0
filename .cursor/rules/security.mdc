@@ -1,0 +1,37 @@
+---
+description: Security baseline for authz, CSRF, validation, CSP, secrets, and admin audit. Use for auth, admin APIs, uploads, cookies, or threat-related changes.
+alwaysApply: false
+---
+
+# Security
+
+Full detail: `docs/security/SECURITY-BASELINE.md`. Critical bullets also in `project-core`.
+
+## Mandatory
+
+- Server-side authorization; re-check session + role on **every** admin API.
+- CSRF protection for mutating operations.
+- Secure cookies; strict input validation (Zod).
+- Sanitize HTML; forbid arbitrary JS in content.
+- MIME + extension checks; file size limits.
+- Rate limiting; admin action audit log.
+- Content Security Policy; HTTPS only in deployed envs.
+- Separate test and production; no secrets in the repository.
+
+## Auth model
+
+- No public registration / profiles / personal cabinets.
+- Admin/editor via Google Sign-In (Firebase Auth in approved stack).
+- Admin allowlist in DB or environment configuration — never hardcoded in client bundles.
+- Client checks are UX only; server is authoritative.
+
+## Content safety
+
+- Drafts/hidden/archived must not leak via public APIs, search index, or previews meant for anonymous users.
+- Published media served from controlled storage, not arbitrary remote HTML.
+
+## Never
+
+- Security decisions enforced only on the client.
+- Service account with blanket Drive access.
+- Committing `.env` secrets, key files, or tokens.

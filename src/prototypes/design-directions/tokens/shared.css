@@ -1,0 +1,77 @@
+/* Shared approved palette — all directions */
+.dd-root {
+  --dd-color-bg: #ffffff;
+  --dd-color-fg: #010101;
+  --dd-color-accent: #f8bc03;
+  --dd-color-secondary: #1f4e79;
+  --dd-color-muted-surface: #f6f6f4;
+  --dd-color-border: #e7e7e3;
+  --dd-color-muted-text: #6b6b67;
+  --dd-color-surface-dark: #2a2a28;
+
+  --dd-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --dd-ease-move: cubic-bezier(0.77, 0, 0.175, 1);
+  --dd-duration-fast: 120ms;
+  --dd-duration-ui: 200ms;
+  --dd-duration-panel: 280ms;
+
+  --dd-z-nav: 40;
+  --dd-z-panel: 50;
+  --dd-z-toolbar: 60;
+
+  --dd-font-mono: ui-monospace, "Cascadia Code", "Segoe UI Mono", monospace;
+
+  color: var(--dd-color-fg);
+  background: var(--dd-color-bg);
+  min-height: 100%;
+}
+
+.dd-root *,
+.dd-root *::before,
+.dd-root *::after {
+  box-sizing: border-box;
+}
+
+.dd-root a {
+  color: var(--dd-color-secondary);
+}
+
+.dd-root :focus-visible {
+  outline: 2px solid var(--dd-color-secondary);
+  outline-offset: 2px;
+}
+
+.dd-root button,
+.dd-root input,
+.dd-root select,
+.dd-root textarea {
+  font: inherit;
+}
+
+.dd-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space:nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dd-root *,
+  .dd-root *::before,
+  .dd-root *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dd-root .dd-hover-lift:hover {
+    transform: translateY(-1px);
+  }
+}

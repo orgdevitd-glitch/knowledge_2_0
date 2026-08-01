@@ -1,0 +1,93 @@
+.container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: var(--container-pad);
+}
+
+.standard {
+  max-width: var(--container-standard);
+}
+
+.wide {
+  max-width: var(--container-wide);
+}
+
+.editorial {
+  max-width: var(--container-editorial);
+}
+
+.full {
+  max-width: none;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.inline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.wrap {
+  flex-wrap: wrap;
+}
+
+.grid {
+  display: grid;
+  width: 100%;
+}
+
+.surface {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+.surfaceMuted {
+  background: var(--color-surface-muted);
+  color: var(--color-foreground);
+}
+
+.surfaceDark {
+  background: var(--color-surface-dark);
+  color: #fff;
+}
+
+.surfaceAccent {
+  background: var(--color-accent);
+  color: var(--color-foreground);
+}
+
+.surfaceInfo {
+  background: var(--color-info-bg);
+  color: var(--color-foreground);
+}
+
+.dividerH {
+  border: 0;
+  border-top: var(--border-width) solid var(--color-border);
+  margin: 0;
+  width: 100%;
+}
+
+.dividerV {
+  border: 0;
+  border-left: var(--border-width) solid var(--color-border);
+  margin: 0;
+  align-self: stretch;
+  width: 0;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

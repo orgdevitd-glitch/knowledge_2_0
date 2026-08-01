@@ -1,0 +1,146 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-family: var(--font-sans);
+}
+
+.label {
+  font-size: var(--text-label-size);
+  font-weight: var(--text-label-weight);
+  letter-spacing: var(--text-label-tracking);
+  color: var(--color-foreground);
+}
+
+.hint {
+  font-size: var(--text-caption-size);
+  color: var(--color-text-muted);
+}
+
+.errorText {
+  font-size: var(--text-caption-size);
+  color: var(--color-error);
+}
+
+.control {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--size-control-md);
+  width: 100%;
+  padding: 0 var(--space-3);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-background);
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+
+.control:focus-within {
+  border-color: var(--color-secondary);
+}
+
+.controlError {
+  border-color: var(--color-error);
+}
+
+.controlDisabled {
+  background: var(--color-surface-muted);
+  opacity: 0.7;
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--color-foreground);
+  outline: none;
+  min-width: 0;
+}
+
+.textarea {
+  min-height: 6rem;
+  padding: var(--space-3) 0;
+  resize: vertical;
+}
+
+.select {
+  min-height: calc(var(--size-control-md) - 2px);
+}
+
+.checkboxRow,
+.radioRow,
+.switchRow {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-3);
+  align-items: start;
+}
+
+.checkbox,
+.radio {
+  width: 1.125rem;
+  height: 1.125rem;
+  margin-top: 0.15rem;
+  accent-color: var(--color-secondary);
+}
+
+.switch {
+  appearance: none;
+  width: 2.75rem;
+  height: 1.5rem;
+  border-radius: var(--radius-round);
+  border: var(--border-width) solid var(--color-border);
+  background: var(--color-surface-muted);
+  position: relative;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: var(--radius-round);
+  background: var(--color-background);
+  border: var(--border-width) solid var(--color-border);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.switch[aria-checked="true"] {
+  background: var(--color-accent);
+}
+
+.switch[aria-checked="true"]::after {
+  transform: translateX(1.15rem);
+}
+
+.switch:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.clearBtn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: var(--space-1);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

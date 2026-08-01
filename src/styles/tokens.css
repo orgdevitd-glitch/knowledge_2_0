@@ -1,0 +1,165 @@
+/**
+ * Production design tokens — Phase 2B hybrid system
+ * Shell/catalog/admin = Workspace · Long reading = Editorial · Learning accents = limited Guided Learning
+ */
+
+:root {
+  /* ——— Color: brand ——— */
+  --color-background: #ffffff;
+  --color-foreground: #010101;
+  --color-accent: #f8bc03;
+  --color-secondary: #1f4e79;
+  --color-surface-muted: #f6f6f4;
+  --color-border: #e7e7e3;
+  --color-text-muted: #6b6b67;
+  --color-surface-dark: #2a2a28;
+
+  /* ——— Color: semantic (calm, not brand accents) ——— */
+  --color-success: #1f6b3a;
+  --color-success-bg: #e8f5ec;
+  --color-warning: #8a5b00;
+  --color-warning-bg: #fff4d6;
+  --color-error: #a11b1b;
+  --color-error-bg: #fdecec;
+  --color-info: #1f4e79;
+  --color-info-bg: #e8eef4;
+
+  /* ——— Typography families (wired via next/font variables) ——— */
+  --font-sans: var(--font-ibm-plex-sans), system-ui, sans-serif;
+  --font-serif: var(--font-source-serif-4), Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, "Cascadia Code", "Segoe UI Mono", monospace;
+
+  /* ——— Type scale ——— */
+  --text-display-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem);
+  --text-display-line: 1.2;
+  --text-display-weight: 650;
+  --text-display-tracking: -0.02em;
+
+  --text-h1-size: clamp(1.5rem, 1.3rem + 0.7vw, 1.875rem);
+  --text-h1-line: 1.25;
+  --text-h1-weight: 650;
+  --text-h1-tracking: -0.015em;
+
+  --text-h2-size: 1.375rem;
+  --text-h2-line: 1.3;
+  --text-h2-weight: 650;
+  --text-h2-tracking: -0.01em;
+
+  --text-h3-size: 1.125rem;
+  --text-h3-line: 1.35;
+  --text-h3-weight: 600;
+  --text-h3-tracking: 0;
+
+  --text-h4-size: 1rem;
+  --text-h4-line: 1.4;
+  --text-h4-weight: 600;
+  --text-h4-tracking: 0;
+
+  --text-body-lg-size: 1.0625rem;
+  --text-body-lg-line: 1.55;
+  --text-body-lg-weight: 400;
+
+  --text-body-size: 0.9375rem;
+  --text-body-line: 1.5;
+  --text-body-weight: 400;
+
+  --text-body-sm-size: 0.875rem;
+  --text-body-sm-line: 1.45;
+  --text-body-sm-weight: 400;
+
+  --text-label-size: 0.8125rem;
+  --text-label-line: 1.35;
+  --text-label-weight: 600;
+  --text-label-tracking: 0.01em;
+
+  --text-caption-size: 0.75rem;
+  --text-caption-line: 1.4;
+  --text-caption-weight: 400;
+
+  --text-code-size: 0.875rem;
+  --text-code-line: 1.5;
+  --text-code-weight: 400;
+
+  /* Editorial reading measure */
+  --prose-body-size: 1.125rem;
+  --prose-body-line: 1.7;
+  --prose-measure: 38rem;
+
+  /* ——— Spacing (4–64) ——— */
+  --space-1: 0.25rem; /* 4 */
+  --space-2: 0.5rem; /* 8 */
+  --space-3: 0.75rem; /* 12 */
+  --space-4: 1rem; /* 16 */
+  --space-5: 1.5rem; /* 24 */
+  --space-6: 2rem; /* 32 */
+  --space-7: 3rem; /* 48 */
+  --space-8: 4rem; /* 64 */
+
+  /* ——— Size ——— */
+  --size-control-sm: 2rem;
+  --size-control-md: 2.5rem;
+  --size-control-lg: 3rem;
+  --size-icon: 1.25rem;
+  --size-touch-min: 2.75rem;
+
+  /* ——— Radius ——— */
+  --radius-compact: 0.125rem;
+  --radius-control: 0.375rem;
+  --radius-card: 0.5rem;
+  --radius-panel: 0.75rem;
+  --radius-round: 999px;
+
+  /* ——— Border ——— */
+  --border-width: 1px;
+  --border-width-strong: 2px;
+
+  /* ——— Shadow (minimal) ——— */
+  --shadow-none: none;
+  --shadow-panel: 0 8px 24px rgba(1, 1, 1, 0.08), 0 2px 6px rgba(1, 1, 1, 0.04);
+  --shadow-dialog: 0 16px 40px rgba(1, 1, 1, 0.12), 0 4px 12px rgba(1, 1, 1, 0.06);
+  --shadow-raised: 0 4px 12px rgba(1, 1, 1, 0.1);
+
+  /* ——— Motion ——— */
+  --duration-instant: 0ms;
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+  --duration-slow: 280ms;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-move: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-standard: ease;
+
+  /* ——— Breakpoints (reference; media queries use literals) ——— */
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+
+  /* ——— Z-index ——— */
+  --z-base: 0;
+  --z-sticky: 20;
+  --z-dropdown: 40;
+  --z-overlay: 50;
+  --z-modal: 60;
+  --z-toast: 70;
+
+  /* ——— Containers ——— */
+  --container-pad: var(--space-4);
+  --container-standard: 72rem;
+  --container-wide: 90rem;
+  --container-editorial: 42rem;
+  --content-width-prose: var(--prose-measure);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --container-pad: var(--space-5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --duration-slow: 0ms;
+  }
+}

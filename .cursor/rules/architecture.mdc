@@ -1,0 +1,48 @@
+---
+description: System architecture, layered structure, stack choices, and module boundaries for the Corporate Knowledge Portal. Use when designing modules, APIs, server code, or folder layout.
+alwaysApply: false
+---
+
+# Architecture
+
+Full detail: `docs/architecture/SYSTEM-ARCHITECTURE.md`, `docs/architecture/PROJECT-STRUCTURE.md`.
+
+## Stack (approved)
+
+- Next.js App Router, React, TypeScript **strict**
+- Server Components by default; Client Components only for interactivity
+- Zod for input validation
+- Firebase Auth (Google), Cloud Firestore, GCS, Cloud Run
+- Secret Manager, Cloud Logging, Cloud Scheduler
+- Google Drive / Docs / Sheets APIs for **import prep only**
+
+Do not add a library for one trivial function. Call `pick-ui-library` before UI deps.
+
+## Layers
+
+```text
+UI → Application services → Domain → Repositories → Infrastructure adapters → External APIs
+```
+
+Also separate: authorization, audit, search.
+
+## Source of truth
+
+- Published content truth = **portal database**.
+- Google Docs/Sheets/Drive = external import sources only.
+- External sources must not mutate published content directly.
+- Publish flow: detect → fetch → normalize → preview version → diff → admin confirm → new version → publish → reindex → audit.
+
+## Automation boundary
+
+**Automatic:** detect changes, fetch, draft preview, compute diffs, log errors, notify admin, reindex after publish.
+
+**Manual only:** accept external changes, resolve conflicts, publish, delete, restore versions.
+
+## Search (v1)
+
+No separate search infra until real data volume justifies it. On publish, write a normalized search document into a versioned JSON index (e.g. GCS). Index must exclude drafts. Semantic/RAG only after confirmed need.
+
+## Structure
+
+Follow `src/app/(public|admin|api)`, `components/`, `features/`, `domain/`, `server/{auth,repositories,services,integrations,security,audit}`, `lib/`, `config/`, `styles/`, `tests/`.

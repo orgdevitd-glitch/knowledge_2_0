@@ -1,0 +1,39 @@
+---
+description: Google Drive, Docs, and Sheets import rules, least-privilege, and preview-before-publish. Use when working on sync, import, or Google API adapters.
+globs: src/server/integrations/**/*,src/features/google-sync/**/*,docs/integrations/**/*
+alwaysApply: false
+---
+
+# Google Integrations
+
+Full detail: `docs/integrations/GOOGLE-INTEGRATIONS.md`.
+
+## Principles
+
+- Least privilege; no whole-Drive access for service accounts.
+- Prefer Shared Drive; separate test vs production sources.
+- Secrets only in Secret Manager — never in the repo.
+- External content is never auto-published.
+- No two-way sync without an explicit approved decision (ADR).
+
+## Role of Google
+
+Import and preparation only. Portal DB remains source of truth for published content.
+
+Pipeline: detect → load → normalize → preview version → diff → admin confirm → version → publish → reindex → audit.
+
+## Docs import
+
+Support: headings, paragraphs, bullets, numbered lists, links, tables, images, basic formatting.
+
+Unsupported elements: record as warnings, do not silently drop, show in import report.
+
+## Sheets import
+
+Use for bulk prompts, registries, categories, tags, metadata, learning paths.
+
+Before import: validate column schema → validate all rows → show per-row errors → do not partially import corrupted data without explicit admin permission.
+
+## Drive
+
+Source file selection, collaboration, source images/video/docs. Published media may be copied to Cloud Storage when needed.

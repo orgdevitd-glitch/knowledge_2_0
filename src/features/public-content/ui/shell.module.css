@@ -1,0 +1,78 @@
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+.skipLink {
+  position: absolute;
+  inset-inline-start: var(--space-3);
+  top: -100%;
+  z-index: 100;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-accent);
+  color: #fff;
+  border-radius: var(--radius-control);
+  text-decoration: none;
+}
+
+.skipLink:focus {
+  top: var(--space-3);
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.sidebarDesktop {
+  display: none;
+  flex-shrink: 0;
+}
+
+@media (min-width: 960px) {
+  .sidebarDesktop {
+    display: block;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    max-height: 100vh;
+    overflow: auto;
+  }
+
+  .shell :global(header) button[aria-label="Открыть навигацию"] {
+    display: none;
+  }
+}
+
+.contentColumn {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+  padding: var(--space-5) var(--space-4);
+}
+
+@media (min-width: 960px) {
+  .content {
+    padding: var(--space-6) var(--space-6);
+  }
+}
+
+.footer {
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--text-body-sm-size);
+}
+
+.footer p {
+  margin: 0;
+}

@@ -1,0 +1,57 @@
+---
+description: Critical project constraints for the Corporate Knowledge Portal
+alwaysApply: true
+---
+
+# Project Core
+
+Corporate Knowledge Portal — maintainable production app, not a demo page.
+
+## Priorities (descending)
+
+1. Architecture correctness
+2. Data & admin security
+3. Content management simplicity
+4. Maintainability
+5. Accessibility
+6. Performance
+7. Visual quality
+8. Appropriate animation
+
+Never sacrifice architecture or accessibility for visual effects.
+
+## Phase discipline
+
+- Execute **only the assigned phase or vertical slice**.
+- After each phase: typecheck → lint → tests → production build → manual check → report → **STOP**.
+- Do not start the next phase without an explicit new task.
+
+## Hard bans
+
+- No hardcoded articles, categories, section names, users, admin emails, Google IDs, Doc/Sheet IDs, Drive paths, dates, prompts, learning paths, secrets, or env config in app code.
+- Separate test data from production data explicitly.
+- No UI / Firebase / Firestore / Google API wiring / UI libraries / deploy / content migration until the assigned phase requires it.
+- Prior HTML source materials are **content text only** — never CSS, JS, layout, components, animations, or design reference.
+
+## Access model
+
+- Public: read published content only; no registration, profiles, or personal cabinets.
+- Admin/editor: Google Sign-In; **server-side** role checks on every admin API; audit every admin action.
+- Client-side auth checks are never sufficient alone.
+
+## Layers
+
+UI → application services → domain → repositories → infrastructure adapters → external APIs.
+
+UI components must not call Firestore or Google APIs directly.
+
+## Skills policy (short)
+
+- Call `pick-ui-library` before adding a UI dependency.
+- Use `emil-design-eng` for UI craft; do not change approved palette or product architecture.
+- Use `apple-design` only for gestures/DnD/physics/reduced-motion — not Apple visual cloning.
+- Animation skills (`find-animation-opportunities`, `improve-animations`, `review-animations`, `animation-vocabulary`) follow their documented modes; do not mix audit and implementation in one run.
+
+## Canonical docs
+
+See `AGENTS.md` and `docs/`. Detailed rules live in sibling `.cursor/rules` files — do not dump the master plan into always-on context.

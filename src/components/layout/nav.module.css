@@ -1,0 +1,134 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 3.5rem;
+  padding: var(--space-2) var(--space-4);
+  border-bottom: var(--border-width) solid var(--color-border);
+  background: var(--color-background);
+  font-family: var(--font-sans);
+}
+
+.brand {
+  font-weight: 700;
+  color: var(--color-foreground);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.headerSearch {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 15rem;
+  padding: var(--space-4);
+  background: var(--color-surface-muted);
+  border-right: var(--border-width) solid var(--color-border);
+  font-family: var(--font-sans);
+  min-height: 20rem;
+}
+
+.sidebarCollapsed {
+  width: 4.5rem;
+  align-items: center;
+}
+
+.sidebarGroup {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.sidebarGroupLabel {
+  font-size: var(--text-caption-size);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-1);
+}
+
+.sidebarLink {
+  display: block;
+  text-decoration: none;
+  color: var(--color-foreground);
+  padding: 0.55rem 0.65rem;
+  border-radius: var(--radius-control);
+}
+
+.sidebarLinkActive {
+  background: var(--color-background);
+  box-shadow: inset 3px 0 0 var(--color-accent);
+  font-weight: 600;
+}
+
+.breadcrumbs {
+  font-family: var(--font-sans);
+  font-size: var(--text-body-sm-size);
+}
+
+.breadcrumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.breadcrumbs li:not(:last-child)::after {
+  content: "/";
+  margin-left: var(--space-2);
+  color: var(--color-text-muted);
+}
+
+.breadcrumbs a {
+  color: var(--color-secondary);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+.breadcrumbs [aria-current="page"] {
+  color: var(--color-foreground);
+  font-weight: 600;
+}
+
+.mobilePanel {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+}
+
+.mobileBackdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(1, 1, 1, 0.35);
+  border: 0;
+  cursor: pointer;
+}
+
+.mobileSheet {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: min(18rem, 88vw);
+  background: var(--color-background);
+  box-shadow: var(--shadow-panel);
+  padding: var(--space-4);
+  transform: translateX(0);
+  opacity: 1;
+  transition:
+    transform var(--duration-slow) var(--ease-out),
+    opacity var(--duration-slow) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobileSheet {
+    transition: opacity var(--duration-normal) var(--ease-out);
+    transform: none;
+  }
+}

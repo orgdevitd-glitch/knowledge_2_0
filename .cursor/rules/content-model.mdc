@@ -1,0 +1,47 @@
+---
+description: Content domain model for articles, blocks, prompts, versions, and source connections. Use when modeling content, CMS editors, publishing, or repositories.
+globs: src/domain/**/*,src/features/content/**/*,src/features/articles/**/*,src/features/prompts/**/*,src/features/publishing/**/*,src/server/repositories/**/*,docs/data-model/**/*
+alwaysApply: false
+---
+
+# Content Model
+
+Full detail: `docs/data-model/CONTENT-MODEL.md`, `BLOCK-SCHEMAS.md`, `PUBLISHING-LIFECYCLE.md`, `REPOSITORY-CONTRACTS.md`.
+
+## Article (minimum)
+
+`id`, `slug`, `title`, `summary`, `coverMediaId`, `categoryIds`, `tagIds`, `audienceIds`, `ownerId`, `authorId`, `status`, `blocks`, `relatedArticleIds`, `relatedPromptIds`, `relatedVideoIds`, `source`, `currentVersion`, `publishedVersion`, `createdAt`, `updatedAt`, `publishedAt`, `reviewDueAt`, `revision`.
+
+Statuses: `draft` | `published` | `hidden` | `archived` with documented transitions only.
+
+Public may read **published** only (Phase 4+). Drafts/hidden are not public.
+
+## Content block
+
+Every block: `id`, `type`, `schemaVersion`, `data`, `settings`, `visibility`. Order = array order.
+
+**Phase 3 schemas (all):** `heading`, `paragraph`, `list`, `table`, `image`, `gallery`, `video`, `file`, `button`, `link`, `quote`, `info`, `warning`, `tip`, `steps`, `checklist`, `faq`, `prompt`, `code`, `related-content`, `divider`, `table-of-contents`.
+
+Prompt block references `PromptId`. No raw HTML / arbitrary CSS.
+
+## Prompt / Video
+
+Prompt: `promptText` required; no user-filled runtime data; publish needs `ownerId`.
+
+Video: exactly one of `mediaId` | `externalUrl` (HTTPS); sorted chapters within duration.
+
+## Source connection
+
+`SourceReference`: `portal` | `google-docs` | `google-sheets` | `google-drive` | `manual-import`. No OAuth secrets in the reference.
+
+## Version
+
+Published changes create immutable versions: `entityId`, `versionNumber`, `snapshot`, `changeSummary`, `source`, `createdBy`, `createdAt`. Restore → new draft, no history mutation.
+
+## Editor concurrency
+
+Optimistic concurrency via explicit `revision` + `expectedRevision` on save. Never silently overwrite concurrent edits.
+
+## Hardcoding
+
+Never hardcode content entities in source. Seed/fixtures must be clearly labeled test-only and separated from production. In-memory repos are TEST_ONLY.

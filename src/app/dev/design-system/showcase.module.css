@@ -1,0 +1,56 @@
+.root {
+  padding-block: var(--space-6);
+  background: var(--color-background);
+}
+
+.hero h1 {
+  margin: var(--space-2) 0 var(--space-3);
+  font-size: var(--text-display-size);
+  line-height: var(--text-display-line);
+  font-weight: var(--text-display-weight);
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-caption-size);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.lede {
+  margin: 0;
+  max-width: 42rem;
+  color: var(--color-text-muted);
+}
+
+.section {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.section h2 {
+  margin: 0;
+  font-size: var(--text-h2-size);
+}
+
+.section h3 {
+  margin: 0;
+  font-size: var(--text-h3-size);
+}
+
+.swatch {
+  padding: var(--space-3);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-card);
+  display: grid;
+  gap: var(--space-2);
+  font-size: var(--text-caption-size);
+}
+
+.swatchColor {
+  height: 2.5rem;
+  border-radius: var(--radius-control);
+  border: var(--border-width) solid var(--color-border);
+}

@@ -1,0 +1,41 @@
+---
+description: Testing and quality gates — typecheck, lint, unit, integration, e2e, and accessibility. Use when writing tests, CI, or finishing a phase.
+globs: src/tests/**/*,**/*.{test,spec}.{ts,tsx,js,jsx},e2e/**/*,**/*.e2e.*
+alwaysApply: false
+---
+
+# Testing
+
+Full detail: `docs/plans/IMPLEMENTATION-PHASES.md` (quality gates).
+
+## Every phase gate (from Phase 1+)
+
+1. Typecheck
+2. Lint
+3. Unit tests
+4. Integration tests
+5. Production build
+6. Manual check of changed pages
+7. Report → stop
+
+## Critical e2e scenarios (add when those features exist)
+
+- Admin sign-in
+- Create draft
+- Edit blocks
+- Publish
+- Public blocked from draft
+- Restore version
+- Google Docs import
+- Google Sheets import
+- Sync conflict handling
+
+## Accessibility checks
+
+Keyboard navigation, focus states, ARIA, contrast, `prefers-reduced-motion`, image alt text, keyboard alternative to drag-and-drop, accessible video player, correct heading order.
+
+## Rules
+
+- Do not skip failing checks; do not weaken types/lint to greenwash.
+- Prefer tests that assert domain and security behavior over brittle UI snapshots.
+- Phase 0: no app toolchain yet — define commands in docs/scripts; do not invent fake passing suites.

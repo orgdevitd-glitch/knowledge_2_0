@@ -1,0 +1,44 @@
+---
+description: Phase workflow, change protocol, and mandatory end-of-task report format for every implementation task
+alwaysApply: true
+---
+
+# Workflow
+
+## Before changes
+
+1. Read active rules and relevant docs.
+2. Inspect `package.json` and existing patterns (when present).
+3. State a short plan, files to touch, and readiness criteria.
+
+## During changes
+
+- Touch only relevant files; no drive-by refactors.
+- No new dependencies without necessity; UI deps require `pick-ui-library`.
+- No `any` without justification; do not disable lint; do not hide type errors.
+- Do not replace critical logic with TODO.
+
+## After changes
+
+1. Run required checks for the phase.
+2. Fix failures.
+3. Review the diff.
+4. Manual check of changed surfaces.
+5. Apply a review skill if motion/UI craft applies.
+6. Write the report, then stop if the phase is complete.
+
+## Required report format
+
+```text
+Что реализовано
+Какие файлы изменены
+Какие архитектурные решения приняты
+Какие проверки выполнены
+Результаты проверок
+Известные ограничения
+Что не входило в задачу
+```
+
+## Phase 0 note
+
+Bootstrap has no typecheck/lint/test/build until Phase 1 introduces the app. Document verification commands for later phases instead of inventing a fake toolchain.
