@@ -35,6 +35,20 @@ function assertPreviewSize(preview: Record<string, unknown>): void {
   }
 }
 
+/** Collect unique external_id values from a Sheet data range (header row required). */
+function collectSheetExternalIds(rows: string[][]): string[] {
+  if (rows.length < 2) return [];
+  const headers = (rows[0] ?? []).map((h) => String(h).trim().toLowerCase());
+  const idx = headers.indexOf("external_id");
+  if (idx < 0) return [];
+  const ids = new Set<string>();
+  for (let i = 1; i < rows.length; i += 1) {
+    const value = String(rows[i]?.[idx] ?? "").trim();
+    if (value) ids.add(value);
+  }
+  return [...ids];
+}
+
 export async function createDocsImportPreview(
   ports: IntegrationPorts,
   input: {
@@ -238,27 +252,32 @@ export async function createSheetsImportPreview(
   const rows = batch[0]?.values ?? [];
 
   const taxonomyLimit = CONTENT_LIMITS.listMaxLimit;
-  const [categories, tags, audiences, promptPage] = await Promise.all([
+  const [categories, tags, audiences] = await Promise.all([
     ports.content.categories.list({ limit: taxonomyLimit }),
     ports.content.tags.list({ limit: taxonomyLimit }),
     ports.content.audiences.list({ limit: taxonomyLimit }),
-    ports.content.prompts.list({}, { limit: taxonomyLimit }),
   ]);
 
+  // Source-scoped matching: do not depend on a truncated admin list.
+  const sheetExternalIds = collectSheetExternalIds(rows);
   const existingByExternalId = new Map<
     string,
     { id: string; slug: string; revision: number }
   >();
-  for (const prompt of promptPage.items) {
-    if (
-      prompt.source.type === "google-sheets" &&
-      prompt.source.externalId
-    ) {
-      existingByExternalId.set(prompt.source.externalId, {
-        id: prompt.id,
-        slug: prompt.slug,
-        revision: prompt.revision,
+  const existingSlugs = new Set<string>();
+  for (const externalId of sheetExternalIds) {
+    const found = await ports.content.prompts.findBySourceExternalId({
+      sourceType: "google-sheets",
+      connectionId: source.id,
+      externalId,
+    });
+    if (found) {
+      existingByExternalId.set(externalId, {
+        id: found.id,
+        slug: found.slug,
+        revision: found.revision,
       });
+      existingSlugs.add(found.slug);
     }
   }
 
@@ -268,7 +287,7 @@ export async function createSheetsImportPreview(
     rows,
     markerSheetRows: markerRows,
     existingByExternalId,
-    existingSlugs: new Set(promptPage.items.map((p) => p.slug)),
+    existingSlugs,
     categories: categories.items.map((c) => ({
       id: c.id,
       name: c.title,

@@ -10,7 +10,7 @@
 | Статьи, инструкции, регламенты, длинный текст, расшифровки | **Editorial Knowledge** |
 | Обучающие маршруты, шаги, чек-листы, прогресс, next action | **Guided Learning** (ограниченно) |
 
-Phase 4 public UI follows this hybrid: Workspace shell/catalogs/prompts; Editorial article reading. No dark theme. No new UI libraries.
+Phase 4 public UI follows this hybrid: Workspace shell/catalogs/prompts; Editorial article reading. Phase 8A Prompt Admin uses the same Structured Workspace admin patterns as Article Admin (dense forms, no marketing hero, no new UI libraries). No dark theme.
 
 Прототипы Phase 2A сохранены в `/dev/design-directions` для сравнения.
 

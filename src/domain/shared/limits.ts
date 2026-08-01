@@ -37,6 +37,10 @@ export const CONTENT_LIMITS = {
   taxonomyUsagePageMax: 50,
   listDefaultLimit: 20,
   listMaxLimit: 100,
+  /** Max docs scanned for bounded admin text/prefix search. */
+  maxPromptAdminScan: 500,
+  adminPromptPageDefault: 20,
+  adminPromptPageMax: 50,
 } as const;
 
 /** Centralized taxonomy tree / catalog load ceiling (Phase 7A). */

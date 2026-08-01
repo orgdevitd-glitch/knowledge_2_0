@@ -7,3 +7,5 @@ Preview payload is normalized JSON: no Google tokens, no raw API dumps, size-lim
 Docs preview: proposed metadata, blocks outline, unsupported elements, structural diff for existing targets.
 
 Sheets preview: metrics, per-row status, taxonomy/slug conflicts, optional ready-only confirm.
+
+Existing ImportJob preview payloads are immutable. Re-confirm or a new import against an existing prompt still respects target `expectedRevision` / revision conflicts (concurrent Prompt Admin edits).

@@ -37,7 +37,7 @@ Taxonomy: `CategoryRepository`, `TagRepository`, `AudienceRepository` (+ `listAl
 
 ## Unit of work
 
-`UnitOfWork` / `FirestoreUnitOfWork.runAtomicArticlePublish` supports atomic article + version + audit writes for future publish UI. Transaction callbacks keep reads before writes and avoid external side effects.
+`UnitOfWork` / `FirestoreUnitOfWork.runAtomicArticlePublish` and `runAtomicPromptPublish` support atomic entity + version + audit writes. Transaction callbacks keep reads before writes and avoid external side effects.
 
 ## In-memory (TEST_ONLY)
 

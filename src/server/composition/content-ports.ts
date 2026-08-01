@@ -8,6 +8,9 @@ import type { IdGenerator } from "@/domain/shared/id-generator";
 import { getAdminPersistence } from "@/server/composition/admin-persistence";
 import { MemoryPromptRepository } from "@/server/repositories/memory/memory-prompt-repository";
 import { MemoryVideoRepository } from "@/server/repositories/memory/memory-video-repository";
+import { MemoryAuditRepository } from "@/server/repositories/memory/memory-audit-repository";
+import { MemoryVersionRepository } from "@/server/repositories/memory/memory-version-repository";
+import { MemoryPromptUnitOfWork } from "@/server/repositories/memory/memory-prompt-unit-of-work";
 import { FirestorePromptRepository } from "@/server/repositories/firestore/firestore-prompt-repository";
 import {
   InProcessUnitOfWork,
@@ -42,18 +45,30 @@ export function getContentPorts(): ContentPorts {
   }
 
   let uow: UnitOfWork;
+  let prompts;
+
   if (persistence.mode === "firestore") {
     uow = new FirestoreUnitOfWork();
+    prompts = new FirestorePromptRepository();
+  } else if (
+    persistence.prompts instanceof MemoryPromptRepository &&
+    persistence.versions instanceof MemoryVersionRepository &&
+    persistence.audit instanceof MemoryAuditRepository
+  ) {
+    prompts = persistence.prompts;
+    uow = new MemoryPromptUnitOfWork(
+      persistence.prompts,
+      persistence.versions,
+      persistence.audit,
+    );
   } else {
+    prompts = persistence.prompts ?? new MemoryPromptRepository();
     uow = new InProcessUnitOfWork();
   }
 
   return {
     articles: persistence.articles,
-    prompts:
-      persistence.mode === "firestore"
-        ? new FirestorePromptRepository()
-        : new MemoryPromptRepository(),
+    prompts,
     videos: new MemoryVideoRepository(),
     categories: persistence.categories,
     tags: persistence.tags,

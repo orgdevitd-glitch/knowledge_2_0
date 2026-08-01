@@ -432,6 +432,8 @@ export async function confirmSheetsImport(
     const source = parseSourceReference({
       type: "google-sheets",
       externalId: item.externalId,
+      connectionId: existingJob.sourceConnectionId ?? undefined,
+      lastImportJobId: existingJob.id,
       checksum: existingJob.sourceChecksum ?? undefined,
       lastKnownModifiedAt: existingJob.sourceModifiedAt ?? undefined,
       lastSyncAt: now,

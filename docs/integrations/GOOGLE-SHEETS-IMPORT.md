@@ -10,3 +10,5 @@ Taxonomy tokens resolve to existing values only (`resolved|unresolved|ambiguous|
 New admin taxonomy values (Phase 7A) are visible to **new** previews only; existing ImportJob preview payloads are immutable snapshots.
 
 All imported Prompts remain `draft`. Status column from Sheets is ignored/not supported for publish.
+
+Imported prompts are fully editable in **Prompt Admin** (Phase 8A); re-import and manual publish remain separate steps. Import never auto-publishes.

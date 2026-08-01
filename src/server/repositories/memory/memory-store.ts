@@ -150,4 +150,17 @@ export class MemoryEntityStore<T extends Sluggable> {
   clear(): void {
     this.byId.clear();
   }
+
+  /** TEST_ONLY / atomic rollback helpers */
+  all(): T[] {
+    return [...this.byId.values()].map((i) => deepClone(i));
+  }
+
+  replaceUnchecked(id: string, entity: T | null): void {
+    if (entity == null) {
+      this.byId.delete(id);
+      return;
+    }
+    this.byId.set(id, deepClone(entity));
+  }
 }

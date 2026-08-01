@@ -12,7 +12,7 @@ import {
 } from "@/server/repositories/memory/memory-taxonomy-repository";
 import { MemoryVersionRepository } from "@/server/repositories/memory/memory-version-repository";
 import { MemoryVideoRepository } from "@/server/repositories/memory/memory-video-repository";
-import { InProcessUnitOfWork } from "@/server/repositories/interfaces/unit-of-work";
+import { MemoryPromptUnitOfWork } from "@/server/repositories/memory/memory-prompt-unit-of-work";
 import {
   MemoryIdempotencyRepository,
 } from "@/server/repositories/memory/memory-idempotency-repository";
@@ -109,18 +109,21 @@ function buildPorts(): IntegrationPorts {
     },
   ]);
 
+  const prompts = new MemoryPromptRepository();
+  const versions = new MemoryVersionRepository();
+  const audit = new MemoryAuditRepository();
   const content: ContentPorts = {
     articles: new MemoryArticleRepository(),
-    prompts: new MemoryPromptRepository(),
+    prompts,
     videos: new MemoryVideoRepository(),
     categories: new MemoryCategoryRepository(),
     tags: new MemoryTagRepository(),
     audiences: new MemoryAudienceRepository(),
-    versions: new MemoryVersionRepository(),
-    audit: new MemoryAuditRepository(),
+    versions,
+    audit,
     clock: new SystemClock(),
     ids: ids(),
-    uow: new InProcessUnitOfWork(),
+    uow: new MemoryPromptUnitOfWork(prompts, versions, audit),
   };
 
   return {
@@ -468,18 +471,21 @@ function buildSheetsPorts(): IntegrationPorts {
       },
     },
   ]);
+  const prompts = new MemoryPromptRepository();
+  const versions = new MemoryVersionRepository();
+  const audit = new MemoryAuditRepository();
   const content: ContentPorts = {
     articles: new MemoryArticleRepository(),
-    prompts: new MemoryPromptRepository(),
+    prompts,
     videos: new MemoryVideoRepository(),
     categories: new MemoryCategoryRepository(),
     tags: new MemoryTagRepository(),
     audiences: new MemoryAudienceRepository(),
-    versions: new MemoryVersionRepository(),
-    audit: new MemoryAuditRepository(),
+    versions,
+    audit,
     clock: new SystemClock(),
     ids: ids(),
-    uow: new InProcessUnitOfWork(),
+    uow: new MemoryPromptUnitOfWork(prompts, versions, audit),
   };
   return {
     google: {

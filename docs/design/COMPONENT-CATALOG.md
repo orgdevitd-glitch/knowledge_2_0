@@ -51,7 +51,8 @@
 | `Prose` | Editorial reading | `.ds-prose` / Source Serif 4 |
 | `Callout` | information/tip/warning/important | не всё жёлтое |
 | `StepList` | Шаги инструкции | completed visual only |
-| `PromptBlock` | Промт + copy callback | без реальной библиотеки |
+| `PromptBlock` | Промт + copy callback | публичный блок в статье |
+| Prompt Admin forms | create/edit/list Phase 8A | feature components under `features/admin/prompts` — не отдельный UI-kit |
 | `TableOfContents` | Список якорей | без scroll spy |
 | `RelatedContent` | Связанные ссылки | typed items |
 | `Progress` | Прогресс | `role="progressbar"` |

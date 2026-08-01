@@ -1,21 +1,50 @@
 import "server-only";
 
 import type { Prompt } from "@/domain/content/prompt";
+import type { SourceType } from "@/domain/content/source";
 import {
   ConflictError,
   DuplicateSlugError,
   RepositoryError,
+  ValidationError,
 } from "@/domain/shared/errors";
-import type { PromptRepository } from "@/server/repositories/interfaces/prompt-repository";
+import { CONTENT_LIMITS } from "@/domain/shared/limits";
+import type {
+  PromptAdminListFilter,
+  PromptAdminPage,
+  PromptAdminSort,
+  PromptRepository,
+} from "@/server/repositories/interfaces/prompt-repository";
 import type {
   ContentListFilter,
   PaginationInput,
   SaveOptions,
 } from "@/server/repositories/interfaces/types";
 import { normalizePagination } from "@/server/repositories/interfaces/types";
+import {
+  decodePromptAdminCursor,
+  encodePromptAdminCursor,
+  sortValueForPrompt,
+} from "@/server/repositories/prompt-admin-cursor";
+import type {
+  Query as FirestoreQuery,
+} from "firebase-admin/firestore";
 import { getFirebaseAdminFirestore } from "@/server/firebase/admin";
 import { FIRESTORE_COLLECTIONS } from "./collections";
 import { fromPromptDoc, toPromptDoc } from "./mappers";
+import { comparePromptsAdmin } from "@/server/repositories/prompt-admin-cursor";
+
+function assertSingleTaxonomyFilter(filter: PromptAdminListFilter | undefined) {
+  const count = [filter?.categoryId, filter?.tagId, filter?.audienceId].filter(
+    Boolean,
+  ).length;
+  if (count > 1) {
+    throw new ValidationError(
+      "Only one taxonomy filter (category, tag, or audience) is supported per query",
+      { adminCode: "VALIDATION_ERROR" },
+    );
+  }
+}
 
 export class FirestorePromptRepository implements PromptRepository {
   private col() {
@@ -150,6 +179,175 @@ export class FirestorePromptRepository implements PromptRepository {
       return { items: page, nextCursor, limit };
     } catch (error) {
       throw new RepositoryError("Failed to list prompts", {
+        cause: error instanceof Error ? error.message : "unknown",
+      });
+    }
+  }
+
+  async listAdmin(
+    filter?: PromptAdminListFilter,
+    pagination?: PaginationInput,
+  ): Promise<PromptAdminPage> {
+    assertSingleTaxonomyFilter(filter);
+    const sort: PromptAdminSort = filter?.sort ?? "updatedAt_desc";
+    const { limit, cursor } = normalizePagination({
+      limit: pagination?.limit ?? CONTENT_LIMITS.adminPromptPageDefault,
+      cursor: pagination?.cursor,
+    });
+    if (limit > CONTENT_LIMITS.adminPromptPageMax) {
+      throw new ValidationError("Invalid admin page limit", {
+        adminCode: "VALIDATION_ERROR",
+        limit,
+      });
+    }
+
+    try {
+      // Text search uses bounded scan (honest incomplete contract).
+      if (filter?.q?.trim()) {
+        return this.listAdminBoundedScan(filter, limit, cursor, sort);
+      }
+
+      let query: FirestoreQuery = this.col();
+      if (filter?.status) {
+        query = query.where("status", "==", filter.status);
+      }
+      if (filter?.sourceType) {
+        query = query.where("sourceType", "==", filter.sourceType);
+      }
+      if (filter?.categoryId) {
+        query = query.where("categoryIds", "array-contains", filter.categoryId);
+      } else if (filter?.tagId) {
+        query = query.where("tagIds", "array-contains", filter.tagId);
+      } else if (filter?.audienceId) {
+        query = query.where(
+          "audienceIds",
+          "array-contains",
+          filter.audienceId,
+        );
+      }
+
+      if (sort === "title_asc") {
+        query = query.orderBy("title", "asc").orderBy("__name__", "asc");
+      } else if (sort === "createdAt_desc") {
+        query = query.orderBy("createdAt", "desc").orderBy("__name__", "desc");
+      } else {
+        query = query.orderBy("updatedAt", "desc").orderBy("__name__", "desc");
+      }
+
+      if (cursor) {
+        const decoded = decodePromptAdminCursor(cursor, sort);
+        query = query.startAfter(decoded.v, decoded.id);
+      }
+
+      const snap = await query.limit(limit).get();
+      const items = snap.docs.map((d) => fromPromptDoc(d.id, d.data()));
+      const last = items[items.length - 1];
+      const nextCursor =
+        items.length === limit && last
+          ? encodePromptAdminCursor({
+              sort,
+              v: sortValueForPrompt(last, sort),
+              id: last.id,
+            })
+          : null;
+
+      return { items, nextCursor, limit, scanLimitExceeded: false };
+    } catch (error) {
+      if (error instanceof ValidationError) throw error;
+      throw new RepositoryError("Failed to list prompts for admin", {
+        cause: error instanceof Error ? error.message : "unknown",
+      });
+    }
+  }
+
+  private async listAdminBoundedScan(
+    filter: PromptAdminListFilter,
+    limit: number,
+    cursor: string | null,
+    sort: PromptAdminSort,
+  ): Promise<PromptAdminPage> {
+    const q = filter.q!.trim().toLowerCase();
+    let query: FirestoreQuery = this.col();
+    if (filter.status) {
+      query = query.where("status", "==", filter.status);
+    }
+    if (filter.sourceType) {
+      query = query.where("sourceType", "==", filter.sourceType);
+    }
+    query = query.orderBy("updatedAt", "desc").orderBy("__name__", "desc");
+
+    const snap = await query.limit(CONTENT_LIMITS.maxPromptAdminScan + 1).get();
+    const scanLimitExceeded = snap.docs.length > CONTENT_LIMITS.maxPromptAdminScan;
+    let items = snap.docs
+      .slice(0, CONTENT_LIMITS.maxPromptAdminScan)
+      .map((d) => fromPromptDoc(d.id, d.data()))
+      .filter(
+        (p) =>
+          p.title.toLowerCase().includes(q) ||
+          p.slug.toLowerCase().includes(q),
+      );
+
+    if (filter.categoryId) {
+      items = items.filter((p) =>
+        p.categoryIds.map(String).includes(filter.categoryId!),
+      );
+    }
+    if (filter.tagId) {
+      items = items.filter((p) => p.tagIds.map(String).includes(filter.tagId!));
+    }
+    if (filter.audienceId) {
+      items = items.filter((p) =>
+        p.audienceIds.map(String).includes(filter.audienceId!),
+      );
+    }
+
+    items.sort((a, b) => comparePromptsAdmin(a, b, sort));
+
+    let start = 0;
+    if (cursor) {
+      const decoded = decodePromptAdminCursor(cursor, sort);
+      const idx = items.findIndex((i) => i.id === decoded.id);
+      if (idx < 0) {
+        throw new ValidationError("Malformed admin list cursor", {
+          adminCode: "VALIDATION_ERROR",
+        });
+      }
+      start = idx + 1;
+    }
+    const pageItems = items.slice(start, start + limit);
+    const nextCursor =
+      start + limit < items.length && pageItems.length > 0
+        ? encodePromptAdminCursor({
+            sort,
+            v: sortValueForPrompt(pageItems[pageItems.length - 1]!, sort),
+            id: pageItems[pageItems.length - 1]!.id,
+          })
+        : null;
+
+    return {
+      items: pageItems,
+      nextCursor,
+      limit,
+      scanLimitExceeded,
+    };
+  }
+
+  async findBySourceExternalId(input: {
+    sourceType: SourceType;
+    connectionId: string;
+    externalId: string;
+  }): Promise<Prompt | null> {
+    try {
+      const snap = await this.col()
+        .where("sourceType", "==", input.sourceType)
+        .where("sourceConnectionId", "==", input.connectionId)
+        .where("sourceExternalId", "==", input.externalId)
+        .limit(2)
+        .get();
+      if (snap.empty) return null;
+      return fromPromptDoc(snap.docs[0]!.id, snap.docs[0]!.data());
+    } catch (error) {
+      throw new RepositoryError("Failed to find prompt by source external id", {
         cause: error instanceof Error ? error.message : "unknown",
       });
     }

@@ -25,7 +25,15 @@ export class MemoryVersionRepository implements VersionRepository {
     return list.length ? (list[list.length - 1] ?? null) : null;
   }
 
+  /** TEST_ONLY failure injection */
+  failNextSave?: Error;
+
   saveImmutable(version: ContentVersion) {
+    if (this.failNextSave) {
+      const err = this.failNextSave;
+      this.failNextSave = undefined;
+      return Promise.reject(err);
+    }
     if (this.byId.has(version.id)) {
       return Promise.reject(
         new ConflictError("Version is immutable and already exists", {
@@ -39,5 +47,10 @@ export class MemoryVersionRepository implements VersionRepository {
 
   clear() {
     this.byId.clear();
+  }
+
+  /** TEST_ONLY / atomic rollback */
+  removeUnchecked(id: string) {
+    this.byId.delete(id);
   }
 }

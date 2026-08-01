@@ -74,7 +74,7 @@ Invariants:
 
 ## Prompt / Video
 
-See entity modules. Prompt stores `promptText` (never user-filled runtime data). Video has exactly one primary source (`mediaId` XOR `externalUrl`). Chapters must be sorted ascending; timestamps cannot exceed duration. External URLs must be HTTPS.
+See entity modules. Prompt stores `promptText` (never user-filled runtime data). Publish requires `ownerId`. Admin CMS: Phase 8A — working draft vs `publishedVersion` snapshot; public reads via `promptFromPublishedSnapshot` (see [PROMPT-PUBLISHING-POLICY.md](./PROMPT-PUBLISHING-POLICY.md) and ADR 0010). Video has exactly one primary source (`mediaId` XOR `externalUrl`). Chapters must be sorted ascending; timestamps cannot exceed duration. External URLs must be HTTPS.
 
 ## Taxonomy
 
