@@ -126,6 +126,8 @@ Execute **one phase per assignment**. After each phase: typecheck → lint → t
 
 ## Phase 6B — Automatic sync (later)
 
+**Status:** not started.
+
 - Drive changes feed / scheduler
 - Conflict notifications
 - Still no auto-publish without admin policy

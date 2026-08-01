@@ -18,12 +18,18 @@ Same transition matrix as Article (see `src/domain/shared/status.ts`).
 
 | Action | Endpoint | Notes |
 |--------|----------|-------|
-| Publish / republish | `.../publish` | Creates immutable version; `markPromptPublished` sets `source` to portal |
+| Publish / republish | `.../publish` | Creates immutable `ContentVersion`; `markPromptPublished` **preserves** entity `Prompt.source` |
 | Hide | `.../hide` | `published → hidden`; keeps `publishedVersion` |
 | Archive | `.../archive` | Removes from public; no physical delete |
 | Restore archive | `.../restore` | `archived → draft`; clears `publishedAt`; not auto-published |
 
 Hide/archive do not create ContentVersions.
+
+## Source on publish
+
+- `Prompt.source` — entity provenance (manual/portal or Google Sheets). Survives publish; Sheets import provenance is not wiped.
+- `ContentVersion.source` — creation reason for that version (`portalSource()` for portal publish).
+- See [PROMPT-SOURCE-PROVENANCE.md](./PROMPT-SOURCE-PROVENANCE.md) and [PROMPT-PUBLISHING-POLICY.md](../data-model/PROMPT-PUBLISHING-POLICY.md).
 
 ## Edit rules
 
