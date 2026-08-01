@@ -3,10 +3,15 @@ import "server-only";
 import { getApps, initializeApp, cert, type App } from "firebase-admin/app";
 import { getAuth, type Auth } from "firebase-admin/auth";
 import { getFirestore, type Firestore } from "firebase-admin/firestore";
+import { getStorage, type Storage } from "firebase-admin/storage";
 
 import { getServerEnv } from "@/config/env";
 
 let app: App | null = null;
+
+function resolveStorageBucket(): string | undefined {
+  return process.env.MEDIA_GCS_BUCKET ?? process.env.FIREBASE_STORAGE_BUCKET;
+}
 
 function ensureApp(): App {
   if (app) return app;
@@ -26,6 +31,17 @@ function ensureApp(): App {
     process.env.FIRESTORE_EMULATOR_HOST = env.FIRESTORE_EMULATOR_HOST;
   }
 
+  const storageBucket = resolveStorageBucket();
+  const initOptions: {
+    credential?: ReturnType<typeof cert>;
+    projectId?: string;
+    storageBucket?: string;
+  } = { projectId: projectId ?? "demo-ckp" };
+
+  if (storageBucket) {
+    initOptions.storageBucket = storageBucket;
+  }
+
   if (env.FIREBASE_CLIENT_EMAIL && env.firebasePrivateKeyNormalized) {
     app = initializeApp({
       credential: cert({
@@ -33,11 +49,11 @@ function ensureApp(): App {
         clientEmail: env.FIREBASE_CLIENT_EMAIL,
         privateKey: env.firebasePrivateKeyNormalized,
       }),
-      projectId,
+      ...initOptions,
     });
   } else {
     // Application Default Credentials / emulator
-    app = initializeApp({ projectId: projectId ?? "demo-ckp" });
+    app = initializeApp(initOptions);
   }
   return app;
 }
@@ -57,6 +73,10 @@ export function getFirebaseAdminFirestore(): Firestore {
     return getFirestore(ensureApp(), databaseId);
   }
   return getFirestore(ensureApp());
+}
+
+export function getFirebaseAdminStorage(): Storage {
+  return getStorage(ensureApp());
 }
 
 /** Test helper — does not delete the global firebase-admin app (unsupported). */

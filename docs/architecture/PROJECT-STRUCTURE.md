@@ -6,8 +6,8 @@ Recommended layout for the Corporate Knowledge Portal. Directories were scaffold
 src/
   app/
     (public)/          # Public App Router segment
-    admin/             # Articles, prompts, taxonomy, Google integrations
-    api/               # health + /api/auth/* + /api/admin/*
+    admin/             # Articles, prompts, media, taxonomy, Google integrations
+    api/               # health + /api/auth/* + /api/admin/* + /media/[mediaId]
   components/
     ui/                # Design-system primitives
     layout/            # Shell, nav, breadcrumbs
@@ -15,7 +15,7 @@ src/
   features/
     content/application/   # Domain write use cases
     public-content/        # Public queries, search, renderers, shell UI
-    admin/                 # Admin articles, prompts, taxonomy + auth UI
+    admin/                 # Admin articles, prompts, media, taxonomy + auth UI
     integrations/google/   # Docs/Sheets import application + admin UI
   domain/
     content/           # Article, blocks, prompt, video, taxonomy, versions
@@ -63,8 +63,8 @@ firestore.rules
 firestore.indexes.json
 ```
 
-Admin routes include `/admin/sign-in`, `/admin`, `/admin/articles`, `/admin/prompts` (Phase 8A), `/admin/integrations`, `/admin/taxonomy` (Phase 7A).
-Public routes unchanged from Phase 4.
+Admin routes include `/admin/sign-in`, `/admin`, `/admin/articles`, `/admin/prompts` (Phase 8A), `/admin/media` (Phase 7B), `/admin/integrations`, `/admin/taxonomy` (Phase 7A).
+Public routes include `/media/[mediaId]` for ready binary delivery (Phase 7B).
 
 ## Placement rules
 

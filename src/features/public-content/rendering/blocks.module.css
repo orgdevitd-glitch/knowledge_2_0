@@ -45,6 +45,16 @@
   font-weight: 600;
 }
 
+.mediaFigure {
+  margin: 0;
+}
+
+.mediaImage {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
 .mediaFallback {
   margin: 0;
   padding: var(--space-4);

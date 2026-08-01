@@ -53,6 +53,7 @@
 | `StepList` | Шаги инструкции | completed visual only |
 | `PromptBlock` | Промт + copy callback | публичный блок в статье |
 | Prompt Admin forms | create/edit/list Phase 8A | feature components under `features/admin/prompts` — не отдельный UI-kit |
+| Media Admin forms | upload/list/edit Phase 7B | feature components under `features/admin/media` |
 | `TableOfContents` | Список якорей | без scroll spy |
 | `RelatedContent` | Связанные ссылки | typed items |
 | `Progress` | Прогресс | `role="progressbar"` |

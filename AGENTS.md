@@ -11,8 +11,8 @@ Open corporate knowledge portal: instructions, prompt library, learning material
 
 ## Current phase
 
-**Phase 8A — Prompt administration** (complete for this pass when accepted).
-Do not start Media (7B), Video admin, or Google automatic sync (6B) unless explicitly assigned.
+**Phase 7B — Media Library** (complete for this pass when accepted).
+Do not start Video admin or Google automatic sync (6B) unless explicitly assigned.
 
 ## Priorities
 
@@ -29,7 +29,7 @@ Phase 5A: Admin SDK Firestore + deny-all rules; public may use empty/demo/firest
 | Path | Purpose |
 |------|---------|
 | `src/app/(public)` | Public routes + shell |
-| `src/app/admin` | Admin shell (sign-in, home, articles, prompts, taxonomy) |
+| `src/app/admin` | Admin shell (sign-in, home, articles, prompts, media, taxonomy) |
 | `src/app/api` | HTTP API (health + auth) |
 | `src/domain` | Domain model (content + shared) |
 | `src/features/content/application` | Content write use cases |

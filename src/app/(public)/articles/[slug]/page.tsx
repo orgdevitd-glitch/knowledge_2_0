@@ -6,12 +6,17 @@ import { ArticleHeader } from "@/components/content";
 import { getPublishedArticleBySlug } from "@/features/public-content/queries";
 import { ArticleBlocks } from "@/features/public-content/rendering/block-registry";
 import {
+  collectMediaIdsFromBlocks,
+  resolveMediaPresentations,
+} from "@/features/public-content/rendering/resolve-block-media";
+import {
   reviewStatusLabel,
   reviewStatusTone,
 } from "@/features/public-content/review-status";
 import { formatDate } from "@/features/public-content/ui/catalog";
 import { Link } from "@/components/ui/Link";
 import { getSiteUrl } from "@/config/env";
+import { getPublicMediaPresentationResolver } from "@/server/composition/public-media";
 
 import styles from "./article.module.css";
 
@@ -68,6 +73,12 @@ export default async function ArticlePage({ params }: { params: Params }) {
     })),
   ];
 
+  const mediaIds = collectMediaIdsFromBlocks(article.blocks);
+  const resolvedMedia = await resolveMediaPresentations(
+    mediaIds,
+    getPublicMediaPresentationResolver(),
+  );
+
   return (
     <Container width="editorial">
       <div className={styles.layout}>
@@ -92,6 +103,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
               toc: article.tableOfContents,
               promptLookup: article.promptLookup,
               relatedMaterials: article.relatedMaterials,
+              resolvedMedia,
             }}
           />
           {article.relatedMaterials.length > 0 ? (

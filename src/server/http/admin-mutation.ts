@@ -50,6 +50,10 @@ export type AdminErrorCode =
   | "VERSION_NOT_FOUND"
   | "VERSION_INCOMPATIBLE"
   | "SOURCE_REFERENCE_INVALID"
+  | "MEDIA_BINARY_IMMUTABLE"
+  | "MEDIA_UPLOAD_FAILED"
+  | "MEDIA_IN_USE"
+  | "MEDIA_USAGE_SCAN_INCOMPLETE"
   | "INVALID_PARENT"
   | "INVALID_SORT_ORDER"
   | "AUTH_REQUIRED"
@@ -104,12 +108,20 @@ const TAXONOMY_ADMIN_CODES = new Set<AdminErrorCode>([
   "VERSION_NOT_FOUND",
   "VERSION_INCOMPATIBLE",
   "SOURCE_REFERENCE_INVALID",
+  "MEDIA_BINARY_IMMUTABLE",
+  "MEDIA_UPLOAD_FAILED",
+  "MEDIA_IN_USE",
+  "MEDIA_USAGE_SCAN_INCOMPLETE",
+  "PUBLISH_VALIDATION_FAILED",
   "INVALID_PARENT",
   "INVALID_SORT_ORDER",
   "DUPLICATE_TITLE",
   "INVALID_STATUS_TRANSITION",
   "VALIDATION_ERROR",
 ]);
+
+export const adminMediaUploadLimiter = new InProcessRateLimiter(30, 60_000);
+export const adminMediaMutationLimiter = new InProcessRateLimiter(60, 60_000);
 
 export const adminCreateLimiter = new InProcessRateLimiter(20, 60_000);
 export const adminSaveLimiter = new InProcessRateLimiter(120, 60_000);
@@ -214,6 +226,14 @@ export function mapDomainErrorToResponse(error: unknown): NextResponse {
         }
       }
     }
+    const detailFields = error.details.fields;
+    if (detailFields && typeof detailFields === "object") {
+      for (const [key, value] of Object.entries(
+        detailFields as Record<string, unknown>,
+      )) {
+        if (typeof value === "string") fields[key] = value;
+      }
+    }
     const adminCode = error.details.adminCode;
     const code =
       typeof adminCode === "string" &&
@@ -224,7 +244,10 @@ export function mapDomainErrorToResponse(error: unknown): NextResponse {
       code === "INVALID_STATUS_TRANSITION" ||
       code === "CATEGORY_CYCLE" ||
       code === "CATEGORY_DEPTH_EXCEEDED" ||
-      code === "CATEGORY_PARENT_ARCHIVED"
+      code === "CATEGORY_PARENT_ARCHIVED" ||
+      code === "MEDIA_IN_USE" ||
+      code === "MEDIA_USAGE_SCAN_INCOMPLETE" ||
+      code === "MEDIA_BINARY_IMMUTABLE"
         ? 409
         : 400;
     return adminErrorResponse(

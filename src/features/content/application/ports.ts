@@ -10,6 +10,8 @@ import type {
   TagRepository,
 } from "@/server/repositories/interfaces/taxonomy-repository";
 import type { VersionRepository } from "@/server/repositories/interfaces/version-repository";
+import type { MediaRepository } from "@/server/repositories/interfaces/media-repository";
+import type { MediaStoragePort } from "@/server/repositories/interfaces/media-storage-port";
 import type { UnitOfWork } from "@/server/repositories/interfaces/unit-of-work";
 
 export type UseCaseContext = {
@@ -30,4 +32,7 @@ export type ContentPorts = {
   clock: Clock;
   ids: IdGenerator;
   uow: UnitOfWork;
+  /** Phase 7B — optional until media persistence is wired. */
+  media?: MediaRepository;
+  mediaStorage?: MediaStoragePort;
 };

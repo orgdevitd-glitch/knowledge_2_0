@@ -5,6 +5,7 @@
  */
 import type { Article } from "@/domain/content/article";
 import type { AuditEvent } from "@/domain/content/audit";
+import type { MediaAsset } from "@/domain/content/media";
 import type { Prompt } from "@/domain/content/prompt";
 import type { Audience, Category, Tag } from "@/domain/content/taxonomy";
 import type { ContentVersion } from "@/domain/content/versioning";
@@ -29,6 +30,16 @@ export type AtomicPromptMutationBundle = {
   expectedRevision: number;
   audit: AuditEvent;
   version?: ContentVersion;
+};
+
+/**
+ * Media entity write + one or more audit events in a single atomic mutation.
+ * All audits succeed or the entity write is rolled back.
+ */
+export type AtomicMediaMutationBundle = {
+  media: MediaAsset;
+  expectedRevision: number;
+  audits: AuditEvent[];
 };
 
 export type TaxonomyMutationKind = "category" | "tag" | "audience";
@@ -69,6 +80,10 @@ export interface UnitOfWork {
   runAtomicTaxonomyMutation?(
     bundle: AtomicTaxonomyMutationBundle,
   ): Promise<void>;
+  /**
+   * Atomic media mutation (entity + audit).
+   */
+  runAtomicMediaMutation?(bundle: AtomicMediaMutationBundle): Promise<void>;
 }
 
 export class InProcessUnitOfWork implements UnitOfWork {

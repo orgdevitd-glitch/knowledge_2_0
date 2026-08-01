@@ -23,6 +23,7 @@ allow read, write: if false;
 | `sourceConnections/{id}` | Phase 6A Google source metadata |
 | `importJobs/{id}` | Phase 6A import preview / confirm jobs |
 | `idempotencyRecords/{hash}` | Phase 6A confirm idempotency |
+| `mediaAssets/{mediaId}` | Phase 7B media metadata |
 
 ## Persistence documents
 
@@ -40,7 +41,7 @@ Article (and taxonomy) saves run in a transaction: read → check `expectedRevis
 
 ## Unit of Work
 
-`FirestoreUnitOfWork.runAtomicArticlePublish` and `runAtomicPromptPublish` write entity + content version + audit atomically. Transaction callbacks must keep all reads before writes and avoid external side effects. IDs/timestamps for one application operation are fixed so retries do not invent new audit/version identities.
+`FirestoreUnitOfWork.runAtomicArticlePublish`, `runAtomicPromptPublish`, and `runAtomicMediaMutation` write entity + content version (when applicable) + audit atomically. Transaction callbacks must keep all reads before writes and avoid external side effects. IDs/timestamps for one application operation are fixed so retries do not invent new audit/version identities.
 
 ## Indexes
 

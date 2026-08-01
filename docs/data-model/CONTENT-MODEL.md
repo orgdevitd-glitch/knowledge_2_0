@@ -29,6 +29,7 @@ Related docs:
 | SourceReference | `src/domain/content/source.ts` |
 | AuditEvent | `src/domain/content/audit.ts` |
 | ContentBlock | `src/domain/content/blocks.ts` |
+| MediaAsset | `src/domain/content/media.ts` (Phase 7B) |
 
 ## Identifiers
 
@@ -70,11 +71,16 @@ Invariants:
 - no duplicate block ids or related ids; no self-reference
 - taxonomy id lists deduplicated
 - publish requires blocks, title, slug, `ownerId`
+- referenced `coverMediaId` and block `mediaId` values must be **ready** at publish time (Phase 7B); draft saves may reference non-ready media
 - `revision` is the optimistic concurrency token (not `updatedAt` alone)
 
 ## Prompt / Video
 
 See entity modules. Prompt stores `promptText` (never user-filled runtime data). Publish requires `ownerId`. Admin CMS: Phase 8A — working draft vs `publishedVersion` snapshot; public reads via `promptFromPublishedSnapshot` (see [PROMPT-PUBLISHING-POLICY.md](./PROMPT-PUBLISHING-POLICY.md) and ADR 0010). Video has exactly one primary source (`mediaId` XOR `externalUrl`). Chapters must be sorted ascending; timestamps cannot exceed duration. External URLs must be HTTPS.
+
+## MediaAsset (Phase 7B)
+
+See [MEDIA-MODEL.md](./MEDIA-MODEL.md) and ADR 0011. Articles/blocks store `MediaId` pointers only. Upload kinds: `image`, `document`. Ready binary is immutable; delivery via `/media/[mediaId]`.
 
 ## Taxonomy
 

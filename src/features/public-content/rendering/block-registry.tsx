@@ -10,6 +10,7 @@ import { headingAnchorForBlock } from "../mappers";
 import { RichTextRenderer } from "./rich-text-renderer";
 import {
   defaultMediaResolver,
+  type MediaPresentation,
   type MediaPresentationResolver,
 } from "./media-resolver";
 import { PromptCopyButton } from "./prompt-copy-button";
@@ -21,6 +22,8 @@ export type BlockRenderContext = {
   promptLookup: ArticleDetail["promptLookup"];
   relatedMaterials: MaterialSummary[];
   mediaResolver?: MediaPresentationResolver;
+  /** Prefetched presentations keyed by mediaId (RSC-friendly). */
+  resolvedMedia?: Record<string, MediaPresentation>;
 };
 
 type BlockRenderer = (
@@ -110,8 +113,27 @@ const renderers: { [K in BlockType]: BlockRenderer } = {
     );
   },
 
-  image(block) {
+  image(block, ctx) {
     if (block.type !== "image") return null;
+    const presentation = ctx.resolvedMedia?.[block.data.mediaId];
+    if (presentation?.status === "ready") {
+      const alt = block.data.decorative
+        ? ""
+        : block.data.alt || presentation.defaultAltText || presentation.title;
+      return (
+        <figure className={styles.mediaFigure}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={presentation.url}
+            alt={alt}
+            className={styles.mediaImage}
+          />
+          {block.data.caption ? (
+            <figcaption>{block.data.caption}</figcaption>
+          ) : null}
+        </figure>
+      );
+    }
     return (
       <MediaFallback
         title={block.data.decorative ? "Изображение" : block.data.alt}
@@ -120,17 +142,36 @@ const renderers: { [K in BlockType]: BlockRenderer } = {
     );
   },
 
-  gallery(block) {
+  gallery(block, ctx) {
     if (block.type !== "gallery") return null;
     return (
       <div className={styles.gallery}>
-        {block.data.items.map((item, i) => (
-          <MediaFallback
-            key={`${block.id}-${i}`}
-            title={item.decorative ? "Изображение галереи" : item.alt}
-            description={item.caption}
-          />
-        ))}
+        {block.data.items.map((item, i) => {
+          const presentation = ctx.resolvedMedia?.[item.mediaId];
+          if (presentation?.status === "ready") {
+            const alt = item.decorative
+              ? ""
+              : item.alt || presentation.defaultAltText || presentation.title;
+            return (
+              <figure key={`${block.id}-${i}`} className={styles.mediaFigure}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={presentation.url}
+                  alt={alt}
+                  className={styles.mediaImage}
+                />
+                {item.caption ? <figcaption>{item.caption}</figcaption> : null}
+              </figure>
+            );
+          }
+          return (
+            <MediaFallback
+              key={`${block.id}-${i}`}
+              title={item.decorative ? "Изображение галереи" : item.alt}
+              description={item.caption}
+            />
+          );
+        })}
       </div>
     );
   },
@@ -140,8 +181,24 @@ const renderers: { [K in BlockType]: BlockRenderer } = {
     return <MediaFallback title={block.data.title} description="Видео" />;
   },
 
-  file(block) {
+  file(block, ctx) {
     if (block.type !== "file") return null;
+    const presentation = ctx.resolvedMedia?.[block.data.mediaId];
+    if (presentation?.status === "ready") {
+      return (
+        <p className={styles.blockAction}>
+          <a href={presentation.url} download>
+            {block.data.title}
+          </a>
+          {block.data.description ? (
+            <span className={styles.mediaFallbackBody}>
+              {" "}
+              — {block.data.description}
+            </span>
+          ) : null}
+        </p>
+      );
+    }
     return (
       <MediaFallback
         title={block.data.title}

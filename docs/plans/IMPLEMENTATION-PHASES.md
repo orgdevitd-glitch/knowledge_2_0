@@ -144,10 +144,18 @@ Execute **one phase per assignment**. After each phase: typecheck → lint → t
 
 **Out of scope:** Prompt/Video admin, Media, Google automatic sync (Phase 6B).
 
-## Phase 7B — Media (later)
+## Phase 7B — Media Library
 
-- Images, video, files
-- Captions, transcripts
+**Status:** implemented in this repository pass (see ADR 0011).
+
+- Admin UI for image + document upload (signed URL, MIME sniff, size limits)
+- `MediaAsset` lifecycle: uploading → ready | failed; archive/restore; retry with new storageKey
+- Ready binary immutable; public delivery `/media/[mediaId]`
+- Article publish validates media references
+- Private GCS + deny-all Storage rules; memory adapter for tests
+- Docs: MEDIA-ADMIN, MEDIA-MODEL, MEDIA-STORAGE, MEDIA-MUTATION-FLOW
+
+**Out of scope:** Video/audio upload, CDN, antivirus, physical delete, orphan sweeper.
 
 ## Phase 8A — Prompt Administration
 
@@ -160,7 +168,7 @@ Execute **one phase per assignment**. After each phase: typecheck → lint → t
 - Imported Sheets prompts editable; `promptFromPublishedSnapshot` public read
 - Docs: PROMPT-ADMIN, PROMPT-EDITOR, PROMPT-LIFECYCLE, PROMPT-VERSIONS, PROMPT-SOURCE-PROVENANCE, PROMPT-MUTATION-FLOW, PROMPT-PUBLISHING-POLICY
 
-**Out of scope:** Video admin, Media (7B), Google write-back, automatic sync (6B), WYSIWYG, autosave, new UI libraries.
+**Out of scope:** Video admin, Google write-back, automatic sync (6B), WYSIWYG, autosave, new UI libraries.
 
 ## Phase 8 — Search and assistant
 

@@ -13,6 +13,8 @@ export {
 } from "./memory-taxonomy-repository";
 export { MemoryVersionRepository } from "./memory-version-repository";
 export { MemoryAuditRepository } from "./memory-audit-repository";
+export { MemoryMediaRepository } from "./memory-media-repository";
+export { MemoryMediaStorage } from "./memory-media-storage";
 export { MemorySourceConnectionRepository } from "./memory-source-connection-repository";
 export { MemoryImportJobRepository } from "./memory-import-job-repository";
 export { MemoryIdempotencyRepository } from "./memory-idempotency-repository";

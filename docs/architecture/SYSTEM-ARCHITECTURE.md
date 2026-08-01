@@ -31,6 +31,8 @@ Phase 7A: admin Taxonomy management (Category / Tag / Audience) with archive-not
 
 Phase 8A: admin Prompt library (create/edit, manual publish, hide/archive, version restore) with snapshot-based public reads and Sheets-import provenance (ADR 0010).
 
+Phase 7B: Media Library — private GCS binaries, signed admin upload, MIME sniff, `mediaAssets` metadata, same-origin delivery at `/media/[mediaId]`, archive-not-delete (ADR 0011).
+
 ## Logical layers
 
 ```text
@@ -127,7 +129,7 @@ Cross-cutting:
 | Store | Responsibility |
 |-------|----------------|
 | Firestore | Content entities, metadata, roles, sync connections, audit |
-| Cloud Storage | Published binary media; versioned search index JSON |
+| Cloud Storage | Private media binaries (Phase 7B); versioned search index JSON |
 | Secret Manager | API keys, service credentials |
 | Cloud Logging | Operational + security-relevant logs |
 
