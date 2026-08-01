@@ -14,6 +14,10 @@ export interface PublicContentInvalidationPort {
     slug: string;
     previousSlug?: string | null;
   }): void;
+  invalidatePrompt(input: {
+    slug: string;
+    previousSlug?: string | null;
+  }): void;
   invalidateCatalogs(): void;
 }
 
@@ -51,6 +55,23 @@ export class NextPublicContentInvalidation
       }
     } catch (error) {
       logger.warn("article cache invalidation failed", {
+        cause: error instanceof Error ? error.message : "unknown",
+      });
+    }
+  }
+
+  invalidatePrompt(input: {
+    slug: string;
+    previousSlug?: string | null;
+  }): void {
+    try {
+      this.invalidateCatalogs();
+      revalidatePath(`/prompts/${input.slug}`);
+      if (input.previousSlug && input.previousSlug !== input.slug) {
+        revalidatePath(`/prompts/${input.previousSlug}`);
+      }
+    } catch (error) {
+      logger.warn("prompt cache invalidation failed", {
         cause: error instanceof Error ? error.message : "unknown",
       });
     }

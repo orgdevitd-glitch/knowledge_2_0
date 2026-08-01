@@ -29,6 +29,8 @@ Phase 6A: server-only Google Drive/Docs/Sheets **read** adapters, Shared Drive +
 
 Phase 7A: admin Taxonomy management (Category / Tag / Audience) with archive-not-delete, usage analysis, and public invalidation (ADR 0009).
 
+Phase 8A: admin Prompt library (create/edit, manual publish, hide/archive, version restore) with snapshot-based public reads and Sheets-import provenance (ADR 0010).
+
 ## Logical layers
 
 ```text

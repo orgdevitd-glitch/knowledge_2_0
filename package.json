@@ -2,7 +2,7 @@
   "name": "corporate-knowledge-portal",
   "version": "0.1.0",
   "private": true,
-  "description": "Corporate Knowledge Portal — Phase 7A Taxonomy administration",
+  "description": "Corporate Knowledge Portal — Phase 8A Prompt administration",
   "engines": {
     "node": ">=20"
   },

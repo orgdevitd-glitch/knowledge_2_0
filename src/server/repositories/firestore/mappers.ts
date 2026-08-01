@@ -167,6 +167,11 @@ export function toPromptDoc(prompt: Prompt): Record<string, unknown> {
   return {
     schemaVersion: FIRESTORE_SCHEMA_VERSION,
     ...serializePrompt(prompt),
+    // Queryable denormalized fields (stripped on read).
+    sourceType: prompt.source.type,
+    sourceExternalId: prompt.source.externalId ?? null,
+    sourceConnectionId: prompt.source.connectionId ?? null,
+    titleLower: String(prompt.title).toLowerCase(),
   };
 }
 
@@ -175,6 +180,10 @@ export function fromPromptDoc(docId: string, raw: unknown): Prompt {
   assertSchemaVersion(data);
   const rest = { ...data };
   delete rest.schemaVersion;
+  delete rest.sourceType;
+  delete rest.sourceExternalId;
+  delete rest.sourceConnectionId;
+  delete rest.titleLower;
   const prompt = deserializePrompt(rest);
   if (prompt.id !== docId) {
     throw new ValidationError("Prompt document id mismatch", {

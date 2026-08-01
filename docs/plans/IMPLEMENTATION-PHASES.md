@@ -147,6 +147,19 @@ Execute **one phase per assignment**. After each phase: typecheck → lint → t
 - Images, video, files
 - Captions, transcripts
 
+## Phase 8A — Prompt Administration
+
+**Status:** implemented in this repository pass (see ADR 0010).
+
+- Admin UI for Prompt create / edit / preview / publish / hide / archive / restore
+- Version history + restore to draft (no auto-publish)
+- Mutation APIs with CSRF, revision, audit, public invalidation
+- List dashboard, filters (status, taxonomy, source, review due), sort
+- Imported Sheets prompts editable; `promptFromPublishedSnapshot` public read
+- Docs: PROMPT-ADMIN, PROMPT-EDITOR, PROMPT-LIFECYCLE, PROMPT-VERSIONS, PROMPT-SOURCE-PROVENANCE, PROMPT-MUTATION-FLOW, PROMPT-PUBLISHING-POLICY
+
+**Out of scope:** Video admin, Media (7B), Google write-back, automatic sync (6B), WYSIWYG, autosave, new UI libraries.
+
 ## Phase 8 — Search and assistant
 
 - Index, filters, suggestions

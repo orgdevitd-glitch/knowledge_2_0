@@ -268,7 +268,9 @@ export function markPromptPublished(
     currentVersion: versionId,
     publishedAt: now,
     updatedAt: now,
-    source: portalSource(),
+    // Entity import provenance is preserved. ContentVersion.source records
+    // that this version was created by a portal publish action.
+    source: prompt.source,
     revision: nextRevision(prompt.revision),
   };
 }
@@ -286,6 +288,19 @@ export function markPromptArchived(prompt: Prompt, now: IsoDateTime): Prompt {
   return {
     ...prompt,
     status: "archived",
+    updatedAt: now,
+    revision: nextRevision(prompt.revision),
+  };
+}
+
+export function markPromptRestoredFromArchive(
+  prompt: Prompt,
+  now: IsoDateTime,
+): Prompt {
+  return {
+    ...prompt,
+    status: "draft",
+    publishedAt: null,
     updatedAt: now,
     revision: nextRevision(prompt.revision),
   };
@@ -346,6 +361,7 @@ export function applyPromptVersionSnapshot(
     publishedVersion: prompt.publishedVersion,
     publishedAt: null,
     createdAt: prompt.createdAt,
+    source: prompt.source,
     revision: nextRevision(prompt.revision),
   };
 }

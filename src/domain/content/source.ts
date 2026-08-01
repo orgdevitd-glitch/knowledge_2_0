@@ -17,7 +17,15 @@ export type SourceType = (typeof SOURCE_TYPES)[number];
 
 export type SourceReference = {
   type: SourceType;
+  /** Row/document external id within the source namespace. */
   externalId?: string;
+  /**
+   * SourceConnection id for Google imports (scopes externalId uniqueness).
+   * Not a second provenance store — part of the same SourceReference.
+   */
+  connectionId?: string;
+  /** Last confirmed ImportJob id (admin provenance only). */
+  lastImportJobId?: string;
   externalUrl?: SafeUrl;
   lastKnownModifiedAt?: IsoDateTime;
   lastSyncAt?: IsoDateTime;
@@ -27,6 +35,8 @@ export type SourceReference = {
 const sourceSchema = z.object({
   type: z.enum(SOURCE_TYPES),
   externalId: z.string().min(1).max(256).optional(),
+  connectionId: z.string().min(1).max(128).optional(),
+  lastImportJobId: z.string().min(1).max(128).optional(),
   externalUrl: z.string().max(2048).optional(),
   lastKnownModifiedAt: z.string().optional(),
   lastSyncAt: z.string().optional(),
@@ -42,6 +52,8 @@ export function parseSourceReference(value: unknown): SourceReference {
   return {
     type: data.type,
     externalId: data.externalId,
+    connectionId: data.connectionId,
+    lastImportJobId: data.lastImportJobId,
     externalUrl: data.externalUrl
       ? parseSafeUrl(data.externalUrl, {
           requireHttpsAbsolute: true,
@@ -56,6 +68,16 @@ export function parseSourceReference(value: unknown): SourceReference {
       : undefined,
     checksum: data.checksum,
   };
+}
+
+/** Stable key for source-scoped external id uniqueness. */
+export function sourceExternalKey(
+  sourceType: SourceType,
+  connectionId: string | undefined,
+  externalId: string,
+): string {
+  const ns = connectionId?.trim() || "_";
+  return `${sourceType}:${ns}:${externalId}`;
 }
 
 export function portalSource(): SourceReference {

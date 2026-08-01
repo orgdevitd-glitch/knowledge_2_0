@@ -18,7 +18,7 @@ allow read, write: if false;
 | `audiences/{audienceId}` | full |
 | `contentVersions/{versionId}` | full (immutable save) |
 | `auditEvents/{auditEventId}` | full (immutable save) |
-| `prompts/{promptId}` | full (Phase 6A FirestorePromptRepository; public shows published only) |
+| `prompts/{promptId}` | full (Phase 6A repository; Phase 8A admin + public published snapshots) |
 | `videos/{videoId}` | skeleton / unused by public Firestore source |
 | `sourceConnections/{id}` | Phase 6A Google source metadata |
 | `importJobs/{id}` | Phase 6A import preview / confirm jobs |
@@ -40,12 +40,14 @@ Article (and taxonomy) saves run in a transaction: read → check `expectedRevis
 
 ## Unit of Work
 
-`FirestoreUnitOfWork.runAtomicArticlePublish` writes article + content version + audit atomically. Transaction callbacks must keep all reads before writes and avoid external side effects. IDs/timestamps for one application operation are fixed so retries do not invent new audit/version identities.
+`FirestoreUnitOfWork.runAtomicArticlePublish` and `runAtomicPromptPublish` write entity + content version + audit atomically. Transaction callbacks must keep all reads before writes and avoid external side effects. IDs/timestamps for one application operation are fixed so retries do not invent new audit/version identities.
 
 ## Indexes
 
-See `firestore.indexes.json`. Each composite index maps to a real query (status+updatedAt, status+publishedAt, versions/audit by entity). Single-field indexes are insufficient for those compound filters/sorts.
+See `firestore.indexes.json`. Each composite index maps to a real query (status+updatedAt for articles and prompts, status+publishedAt for articles, versions/audit by entity). Single-field indexes are insufficient for those compound filters/sorts.
+
+Example prompt admin list query: `where status == X orderBy updatedAt desc` → composite index on `prompts`: `status ASC`, `updatedAt DESC`.
 
 ## Public source limitation
 
-`FirestorePublicContentSource` serves published articles + taxonomy. **Prompts and videos return empty lists** until their adapters are completed in a later phase. Demo source behavior is unchanged in development.
+`FirestorePublicContentSource` serves published articles, prompts (from `publishedVersion` snapshots), and taxonomy. **Videos return empty lists** until their adapters are completed in a later phase. Demo source behavior is unchanged in development.

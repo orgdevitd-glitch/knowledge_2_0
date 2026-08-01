@@ -8,6 +8,8 @@ import {
 } from "@/domain/shared/errors";
 import type {
   AtomicArticlePublishBundle,
+  AtomicPromptMutationBundle,
+  AtomicPromptPublishBundle,
   AtomicTaxonomyMutationBundle,
   UnitOfWork,
 } from "@/server/repositories/interfaces/unit-of-work";
@@ -17,14 +19,21 @@ import {
   fromArticleDoc,
   fromAudienceDoc,
   fromCategoryDoc,
+  fromPromptDoc,
   fromTagDoc,
   toArticleDoc,
   toAuditDoc,
+  toPromptDoc,
   toTaxonomyDoc,
   toVersionDoc,
 } from "./mappers";
 
-export type { AtomicArticlePublishBundle, AtomicTaxonomyMutationBundle };
+export type {
+  AtomicArticlePublishBundle,
+  AtomicPromptMutationBundle,
+  AtomicPromptPublishBundle,
+  AtomicTaxonomyMutationBundle,
+};
 
 function taxonomyCollection(kind: "category" | "tag" | "audience"): string {
   if (kind === "category") return FIRESTORE_COLLECTIONS.categories;
@@ -110,6 +119,89 @@ export class FirestoreUnitOfWork implements UnitOfWork {
         throw error;
       }
       throw new RepositoryError("Atomic publish transaction failed", {
+        cause: error instanceof Error ? error.message : "unknown",
+      });
+    }
+  }
+
+  async runAtomicPromptPublish(
+    bundle: AtomicPromptPublishBundle,
+  ): Promise<void> {
+    await this.runAtomicPromptMutation({
+      prompt: bundle.prompt,
+      expectedRevision: bundle.expectedRevision,
+      audit: bundle.audit,
+      version: bundle.version,
+    });
+  }
+
+  async runAtomicPromptMutation(
+    bundle: AtomicPromptMutationBundle,
+  ): Promise<void> {
+    const db = getFirebaseAdminFirestore();
+    const promptRef = db
+      .collection(FIRESTORE_COLLECTIONS.prompts)
+      .doc(bundle.prompt.id);
+    const auditRef = db
+      .collection(FIRESTORE_COLLECTIONS.auditEvents)
+      .doc(bundle.audit.id);
+    const versionRef = bundle.version
+      ? db
+          .collection(FIRESTORE_COLLECTIONS.contentVersions)
+          .doc(bundle.version.id)
+      : null;
+
+    try {
+      await db.runTransaction(async (tx) => {
+        const promptSnap = await tx.get(promptRef);
+        const auditSnap = await tx.get(auditRef);
+        const versionSnap = versionRef ? await tx.get(versionRef) : null;
+
+        if (!promptSnap.exists) {
+          if (bundle.expectedRevision !== 0) {
+            throw new ConflictError("Prompt not found for mutation");
+          }
+        } else {
+          const existing = fromPromptDoc(promptSnap.id, promptSnap.data());
+          if (existing.revision !== bundle.expectedRevision) {
+            throw new ConflictError("Optimistic concurrency conflict", {
+              expectedRevision: bundle.expectedRevision,
+              actualRevision: existing.revision,
+            });
+          }
+        }
+        if (auditSnap.exists) {
+          throw new ConflictError("Audit event already exists");
+        }
+        if (versionSnap?.exists) {
+          throw new ConflictError("Version already exists");
+        }
+
+        const slugQuery = db
+          .collection(FIRESTORE_COLLECTIONS.prompts)
+          .where("slug", "==", bundle.prompt.slug)
+          .limit(5);
+        const slugSnap = await tx.get(slugQuery);
+        for (const doc of slugSnap.docs) {
+          if (doc.id !== bundle.prompt.id) {
+            throw new DuplicateSlugError("Slug already exists");
+          }
+        }
+
+        tx.set(promptRef, toPromptDoc(bundle.prompt));
+        if (versionRef && bundle.version) {
+          tx.create(versionRef, toVersionDoc(bundle.version));
+        }
+        tx.create(auditRef, toAuditDoc(bundle.audit));
+      });
+    } catch (error) {
+      if (
+        error instanceof ConflictError ||
+        error instanceof DuplicateSlugError
+      ) {
+        throw error;
+      }
+      throw new RepositoryError("Atomic prompt mutation transaction failed", {
         cause: error instanceof Error ? error.message : "unknown",
       });
     }

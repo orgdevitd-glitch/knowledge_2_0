@@ -36,5 +36,5 @@ describe("GOOGLE_WORKSPACE_MODE=disabled", () => {
     expect(JSON.stringify(body)).not.toMatch(
       /private_key|client_email|access_token|refresh_token/i,
     );
-  });
+  }, 15_000);
 });

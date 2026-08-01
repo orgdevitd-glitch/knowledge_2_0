@@ -2,18 +2,17 @@
 
 Open corporate knowledge portal for instructions, prompt library, learning materials, scenarios, media, FAQ, search, and an admin page builder.
 
-Public users read **published** content without registration. Administrators sign in with Google and manage articles in the admin CMS.
+Public users read **published** content without registration. Administrators sign in with Google and manage articles and prompts in the admin CMS.
 
 ## Current status
 
-**Phase 7A — Taxonomy administration** (Category / Tag / Audience admin) is the current admin CMS slice after Phase 6A Google import.
+**Phase 8A — Prompt administration** is the current admin CMS slice after Phase 7A Taxonomy admin.
 
-- Create / edit articles with block editor (manual save, revision conflicts)
+- Create / edit prompts (manual save, revision conflicts)
 - Preview, atomic publish, hide, archive, version restore
+- Prompt list with dashboard, filters, and source/review metadata
+- Article editor and Google import (Phase 6A) retained
 - Mutation APIs protected by session + CSRF
-- Phase 5A auth/Firestore foundation retained
-
-Phase 6 (Google integrations) is **not** started.
 
 ## Requirements
 
@@ -29,7 +28,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Admin (with Firebase configured): `/admin/sign-in` → `/admin/articles`, `/admin/taxonomy`.
+Admin (with Firebase configured): `/admin/sign-in` → `/admin/articles`, `/admin/prompts`, `/admin/taxonomy`.
 
 ## Verification
 
@@ -44,4 +43,4 @@ npm run build
 
 ## Documentation
 
-See `AGENTS.md` and `docs/admin/ARTICLE-EDITOR.md`.
+See `AGENTS.md` and `docs/admin/PROMPT-ADMIN.md`.

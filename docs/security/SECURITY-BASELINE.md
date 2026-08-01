@@ -40,7 +40,7 @@ Security decisions must never be enforced only on the client.
 ## Content exposure
 
 - Drafts, hidden, and archived materials must not be reachable via public routes, public APIs, or the public search index
-- Preview of unpublished content is admin-authenticated only (UI in Phase 5B)
+- Preview of unpublished content is admin-authenticated only (Article Admin Phase 5B; Prompt Admin Phase 8A)
 - Published-only visibility in `features/public-content/visibility.ts`
 - `CONTENT_SOURCE_MODE=demo` is forbidden in production
 - Firestore client SDK access denied by Security Rules; public reads use server source

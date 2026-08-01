@@ -4,7 +4,6 @@ import { parseIsoDateTime } from "@/domain/shared/value-objects";
 import { richTextFromPlain } from "@/domain/shared/rich-text";
 import { BLOCK_SCHEMA_VERSION, type ContentBlock } from "@/domain/content/blocks";
 import type { ContentPorts } from "@/features/content/application/ports";
-import { InProcessUnitOfWork } from "@/server/repositories/interfaces/unit-of-work";
 import {
   MemoryArticleRepository,
   MemoryAudienceRepository,
@@ -15,6 +14,7 @@ import {
   MemoryVersionRepository,
   MemoryVideoRepository,
 } from "@/server/repositories/memory";
+import { MemoryPromptUnitOfWork } from "@/server/repositories/memory/memory-prompt-unit-of-work";
 
 export const TEST_NOW = parseIsoDateTime("2024-06-15T12:00:00.000Z");
 
@@ -22,13 +22,15 @@ export function createTestPorts(): ContentPorts & {
   auditRepo: MemoryAuditRepository;
   articleRepo: MemoryArticleRepository;
   versionRepo: MemoryVersionRepository;
+  promptRepo: MemoryPromptRepository;
 } {
   const articleRepo = new MemoryArticleRepository();
   const auditRepo = new MemoryAuditRepository();
   const versionRepo = new MemoryVersionRepository();
+  const promptRepo = new MemoryPromptRepository();
   return {
     articles: articleRepo,
-    prompts: new MemoryPromptRepository(),
+    prompts: promptRepo,
     videos: new MemoryVideoRepository(),
     categories: new MemoryCategoryRepository(),
     tags: new MemoryTagRepository(),
@@ -37,10 +39,11 @@ export function createTestPorts(): ContentPorts & {
     audit: auditRepo,
     clock: new FixedClock(TEST_NOW),
     ids: new SequentialIdGenerator(),
-    uow: new InProcessUnitOfWork(),
+    uow: new MemoryPromptUnitOfWork(promptRepo, versionRepo, auditRepo),
     auditRepo,
     articleRepo,
     versionRepo,
+    promptRepo,
   };
 }
 

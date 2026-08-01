@@ -5,6 +5,7 @@
  */
 import type { Article } from "@/domain/content/article";
 import type { AuditEvent } from "@/domain/content/audit";
+import type { Prompt } from "@/domain/content/prompt";
 import type { Audience, Category, Tag } from "@/domain/content/taxonomy";
 import type { ContentVersion } from "@/domain/content/versioning";
 
@@ -13,6 +14,21 @@ export type AtomicArticlePublishBundle = {
   expectedRevision: number;
   version: ContentVersion;
   audit: AuditEvent;
+};
+
+export type AtomicPromptPublishBundle = {
+  prompt: Prompt;
+  expectedRevision: number;
+  version: ContentVersion;
+  audit: AuditEvent;
+};
+
+/** Prompt entity write + audit (+ optional immutable version). */
+export type AtomicPromptMutationBundle = {
+  prompt: Prompt;
+  expectedRevision: number;
+  audit: AuditEvent;
+  version?: ContentVersion;
 };
 
 export type TaxonomyMutationKind = "category" | "tag" | "audience";
@@ -39,6 +55,14 @@ export interface UnitOfWork {
    * When present, publishArticle prefers this over sequential run().
    */
   runAtomicArticlePublish?(bundle: AtomicArticlePublishBundle): Promise<void>;
+  /**
+   * Optional Firestore-backed atomic prompt publish.
+   */
+  runAtomicPromptPublish?(bundle: AtomicPromptPublishBundle): Promise<void>;
+  /**
+   * Atomic prompt mutation (entity + audit, optional new ContentVersion).
+   */
+  runAtomicPromptMutation?(bundle: AtomicPromptMutationBundle): Promise<void>;
   /**
    * Optional atomic taxonomy mutation (entity write(s) + audit).
    */

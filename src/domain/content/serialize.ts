@@ -229,6 +229,7 @@ export function deserializePrompt(raw: unknown): Prompt {
     relatedVideoIds: (obj.relatedVideoIds as string[]) ?? [],
     ownerId: optionalString(obj, "ownerId"),
     reviewDueAt: optionalString(obj, "reviewDueAt"),
+    source: obj.source ? parseSourceReference(obj.source) : undefined,
     now: parseIsoDateTime(requireString(obj, "createdAt")),
   });
 
@@ -247,6 +248,9 @@ export function deserializePrompt(raw: unknown): Prompt {
       ? parseIsoDateTime(obj.publishedAt)
       : null,
     revision: parseRevision(obj.revision ?? 0),
+    source: obj.source
+      ? parseSourceReference(obj.source)
+      : created.source,
   };
 }
 

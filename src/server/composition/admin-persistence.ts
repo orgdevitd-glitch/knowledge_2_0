@@ -12,6 +12,7 @@ import type {
 } from "@/server/repositories/interfaces/taxonomy-repository";
 import type { VersionRepository } from "@/server/repositories/interfaces/version-repository";
 import type { AuditRepository } from "@/server/repositories/interfaces/audit-port";
+import type { PromptRepository } from "@/server/repositories/interfaces/prompt-repository";
 import { FirestoreArticleRepository } from "@/server/repositories/firestore/firestore-article-repository";
 import {
   FirestoreAudienceRepository,
@@ -21,6 +22,7 @@ import {
 import { FirestoreVersionRepository } from "@/server/repositories/firestore/firestore-version-repository";
 import { FirestoreAuditRepository } from "@/server/repositories/firestore/firestore-audit-repository";
 import { MemoryArticleRepository } from "@/server/repositories/memory/memory-article-repository";
+import { MemoryPromptRepository } from "@/server/repositories/memory/memory-prompt-repository";
 import {
   MemoryAudienceRepository,
   MemoryCategoryRepository,
@@ -33,6 +35,7 @@ import { isFirestoreConfigured } from "@/server/composition/public-content";
 export type AdminPersistence = {
   mode: "memory" | "firestore" | "unavailable";
   articles: ArticleRepository | null;
+  prompts: PromptRepository | null;
   categories: CategoryRepository | null;
   tags: TagRepository | null;
   audiences: AudienceRepository | null;
@@ -52,6 +55,7 @@ export function getAdminPersistence(): AdminPersistence {
       return {
         mode: "unavailable",
         articles: null,
+        prompts: null,
         categories: null,
         tags: null,
         audiences: null,
@@ -63,6 +67,7 @@ export function getAdminPersistence(): AdminPersistence {
       memorySingleton = {
         mode: "memory",
         articles: new MemoryArticleRepository(),
+        prompts: new MemoryPromptRepository(),
         categories: new MemoryCategoryRepository(),
         tags: new MemoryTagRepository(),
         audiences: new MemoryAudienceRepository(),
@@ -77,6 +82,7 @@ export function getAdminPersistence(): AdminPersistence {
     return {
       mode: "unavailable",
       articles: null,
+      prompts: null,
       categories: null,
       tags: null,
       audiences: null,
@@ -89,6 +95,7 @@ export function getAdminPersistence(): AdminPersistence {
     firestoreSingleton = {
       mode: "firestore",
       articles: new FirestoreArticleRepository(),
+      prompts: null,
       categories: new FirestoreCategoryRepository(),
       tags: new FirestoreTagRepository(),
       audiences: new FirestoreAudienceRepository(),
