@@ -20,6 +20,7 @@ import {
   ConflictError,
   DomainError,
   DuplicateSlugError,
+  DuplicateTitleError,
   InvalidStatusTransitionError,
   NotFoundError,
   ValidationError,
@@ -36,6 +37,14 @@ export type AdminErrorCode =
   | "CONFLICT"
   | "INVALID_STATUS_TRANSITION"
   | "DUPLICATE_SLUG"
+  | "DUPLICATE_TITLE"
+  | "CATEGORY_CYCLE"
+  | "CATEGORY_DEPTH_EXCEEDED"
+  | "CATEGORY_PARENT_ARCHIVED"
+  | "CATEGORY_HAS_ACTIVE_CHILDREN"
+  | "TAXONOMY_TREE_LIMIT_EXCEEDED"
+  | "INVALID_PARENT"
+  | "INVALID_SORT_ORDER"
   | "AUTH_REQUIRED"
   | "ACCESS_DENIED"
   | "CSRF_INVALID"
@@ -56,6 +65,9 @@ const SAFE_FIELD_NAMES = new Set([
   "title",
   "slug",
   "summary",
+  "description",
+  "parentId",
+  "sortOrder",
   "reviewDueAt",
   "changeSummary",
   "expectedRevision",
@@ -63,12 +75,34 @@ const SAFE_FIELD_NAMES = new Set([
   "categoryIds",
   "tagIds",
   "audienceIds",
+  "direction",
+  "position",
+]);
+
+const TAXONOMY_ADMIN_CODES = new Set<AdminErrorCode>([
+  "CATEGORY_CYCLE",
+  "CATEGORY_DEPTH_EXCEEDED",
+  "CATEGORY_PARENT_ARCHIVED",
+  "CATEGORY_HAS_ACTIVE_CHILDREN",
+  "TAXONOMY_TREE_LIMIT_EXCEEDED",
+  "INVALID_PARENT",
+  "INVALID_SORT_ORDER",
+  "DUPLICATE_TITLE",
+  "INVALID_STATUS_TRANSITION",
+  "VALIDATION_ERROR",
 ]);
 
 export const adminCreateLimiter = new InProcessRateLimiter(20, 60_000);
 export const adminSaveLimiter = new InProcessRateLimiter(120, 60_000);
 export const adminPublishLimiter = new InProcessRateLimiter(20, 60_000);
 export const adminRestoreLimiter = new InProcessRateLimiter(20, 60_000);
+export const taxonomyCreateLimiter = new InProcessRateLimiter(30, 60_000);
+export const taxonomyUpdateLimiter = new InProcessRateLimiter(60, 60_000);
+export const taxonomyMoveLimiter = new InProcessRateLimiter(30, 60_000);
+export const taxonomyReorderLimiter = new InProcessRateLimiter(30, 60_000);
+export const taxonomyArchiveLimiter = new InProcessRateLimiter(30, 60_000);
+export const taxonomyRestoreLimiter = new InProcessRateLimiter(30, 60_000);
+export const taxonomyUsageLimiter = new InProcessRateLimiter(60, 60_000);
 export const googleDriveBrowseLimiter = new InProcessRateLimiter(60, 60_000);
 export const googleSourceTestLimiter = new InProcessRateLimiter(20, 60_000);
 export const googlePreviewLimiter = new InProcessRateLimiter(10, 60_000);
@@ -161,20 +195,35 @@ export function mapDomainErrorToResponse(error: unknown): NextResponse {
         }
       }
     }
+    const adminCode = error.details.adminCode;
+    const code =
+      typeof adminCode === "string" &&
+      TAXONOMY_ADMIN_CODES.has(adminCode as AdminErrorCode)
+        ? (adminCode as AdminErrorCode)
+        : "VALIDATION_ERROR";
+    const status =
+      code === "INVALID_STATUS_TRANSITION" ||
+      code === "CATEGORY_CYCLE" ||
+      code === "CATEGORY_DEPTH_EXCEEDED" ||
+      code === "CATEGORY_PARENT_ARCHIVED"
+        ? 409
+        : 400;
     return adminErrorResponse(
-      "VALIDATION_ERROR",
-      "Проверьте заполнение формы.",
-      400,
+      code,
+      code === "VALIDATION_ERROR"
+        ? "Проверьте заполнение формы."
+        : error.message,
+      status,
       fields,
     );
   }
   if (error instanceof NotFoundError) {
-    return adminErrorResponse("NOT_FOUND", "Материал не найден.", 404);
+    return adminErrorResponse("NOT_FOUND", "Объект не найден.", 404);
   }
   if (error instanceof ConflictError) {
     return adminErrorResponse(
       "CONFLICT",
-      "Материал был изменен в другой сессии.",
+      "Объект был изменен в другой сессии.",
       409,
     );
   }
@@ -184,6 +233,14 @@ export function mapDomainErrorToResponse(error: unknown): NextResponse {
       "Такой адрес (slug) уже используется.",
       409,
       { slug: "duplicate" },
+    );
+  }
+  if (error instanceof DuplicateTitleError) {
+    return adminErrorResponse(
+      "DUPLICATE_TITLE",
+      "Такое название уже используется.",
+      409,
+      { title: "duplicate" },
     );
   }
   if (error instanceof InvalidStatusTransitionError) {

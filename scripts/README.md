@@ -28,7 +28,7 @@ Equivalent to:
 npm run typecheck && npm run lint && npm run test && npm run build
 ```
 
-Also run `npm run test:firestore` and `npm run test:rules` when changing persistence or rules.
+Also run `npm run test:firestore` and `npm run test:rules` when changing persistence, rules, or taxonomy repositories (Phase 7A).
 
 **Emulator prerequisite:** JDK **21+** (`JAVA_HOME` / `PATH`). Older Java (e.g. 8) fails with current `firebase-tools`.
 

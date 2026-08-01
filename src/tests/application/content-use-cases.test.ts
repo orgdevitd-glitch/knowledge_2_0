@@ -29,6 +29,7 @@ import {
 import {
   ConflictError,
   InvalidStatusTransitionError,
+  DuplicateTitleError,
   ValidationError,
 } from "@/domain/shared/errors";
 import {
@@ -260,7 +261,7 @@ describe("taxonomy use cases", () => {
     });
     await expect(
       createTagUseCase(ports, ctx, { slug: "tag-two", title: "tag one" }),
-    ).rejects.toBeInstanceOf(ValidationError);
+    ).rejects.toBeInstanceOf(DuplicateTitleError);
 
     const audience = await createAudienceUseCase(ports, ctx, {
       slug: "newcomers",

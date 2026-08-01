@@ -81,6 +81,8 @@ See entity modules. Prompt stores `promptText` (never user-filled runtime data).
 - Category: tree with configurable max depth; no self-parent; no cycles; archived category does not cascade-archive materials.
 - Tag: flat; unique slug; duplicate normalized titles rejected at application level.
 - Audience: data-driven groups (not hardcoded roles).
+- Admin CMS: Phase 7A — see [TAXONOMY-POLICY.md](./TAXONOMY-POLICY.md) and ADR 0009.
+- Physical delete is forbidden; archive keeps material relationships.
 
 ## SourceReference
 

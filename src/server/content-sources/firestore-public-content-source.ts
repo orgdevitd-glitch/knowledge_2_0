@@ -2,7 +2,8 @@ import "server-only";
 
 import type { Article, ArticleSnapshot } from "@/domain/content/article";
 import { articleFromPublishedSnapshot } from "@/domain/content/article";
-import type { Prompt } from "@/domain/content/prompt";
+import type { Prompt, PromptSnapshot } from "@/domain/content/prompt";
+import { promptFromPublishedSnapshot } from "@/domain/content/prompt";
 import type { PublicContentCatalog } from "@/server/content-sources/public-content-source";
 import type { PublicContentSource } from "@/server/content-sources/public-content-source";
 import { FirestoreArticleRepository } from "@/server/repositories/firestore/firestore-article-repository";
@@ -18,8 +19,8 @@ import { CONTENT_LIMITS } from "@/domain/shared/limits";
 
 /**
  * Server-only public read source backed by Firestore.
- * Articles are hydrated from ContentVersion snapshots (publishedVersion),
- * not from the live working copy on articles/{id}.
+ * Articles and prompts are hydrated from ContentVersion snapshots
+ * (publishedVersion), not from live working copies.
  */
 export class FirestorePublicContentSource implements PublicContentSource {
   readonly mode = "firestore" as const;
@@ -68,10 +69,18 @@ export class FirestorePublicContentSource implements PublicContentSource {
     }
 
     const prompts: Prompt[] = [];
-    for (const prompt of promptPage.items) {
+    for (const live of promptPage.items) {
       try {
-        if (prompt.status !== "published") continue;
-        prompts.push(prompt);
+        if (live.status !== "published" || !live.publishedVersion) continue;
+        const version = await versionsRepo.getById(String(live.publishedVersion));
+        if (!version || version.entityType !== "prompt") {
+          logger.warn("content integrity: missing published prompt version", {
+            promptId: String(live.id),
+          });
+          continue;
+        }
+        const snapshot = version.snapshot as unknown as PromptSnapshot;
+        prompts.push(promptFromPublishedSnapshot(live, snapshot));
       } catch (error) {
         logger.warn("content integrity: skipped damaged public prompt", {
           cause: error instanceof Error ? error.message : "unknown",

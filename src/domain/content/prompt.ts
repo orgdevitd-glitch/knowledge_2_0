@@ -349,3 +349,47 @@ export function applyPromptVersionSnapshot(
     revision: nextRevision(prompt.revision),
   };
 }
+
+/**
+ * Materialize the publicly visible Prompt view from the last published snapshot.
+ * Working-copy taxonomy/fields must not leak to public until republish.
+ */
+export function promptFromPublishedSnapshot(
+  live: Prompt,
+  snapshot: PromptSnapshot,
+): Prompt {
+  if (live.status !== "published" || !live.publishedVersion) {
+    throw new ValidationError(
+      "Published snapshot requires a published prompt with publishedVersion",
+    );
+  }
+  const material = createPrompt({
+    id: live.id,
+    slug: snapshot.slug,
+    title: snapshot.title,
+    summary: snapshot.summary,
+    categoryIds: snapshot.categoryIds,
+    tagIds: snapshot.tagIds,
+    audienceIds: snapshot.audienceIds,
+    promptText: snapshot.promptText,
+    inputRequirements: snapshot.inputRequirements,
+    outputRequirements: snapshot.outputRequirements,
+    restrictions: snapshot.restrictions,
+    usageExample: snapshot.usageExample,
+    relatedArticleIds: snapshot.relatedArticleIds,
+    relatedVideoIds: snapshot.relatedVideoIds,
+    ownerId: snapshot.ownerId,
+    reviewDueAt: snapshot.reviewDueAt,
+    now: live.updatedAt,
+  });
+  return {
+    ...material,
+    status: "published",
+    currentVersion: live.currentVersion,
+    publishedVersion: live.publishedVersion,
+    publishedAt: live.publishedAt,
+    createdAt: live.createdAt,
+    updatedAt: live.updatedAt,
+    revision: live.revision,
+  };
+}

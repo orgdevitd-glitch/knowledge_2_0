@@ -26,6 +26,18 @@ export const CONTENT_LIMITS = {
   relatedContentItems: { min: 1, max: 20 },
   videoChapters: 100,
   categoryTreeDepth: 5,
+  /**
+   * Max taxonomy entities loaded for admin tree / uniqueness checks.
+   * Alias: MAX_TAXONOMY_TREE_ITEMS.
+   */
+  maxTaxonomyTreeItems: 500,
+  /** Max content docs scanned while building taxonomy usage. */
+  maxTaxonomyUsageScan: 2_000,
+  taxonomyUsagePageDefault: 20,
+  taxonomyUsagePageMax: 50,
   listDefaultLimit: 20,
   listMaxLimit: 100,
 } as const;
+
+/** Centralized taxonomy tree / catalog load ceiling (Phase 7A). */
+export const MAX_TAXONOMY_TREE_ITEMS = CONTENT_LIMITS.maxTaxonomyTreeItems;

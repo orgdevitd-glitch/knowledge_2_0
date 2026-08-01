@@ -1,4 +1,4 @@
-import { ValidationError } from "../shared/errors";
+import { DuplicateTitleError, ValidationError } from "../shared/errors";
 import type { AudienceId, CategoryId, TagId } from "../shared/ids";
 import {
   AudienceId as AudienceIdP,
@@ -71,7 +71,9 @@ export function createCategory(input: {
   const id = CategoryIdP.parse(input.id);
   const parentId = input.parentId ? CategoryIdP.parse(input.parentId) : null;
   if (parentId && parentId === id) {
-    throw new ValidationError("Category cannot be its own parent");
+    throw new ValidationError("Category cannot be its own parent", {
+      adminCode: "CATEGORY_CYCLE",
+    });
   }
   return {
     id,
@@ -98,7 +100,9 @@ export function assertNoCategoryCycle(
 ): void {
   if (!newParentId) return;
   if (newParentId === categoryId) {
-    throw new ValidationError("Category cannot be its own parent");
+    throw new ValidationError("Category cannot be its own parent", {
+      adminCode: "CATEGORY_CYCLE",
+    });
   }
   const byId = new Map(categories.map((c) => [c.id as string, c]));
   let current: string | null = newParentId;
@@ -106,19 +110,153 @@ export function assertNoCategoryCycle(
   const seen = new Set<string>([categoryId]);
   while (current) {
     if (seen.has(current)) {
-      throw new ValidationError("Category tree cycle is not allowed");
+      throw new ValidationError("Category tree cycle is not allowed", {
+        adminCode: "CATEGORY_CYCLE",
+      });
     }
     seen.add(current);
     depth += 1;
     if (depth > maxDepth) {
       throw new ValidationError("Category tree depth limit exceeded", {
+        adminCode: "CATEGORY_DEPTH_EXCEEDED",
         maxDepth,
       });
     }
     const node = byId.get(current);
-    if (!node) break;
+    if (!node) {
+      throw new ValidationError("Category parent does not exist", {
+        adminCode: "INVALID_PARENT",
+        parentId: current,
+      });
+    }
     current = node.parentId;
   }
+}
+
+export function assertCategoryParentUsable(
+  categories: readonly Category[],
+  parentId: CategoryId | null,
+): void {
+  if (!parentId) return;
+  const parent = categories.find((c) => c.id === parentId);
+  if (!parent) {
+    throw new ValidationError("Category parent does not exist", {
+      adminCode: "INVALID_PARENT",
+      parentId,
+    });
+  }
+  if (parent.status === "archived") {
+    throw new ValidationError("Archived category cannot be a parent", {
+      adminCode: "CATEGORY_PARENT_ARCHIVED",
+      parentId,
+    });
+  }
+}
+
+export function assertTaxonomyTreeSize(count: number): void {
+  if (count > CONTENT_LIMITS.maxTaxonomyTreeItems) {
+    throw new ValidationError("Taxonomy tree exceeds configured size limit", {
+      adminCode: "TAXONOMY_TREE_LIMIT_EXCEEDED",
+      max: CONTENT_LIMITS.maxTaxonomyTreeItems,
+      actual: count,
+    });
+  }
+}
+
+/** Active children block archive (no cascade, no active orphans under archived parent). */
+export function assertCategoryHasNoActiveChildren(
+  categories: readonly Category[],
+  categoryId: CategoryId,
+): void {
+  const activeChildren = categories.filter(
+    (c) => c.parentId === categoryId && c.status === "active",
+  );
+  if (activeChildren.length > 0) {
+    throw new ValidationError(
+      "Category has active children; move or archive them first",
+      {
+        adminCode: "CATEGORY_HAS_ACTIVE_CHILDREN",
+        childCount: activeChildren.length,
+      },
+    );
+  }
+}
+
+export function archiveCategory(
+  category: Category,
+  now: IsoDateTime,
+): Category {
+  if (category.status === "archived") {
+    throw new ValidationError("Category is already archived", {
+      adminCode: "INVALID_STATUS_TRANSITION",
+    });
+  }
+  return withCategoryUpdate(category, { status: "archived" }, now);
+}
+
+export function restoreCategory(
+  category: Category,
+  now: IsoDateTime,
+): Category {
+  if (category.status === "active") {
+    throw new ValidationError("Category is already active", {
+      adminCode: "INVALID_STATUS_TRANSITION",
+    });
+  }
+  return withCategoryUpdate(category, { status: "active" }, now);
+}
+
+export function archiveTag(tag: Tag, now: IsoDateTime): Tag {
+  if (tag.status === "archived") {
+    throw new ValidationError("Tag is already archived", {
+      adminCode: "INVALID_STATUS_TRANSITION",
+    });
+  }
+  return withTagUpdate(tag, { status: "archived" }, now);
+}
+
+export function restoreTag(tag: Tag, now: IsoDateTime): Tag {
+  if (tag.status === "active") {
+    throw new ValidationError("Tag is already active", {
+      adminCode: "INVALID_STATUS_TRANSITION",
+    });
+  }
+  return withTagUpdate(tag, { status: "active" }, now);
+}
+
+export function archiveAudience(
+  audience: Audience,
+  now: IsoDateTime,
+): Audience {
+  if (audience.status === "archived") {
+    throw new ValidationError("Audience is already archived", {
+      adminCode: "INVALID_STATUS_TRANSITION",
+    });
+  }
+  return withAudienceUpdate(audience, { status: "archived" }, now);
+}
+
+export function restoreAudience(
+  audience: Audience,
+  now: IsoDateTime,
+): Audience {
+  if (audience.status === "active") {
+    throw new ValidationError("Audience is already active", {
+      adminCode: "INVALID_STATUS_TRANSITION",
+    });
+  }
+  return withAudienceUpdate(audience, { status: "active" }, now);
+}
+
+/** Deterministic sibling order: sortOrder asc, title asc, id asc. */
+export function compareTaxonomyOrder(
+  a: { sortOrder: number; title: string; id: string },
+  b: { sortOrder: number; title: string; id: string },
+): number {
+  if (a.sortOrder !== b.sortOrder) return a.sortOrder - b.sortOrder;
+  const byTitle = a.title.localeCompare(b.title, "ru");
+  if (byTitle !== 0) return byTitle;
+  return a.id.localeCompare(b.id);
 }
 
 export function withCategoryUpdate(
@@ -195,7 +333,10 @@ export function assertUniqueTagTitle(
   for (const tag of existing) {
     if (excludeId && tag.id === excludeId) continue;
     if (normalizeTitleKey(tag.title) === key) {
-      throw new ValidationError("Duplicate tag title", { title });
+      throw new DuplicateTitleError("Duplicate tag title", {
+        adminCode: "DUPLICATE_TITLE",
+        title,
+      });
     }
   }
 }

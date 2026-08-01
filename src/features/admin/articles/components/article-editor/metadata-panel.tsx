@@ -73,14 +73,22 @@ function TaxonomyField({
         placeholder="Поиск…"
       />
       <Stack gap={1} style={{ marginTop: "0.375rem", maxHeight: "8rem", overflowY: "auto" }}>
-        {filtered.map((opt) => (
-          <Checkbox
-            key={opt.id}
-            label={opt.title}
-            checked={selected.includes(opt.id)}
-            onChange={() => toggle(opt.id)}
-          />
-        ))}
+        {filtered.map((opt) => {
+          const isArchived = opt.status === "archived";
+          const isSelected = selected.includes(opt.id);
+          // Archived values may remain linked and be removed, but not re-added.
+          if (isArchived && !isSelected) return null;
+          return (
+            <Checkbox
+              key={opt.id}
+              label={
+                isArchived ? `${opt.title} (архив)` : opt.title
+              }
+              checked={isSelected}
+              onChange={() => toggle(opt.id)}
+            />
+          );
+        })}
       </Stack>
     </fieldset>
   );

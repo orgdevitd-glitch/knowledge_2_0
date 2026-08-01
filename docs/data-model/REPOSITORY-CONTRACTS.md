@@ -8,7 +8,7 @@ Interfaces: `src/server/repositories/interfaces`.
 
 - `getById`, `getBySlug`, `existsBySlug`, `save`, `list`
 
-Taxonomy: `CategoryRepository`, `TagRepository`, `AudienceRepository` (+ `listAll` where needed for tree/title checks).
+Taxonomy: `CategoryRepository`, `TagRepository`, `AudienceRepository` (+ `listAll` where needed for tree/title checks; bounded by `maxTaxonomyTreeItems`). Usage analysis is an application service over content repositories, not a separate Firestore collection.
 
 ## Versions
 

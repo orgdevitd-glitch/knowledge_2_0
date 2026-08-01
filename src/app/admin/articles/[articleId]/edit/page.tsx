@@ -6,7 +6,7 @@ import { Alert, Link } from "@/components/ui";
 import { ArticleEditor } from "@/features/admin/articles/components/article-editor/article-editor";
 import {
   getAdminArticleDetail,
-  listAdminTaxonomyOptions,
+  listAdminTaxonomyOptionsForArticle,
 } from "@/features/admin/articles/queries";
 import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
@@ -25,16 +25,18 @@ export default async function AdminArticleEditPage({
 }) {
   const { articleId } = await params;
   const principal = await requireAdminPrincipal();
-  const [detail, taxonomy] = await Promise.all([
-    getAdminArticleDetail(principal, articleId),
-    listAdminTaxonomyOptions(),
-  ]);
+  const detail = await getAdminArticleDetail(principal, articleId);
 
   if (!detail) {
     notFound();
   }
 
   const { article, actions } = detail;
+  const taxonomy = await listAdminTaxonomyOptionsForArticle({
+    categoryIds: article.categoryIds,
+    tagIds: article.tagIds,
+    audienceIds: article.audienceIds,
+  });
 
   if (!actions.canEdit) {
     return (

@@ -27,6 +27,8 @@ Periodic sync checks: **Cloud Scheduler** → app/worker endpoints (**Phase 6B**
 
 Phase 6A: server-only Google Drive/Docs/Sheets **read** adapters, Shared Drive + root folder boundary, manual preview → confirm import into **drafts** only.
 
+Phase 7A: admin Taxonomy management (Category / Tag / Audience) with archive-not-delete, usage analysis, and public invalidation (ADR 0009).
+
 ## Logical layers
 
 ```text

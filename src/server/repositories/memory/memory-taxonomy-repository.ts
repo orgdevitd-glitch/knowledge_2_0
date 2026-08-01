@@ -1,4 +1,5 @@
 import type { Audience, Category, Tag } from "@/domain/content/taxonomy";
+import { assertTaxonomyTreeSize } from "@/domain/content/taxonomy";
 import type {
   AudienceRepository,
   CategoryRepository,
@@ -84,9 +85,15 @@ class MemoryTaxonomyBase<
   }
 
   listAll() {
-    return Promise.resolve(
-      [...this.byId.values()].map((i) => deepClone(i)),
-    );
+    const items = [...this.byId.values()]
+      .map((i) => deepClone(i))
+      .sort((a, b) => {
+        const byTitle = a.title.localeCompare(b.title, "ru");
+        if (byTitle !== 0) return byTitle;
+        return a.id.localeCompare(b.id);
+      });
+    assertTaxonomyTreeSize(items.length);
+    return Promise.resolve(items);
   }
 
   clear() {

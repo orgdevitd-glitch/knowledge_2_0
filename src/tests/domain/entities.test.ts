@@ -7,12 +7,19 @@ import {
 import { createPrompt } from "@/domain/content/prompt";
 import { createVideo } from "@/domain/content/video";
 import {
+  assertCategoryHasNoActiveChildren,
   assertNoCategoryCycle,
+  assertTaxonomyTreeSize,
+  archiveCategory,
   createCategory,
   createTag,
   assertUniqueTagTitle,
 } from "@/domain/content/taxonomy";
-import { ValidationError } from "@/domain/shared/errors";
+import { CONTENT_LIMITS } from "@/domain/shared/limits";
+import {
+  DuplicateTitleError,
+  ValidationError,
+} from "@/domain/shared/errors";
 import { TEST_NOW, headingBlock, paragraphBlock } from "../builders/content";
 
 describe("article domain", () => {
@@ -201,7 +208,43 @@ describe("taxonomy domain", () => {
       now: TEST_NOW,
     });
     expect(() => assertUniqueTagTitle([tag], " alpha ")).toThrow(
-      ValidationError,
+      DuplicateTitleError,
     );
+  });
+
+  it("blocks archive when category has active children", () => {
+    const root = createCategory({
+      id: "c1",
+      slug: "root",
+      title: "Root",
+      now: TEST_NOW,
+    });
+    const child = createCategory({
+      id: "c2",
+      slug: "child",
+      title: "Child",
+      parentId: "c1",
+      now: TEST_NOW,
+    });
+    try {
+      assertCategoryHasNoActiveChildren([root, child], root.id);
+      expect.unreachable();
+    } catch (error) {
+      expect(error).toBeInstanceOf(ValidationError);
+      expect(error).toMatchObject({
+        details: { adminCode: "CATEGORY_HAS_ACTIVE_CHILDREN" },
+      });
+    }
+
+    const archivedChild = archiveCategory(child, TEST_NOW);
+    expect(() =>
+      assertCategoryHasNoActiveChildren([root, archivedChild], root.id),
+    ).not.toThrow();
+  });
+
+  it("rejects taxonomy tree size above MAX limit", () => {
+    expect(() =>
+      assertTaxonomyTreeSize(CONTENT_LIMITS.maxTaxonomyTreeItems + 1),
+    ).toThrow(ValidationError);
   });
 });

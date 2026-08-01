@@ -11,8 +11,8 @@ Open corporate knowledge portal: instructions, prompt library, learning material
 
 ## Current phase
 
-**Phase 6A — Google Workspace connections and manual import** (complete for this pass).  
-Next: **Phase 6B — automatic sync** (only when explicitly assigned). Do not start Phase 6B unless asked.
+**Phase 7A — Taxonomy administration** (complete for this pass when accepted).
+Do not start Prompt Admin, Media (7B), or Google automatic sync (6B) unless explicitly assigned.
 
 ## Priorities
 
