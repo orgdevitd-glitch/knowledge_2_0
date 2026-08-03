@@ -6,7 +6,7 @@
 
 See historical behavior: published-only, deterministic weights, safe `highlightSegments`.
 
-## Phase 8B.1 (current foundation)
+## Phase 8B.1 (Search Foundation)
 
 Durable search uses:
 
@@ -17,6 +17,14 @@ Durable search uses:
 
 ADR: [0012-search-foundation.md](../decisions/0012-search-foundation.md)
 
+## Phase 8B.2 (Search Experience)
+
+Public UX on the foundation: URL state, filters/chips, suggestions, result cards.
+
+- `docs/search/SEARCH-EXPERIENCE.md`
+- `docs/search/SEARCH-SUGGESTIONS.md`
+- ADR: [0013-search-experience.md](../decisions/0013-search-experience.md)
+
 ## Out of scope here
 
-Suggestions, typo tolerance, morphology, analytics, semantic search, assistant (Phase 8B.2 / 8C).
+Typo tolerance, morphology, analytics, semantic search, assistant (Phase 8C).

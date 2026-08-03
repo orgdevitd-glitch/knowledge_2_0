@@ -6,10 +6,11 @@ Public users read **published** content without registration. Administrators sig
 
 ## Current status
 
-**Phase 8B.1 — Search Foundation** is the current search slice (after Phase 7B Media Library).
+**Phase 8B.2 — Search Experience** is the current public search UX slice (on top of Phase 8B.1 Search Foundation).
 
-- Durable SearchDocument v2 + private GCS/memory index + `GET /api/search`
-- Publish/hide/archive indexing for articles and prompts; admin `/admin/search` rebuild/reindex
+- Durable SearchDocument v2 + private GCS/memory index + `GET /api/search` (Foundation)
+- Public `/search` UX: URL state, taxonomy ID filters, chips, suggestions, result cards, cursor UX
+- `GET /api/search/suggestions` (title + active taxonomy); admin `/admin/search` rebuild/reindex
 - Live visibility gate; Phase 4 in-process helpers retained for ranking/highlight primitives
 - Media Library, Prompt admin, and article editor retained
 - Mutation APIs protected by session + CSRF

@@ -54,6 +54,7 @@
 | `PromptBlock` | Промт + copy callback | публичный блок в статье |
 | Prompt Admin forms | create/edit/list Phase 8A | feature components under `features/admin/prompts` — не отдельный UI-kit |
 | Media Admin forms | upload/list/edit Phase 7B | feature components under `features/admin/media` |
+| Search experience | form, chips, result card, suggestions combobox | `features/search/ui` (Phase 8B.2); runtime `maxLength` via server props; one filter control set; unique combobox IDs per instance |
 | `TableOfContents` | Список якорей | без scroll spy |
 | `RelatedContent` | Связанные ссылки | typed items |
 | `Progress` | Прогресс | `role="progressbar"` |

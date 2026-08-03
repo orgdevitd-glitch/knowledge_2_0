@@ -7,7 +7,6 @@ import {
   tokenizeSearchQuery,
 } from "@/domain/search/text-normalize";
 import { RepositoryError, ValidationError } from "@/domain/shared/errors";
-import { highlightSegments } from "@/features/public-content/search";
 import type { SearchQueryFilters } from "@/server/repositories/interfaces/search-index-port";
 import {
   encodeSearchCursor,
@@ -19,6 +18,8 @@ import {
   getPublicSearchVisibility,
   getSearchIndex,
 } from "@/server/composition/search-ports";
+import { pickHighlightedSnippet } from "@/features/search/application/snippet";
+import { isSafePublicSearchHref } from "@/domain/search/search-href";
 
 export type PublicSearchItemDto = {
   entityType: "article" | "prompt";
@@ -188,22 +189,15 @@ export async function executePublicSearch(input: {
         };
         const key = `${candidate.document.entityType}:${candidate.document.entityId}`;
         if (!visibleSet.has(key)) continue;
+        if (!isSafePublicSearchHref(candidate.document.href)) continue;
 
-        const snippetSource =
-          candidate.document.summary ||
-          candidate.document.bodyText ||
-          candidate.document.promptText ||
-          candidate.document.title;
-        const clipped = snippetSource.slice(
-          0,
-          SEARCH_LIMIT_DEFAULTS.snippetMaxLength,
-        );
+        const snippet = pickHighlightedSnippet(candidate.document, tokens);
         items.push({
           entityType: candidate.document.entityType,
           entityId: candidate.document.entityId,
           title: candidate.document.title,
           summary: candidate.document.summary,
-          snippet: highlightSegments(clipped, tokens),
+          snippet,
           href: candidate.document.href,
           categoryIds: candidate.document.categoryIds,
           tagIds: candidate.document.tagIds,
