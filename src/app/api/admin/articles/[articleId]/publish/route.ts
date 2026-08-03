@@ -1,9 +1,7 @@
 import { NotFoundError } from "@/domain/shared/errors";
 import { assertArticlePublishable } from "@/domain/content/article";
-import { publishArticle } from "@/features/content/application/article-use-cases";
 import { UserId } from "@/domain/shared/ids";
 import { getContentPorts } from "@/server/composition/content-ports";
-import { getPublicContentInvalidation } from "@/server/content/public-invalidation";
 import {
   adminPublishLimiter,
   okJson,
@@ -11,6 +9,7 @@ import {
 } from "@/server/http/admin-mutation";
 import { publishBodySchema } from "@/features/admin/articles/schemas/mutation-schemas";
 import { toAdminArticleDto } from "@/features/admin/articles/admin-article-dto";
+import { publishArticleAndIndex } from "@/features/search/application/content-search-orchestration";
 
 export const dynamic = "force-dynamic";
 
@@ -31,16 +30,13 @@ export async function POST(request: Request, { params }: Params) {
         throw new NotFoundError("Article not found", { articleId });
       }
       assertArticlePublishable(existing);
-      const result = await publishArticle(
+      const result = await publishArticleAndIndex(
         ports,
         { actorId: actorId as string, requestId },
         articleId,
         data.expectedRevision,
         data.changeSummary,
       );
-      getPublicContentInvalidation().invalidateArticle({
-        slug: result.article.slug as string,
-      });
       return okJson({
         article: toAdminArticleDto(result.article),
         versionId: result.versionId,

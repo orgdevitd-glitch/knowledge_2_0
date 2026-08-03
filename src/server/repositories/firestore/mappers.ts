@@ -226,3 +226,48 @@ export function fromMediaDoc(docId: string, raw: unknown): MediaAsset {
   }
   return media;
 }
+
+export function toSearchIndexFailureDoc(
+  failure: import("@/server/repositories/interfaces/search-index-failure-repository").SearchIndexFailure,
+): Record<string, unknown> {
+  return {
+    schemaVersion: FIRESTORE_SCHEMA_VERSION,
+    entityType: failure.entityType,
+    entityId: failure.entityId,
+    operation: failure.operation,
+    sourceRevision: failure.sourceRevision,
+    versionId: failure.versionId,
+    failureCode: failure.failureCode,
+    occurredAt: failure.occurredAt,
+    updatedAt: failure.updatedAt,
+    attemptCount: failure.attemptCount,
+    resolvedAt: failure.resolvedAt,
+    requestId: failure.requestId,
+  };
+}
+
+export function fromSearchIndexFailureDoc(
+  docId: string,
+  raw: unknown,
+): import("@/server/repositories/interfaces/search-index-failure-repository").SearchIndexFailure {
+  const data = assertObject(raw);
+  assertSchemaVersion(data);
+  return {
+    id: docId,
+    entityType: data.entityType as "article" | "prompt" | "index",
+    entityId: String(data.entityId),
+    operation: data.operation as
+      | "upsert"
+      | "remove"
+      | "rebuild"
+      | "reindex",
+    sourceRevision: Number(data.sourceRevision),
+    versionId: (data.versionId as string | null) ?? null,
+    failureCode: String(data.failureCode),
+    occurredAt: String(data.occurredAt),
+    updatedAt: String(data.updatedAt),
+    attemptCount: Number(data.attemptCount ?? 1),
+    resolvedAt: (data.resolvedAt as string | null) ?? null,
+    requestId: (data.requestId as string | null) ?? null,
+  };
+}

@@ -6,13 +6,12 @@ Public users read **published** content without registration. Administrators sig
 
 ## Current status
 
-**Phase 7B — Media Library** is the current admin CMS slice (after Phase 8A Prompt admin and Phase 7A Taxonomy).
+**Phase 8B.1 — Search Foundation** is the current search slice (after Phase 7B Media Library).
 
-- Upload images and documents (signed URL → sniff → ready)
-- Media admin list, metadata edit, archive/restore, retry failed uploads
-- Public delivery via `/media/[mediaId]` for ready assets
-- Article publish validates referenced media is ready
-- Prompt admin and article editor retained
+- Durable SearchDocument v2 + private GCS/memory index + `GET /api/search`
+- Publish/hide/archive indexing for articles and prompts; admin `/admin/search` rebuild/reindex
+- Live visibility gate; Phase 4 in-process helpers retained for ranking/highlight primitives
+- Media Library, Prompt admin, and article editor retained
 - Mutation APIs protected by session + CSRF
 
 **Google Workspace**
@@ -34,7 +33,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Admin (with Firebase configured): `/admin/sign-in` → `/admin/articles`, `/admin/prompts`, `/admin/media`, `/admin/taxonomy`.
+Admin (with Firebase configured): `/admin/sign-in` → `/admin/articles`, `/admin/prompts`, `/admin/media`, `/admin/search`, `/admin/taxonomy`.
 
 ## Verification
 

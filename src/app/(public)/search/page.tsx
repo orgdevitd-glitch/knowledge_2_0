@@ -3,13 +3,10 @@ import type { Metadata } from "next";
 import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { EmptyState, Badge } from "@/components/ui";
 import { Link } from "@/components/ui/Link";
-import { searchPublicContent } from "@/features/public-content/queries";
-import {
-  highlightSegments,
-  tokenize,
-} from "@/features/public-content/search";
+import { executePublicSearch } from "@/features/search/application/search-query-service";
 import { HeaderSearchForm } from "@/features/public-content/ui/header-search";
-import { PUBLIC_CONTENT_LIMITS } from "@/features/public-content/limits";
+import { getSearchLimits } from "@/config/search-env";
+import { SEARCH_LIMIT_DEFAULTS } from "@/domain/search/search-limits";
 
 export const metadata: Metadata = {
   title: "Поиск",
@@ -31,8 +28,21 @@ export default async function SearchPage({
   const params = await searchParams;
   const q = first(params.q) ?? "";
   const type = first(params.type);
-  const result = await searchPublicContent({ q, type });
-  const tokens = tokenize(result.normalizedQuery);
+  const cursor = first(params.cursor);
+  const limits = getSearchLimits();
+
+  let result;
+  let unavailable = false;
+  try {
+    result = await executePublicSearch({
+      q,
+      type,
+      cursor,
+    });
+  } catch {
+    unavailable = true;
+    result = null;
+  }
 
   return (
     <Container width="wide">
@@ -54,7 +64,11 @@ export default async function SearchPage({
           <HeaderSearchForm defaultQuery={q} />
         </div>
 
-        <form method="get" action="/search" style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+        <form
+          method="get"
+          action="/search"
+          style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}
+        >
           <input type="hidden" name="q" value={q} />
           <label>
             Тип{" "}
@@ -67,29 +81,42 @@ export default async function SearchPage({
           <button type="submit">Фильтровать</button>
         </form>
 
-        {result.tooLong ? (
+        {unavailable ? (
+          <EmptyState
+            title="Поиск временно недоступен"
+            description="Попробуйте позже. Каталог материалов по-прежнему доступен."
+            primaryAction={
+              <Link href="/materials" variant="standalone">
+                К каталогу
+              </Link>
+            }
+          />
+        ) : null}
+
+        {result?.tooLong ? (
           <EmptyState
             title="Запрос слишком длинный"
-            description={`Сократите запрос до ${PUBLIC_CONTENT_LIMITS.searchMaxQueryLength} символов.`}
+            description={`Сократите запрос до ${limits.queryMaxLength} символов.`}
           />
         ) : null}
 
-        {result.tooShort ? (
+        {result?.tooShort ? (
           <EmptyState
             title="Слишком короткий запрос"
-            description={`Введите не меньше ${PUBLIC_CONTENT_LIMITS.searchMinQueryLength} символов.`}
+            description={`Введите не меньше ${SEARCH_LIMIT_DEFAULTS.queryMinLength} символов.`}
           />
         ) : null}
 
-        {!result.tooShort &&
+        {result &&
+        !result.tooShort &&
         !result.tooLong &&
-        result.normalizedQuery.length >=
-          PUBLIC_CONTENT_LIMITS.searchMinQueryLength ? (
+        !result.emptyQuery ? (
           <>
             <p aria-live="polite" style={{ margin: 0 }}>
-              По запросу «{result.query}» найдено: {result.hits.length}
+              По запросу «{q}» найдено: {result.items.length}
+              {result.incompleteScan ? " (неполный скан видимости)" : ""}
             </p>
-            {result.hits.length === 0 ? (
+            {result.items.length === 0 ? (
               <EmptyState
                 title="Ничего не найдено"
                 description="Попробуйте другие слова, проверьте орфографию или откройте каталог материалов."
@@ -100,54 +127,84 @@ export default async function SearchPage({
                 }
               />
             ) : (
-              <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gap: "1rem" }}>
-                {result.hits.map((hit) => (
+              <ul
+                style={{
+                  listStyle: "none",
+                  margin: 0,
+                  padding: 0,
+                  display: "grid",
+                  gap: "1rem",
+                }}
+              >
+                {result.items.map((item) => (
                   <li
-                    key={hit.document.id}
+                    key={`${item.entityType}:${item.entityId}`}
                     style={{
                       padding: "1rem",
                       border: "1px solid var(--color-border)",
                       borderRadius: "var(--radius-control)",
                     }}
                   >
-                    <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.35rem" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "0.5rem",
+                        marginBottom: "0.35rem",
+                      }}
+                    >
                       <Badge>
-                        {hit.document.type === "article" ? "Статья" : "Промт"}
+                        {item.entityType === "article" ? "Статья" : "Промт"}
                       </Badge>
                     </div>
                     <h2 style={{ margin: "0 0 0.35rem", fontSize: "1.1rem" }}>
-                      <Link href={hit.document.url}>
-                        {highlightSegments(hit.document.title, tokens).map(
-                          (part, i) =>
-                            part.match ? (
-                              <mark
-                                key={i}
-                                style={{
-                                  background: "color-mix(in srgb, var(--color-accent) 25%, transparent)",
-                                  color: "inherit",
-                                }}
-                              >
-                                {part.text}
-                              </mark>
-                            ) : (
-                              <span key={i}>{part.text}</span>
-                            ),
-                        )}
+                      <Link href={item.href}>
+                        {item.title}
                       </Link>
                     </h2>
-                    {hit.document.summary ? (
+                    {item.summary ? (
                       <p style={{ margin: 0, color: "var(--color-text-muted)" }}>
-                        {hit.document.summary}
+                        {item.summary}
                       </p>
-                    ) : null}
+                    ) : (
+                      <p style={{ margin: 0, color: "var(--color-text-muted)" }}>
+                        {item.snippet.map((part, i) =>
+                          part.match ? (
+                            <mark
+                              key={i}
+                              style={{
+                                background:
+                                  "color-mix(in srgb, var(--color-accent) 25%, transparent)",
+                                color: "inherit",
+                              }}
+                            >
+                              {part.text}
+                            </mark>
+                          ) : (
+                            <span key={i}>{part.text}</span>
+                          ),
+                        )}
+                      </p>
+                    )}
                   </li>
                 ))}
               </ul>
             )}
+            {result.nextCursor ? (
+              <p>
+                <Link
+                  href={`/search?q=${encodeURIComponent(q)}${
+                    type ? `&type=${encodeURIComponent(type)}` : ""
+                  }&cursor=${encodeURIComponent(result.nextCursor)}`}
+                  variant="standalone"
+                >
+                  Следующая страница
+                </Link>
+              </p>
+            ) : null}
           </>
         ) : null}
 
-        {!q ? (
+        {!q && !unavailable ? (
           <EmptyState
             title="Введите запрос"
             description="Найдите статью или промт по названию и тексту."

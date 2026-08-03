@@ -6,27 +6,30 @@ Recommended layout for the Corporate Knowledge Portal. Directories were scaffold
 src/
   app/
     (public)/          # Public App Router segment
-    admin/             # Articles, prompts, media, taxonomy, Google integrations
-    api/               # health + /api/auth/* + /api/admin/* + /media/[mediaId]
+    admin/             # Articles, prompts, media, taxonomy, search, Google integrations
+    api/               # health + /api/auth/* + /api/admin/* + /api/search + /media/[mediaId]
   components/
     ui/                # Design-system primitives
     layout/            # Shell, nav, breadcrumbs
     content/           # ArticleHeader, Prose, Callout, PromptBlock, …
   features/
     content/application/   # Domain write use cases
-    public-content/        # Public queries, search, renderers, shell UI
-    admin/                 # Admin articles, prompts, media, taxonomy + auth UI
+    public-content/        # Public queries, Phase 4 search helpers, renderers, shell UI
+    search/application/    # Phase 8B.1 index lifecycle, query, rebuild
+    admin/                 # Admin articles, prompts, media, taxonomy, search + auth UI
     integrations/google/   # Docs/Sheets import application + admin UI
   domain/
     content/           # Article, blocks, prompt, video, taxonomy, versions
+    search/            # SearchDocument v2, limits, text normalize
     integrations/      # SourceConnection, ImportJob
     shared/            # IDs, VO, errors, status
   server/
     auth/              # CSRF, session, allowlist, guards
     firebase/          # Admin SDK singleton
-    composition/       # public-content + admin-persistence + integration-ports
+    composition/       # public-content + admin-persistence + integration-ports + search-ports
     content-sources/   # empty + demo + firestore public sources
     google-workspace/  # server-only Drive/Docs/Sheets adapters
+    search/            # GCS search index + cursor + visibility
     repositories/      # ports + memory (TEST_ONLY) + firestore adapters
   lib/
     firebase/client/   # Client-only Firebase Auth
@@ -63,8 +66,8 @@ firestore.rules
 firestore.indexes.json
 ```
 
-Admin routes include `/admin/sign-in`, `/admin`, `/admin/articles`, `/admin/prompts` (Phase 8A), `/admin/media` (Phase 7B), `/admin/integrations`, `/admin/taxonomy` (Phase 7A).
-Public routes include `/media/[mediaId]` for ready binary delivery (Phase 7B).
+Admin routes include `/admin/sign-in`, `/admin`, `/admin/articles`, `/admin/prompts` (Phase 8A), `/admin/media` (Phase 7B), `/admin/search` (Phase 8B.1), `/admin/integrations`, `/admin/taxonomy` (Phase 7A).
+Public routes include `/media/[mediaId]` for ready binary delivery (Phase 7B) and `/search` backed by Search Foundation.
 
 ## Placement rules
 

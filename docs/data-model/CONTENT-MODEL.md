@@ -127,6 +127,10 @@ Centralized in `src/domain/shared/limits.ts` (`CONTENT_LIMITS`): id/slug/title l
 
 Structured `RichTextDocument` (schemaVersion 1): nodes `text` | `line-break`; marks `bold` | `italic` | `code` | `link`. No raw HTML. `richTextToPlain` for search/preview.
 
+## Search documents (Phase 8B.1)
+
+SearchDocument v2 is built only from published Article/Prompt snapshots (not working drafts). Stable id `${entityType}:${entityId}`. See `docs/search/SEARCH-DOCUMENT.md`. Video is not indexed in production search.
+
 ## Blocks
 
 All 22 Phase 3 types have domain schemas. Details: [BLOCK-SCHEMAS.md](./BLOCK-SCHEMAS.md). Prompt blocks reference `PromptId` (not embedded dual source of truth).

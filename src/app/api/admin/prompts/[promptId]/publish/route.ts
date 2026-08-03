@@ -1,9 +1,7 @@
 import { assertPromptPublishable } from "@/domain/content/prompt";
 import { NotFoundError } from "@/domain/shared/errors";
-import { publishPrompt } from "@/features/content/application/prompt-use-cases";
 import { UserId } from "@/domain/shared/ids";
 import { getContentPorts } from "@/server/composition/content-ports";
-import { getPublicContentInvalidation } from "@/server/content/public-invalidation";
 import {
   adminPublishLimiter,
   okJson,
@@ -11,6 +9,7 @@ import {
 } from "@/server/http/admin-mutation";
 import { publishBodySchema } from "@/features/admin/prompts/schemas/mutation-schemas";
 import { toAdminPromptDto } from "@/features/admin/prompts/admin-prompt-dto";
+import { publishPromptAndIndex } from "@/features/search/application/content-search-orchestration";
 
 export const dynamic = "force-dynamic";
 
@@ -31,16 +30,13 @@ export async function POST(request: Request, { params }: Params) {
         throw new NotFoundError("Prompt not found", { promptId });
       }
       assertPromptPublishable(existing);
-      const result = await publishPrompt(
+      const result = await publishPromptAndIndex(
         ports,
         { actorId: actorId as string, requestId },
         promptId,
         data.expectedRevision,
         data.changeSummary,
       );
-      getPublicContentInvalidation().invalidatePrompt({
-        slug: result.prompt.slug as string,
-      });
       return okJson({
         prompt: toAdminPromptDto(result.prompt),
         versionId: result.versionId,

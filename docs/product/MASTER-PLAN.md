@@ -164,9 +164,11 @@ Concurrency: `updatedAt` + version number, optimistic check, conflict message â€
 
 ## 9. Search
 
-**v1:** Normalized search documents on publish; versioned JSON index (e.g. GCS); client search library and/or server filters; no drafts in index. No separate search platform until volume justifies it.
+**v1 / Phase 8B.1:** Normalized SearchDocument v2 from published snapshots; immutable GCS JSON generations + CAS manifest; server `GET /api/search` with filters, cursors, live visibility gate; no drafts/hidden/archived in results. No separate managed search platform until volume justifies it.
 
-**Later (only if needed):** semantic search, embeddings, Vertex AI, RAG assistant, video transcript search.
+**Phase 8B.2:** search experience polish (suggestions/filters UI) â€” not started.
+
+**Later (only if needed, Phase 8C+):** Knowledge Assistant, semantic search, embeddings, Vertex AI, RAG, video transcript search.
 
 ## 10. Design & motion
 
