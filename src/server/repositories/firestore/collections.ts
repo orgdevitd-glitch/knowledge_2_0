@@ -13,6 +13,7 @@ export const FIRESTORE_COLLECTIONS = {
   importJobs: "importJobs",
   idempotencyRecords: "idempotencyRecords",
   mediaAssets: "mediaAssets",
+  searchIndexFailures: "searchIndexFailures",
 } as const;
 
 export const FIRESTORE_SCHEMA_VERSION = 1 as const;

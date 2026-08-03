@@ -22,6 +22,24 @@ Taxonomy: `CategoryRepository`, `TagRepository`, `AudienceRepository` (+ `listAl
 
 See [MEDIA-MODEL.md](./MEDIA-MODEL.md) and ADR 0011.
 
+## Search (Phase 8B.1)
+
+`SearchIndexPort`:
+
+- `getCurrentGeneration`, `loadGeneration`, `applyMutation`, `replaceGeneration`, `search`, `getStatus`
+- Adapters: Memory (tests/local), GCS (production); memory forbidden in production
+
+`SearchIndexFailureRepository`:
+
+- `getById`, `save`, `listUnresolved`, `findOpenForEntity`
+- Firestore collection `searchIndexFailures` only — index document bodies live in private GCS generations
+
+`PublicSearchVisibilityPort`:
+
+- batch `filterVisible` (published + matching versionId)
+
+See `docs/search/` and ADR 0012.
+
 ## Versions
 
 `VersionRepository`:

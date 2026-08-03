@@ -87,6 +87,11 @@ export default async function AdminHomePage() {
           </Link>
         </p>
         <p>
+          <Link href="/admin/search" variant="standalone">
+            Поисковый индекс
+          </Link>
+        </p>
+        <p>
           <Link href="/admin/integrations" variant="standalone">
             Интеграции
           </Link>

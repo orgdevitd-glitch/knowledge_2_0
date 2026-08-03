@@ -29,4 +29,8 @@ Public route
 
 ## Media
 
-`MediaPresentationResolver` returns `unavailable` in Phase 4. Cloud Storage will plug in later without changing renderers.
+`MediaPresentationResolver` returns signed/same-origin delivery for ready assets (Phase 7B).
+
+## Search (Phase 8B.1)
+
+Public `/search` and `GET /api/search` use Search Foundation (`executePublicSearch`): durable index candidates + live visibility gate. Catalog loaders with silent caps must not be the production search scan path. Phase 4 `runBasicSearch` remains for helpers/tests. Index is not the final authority for visibility — always re-check published state and `versionId`.

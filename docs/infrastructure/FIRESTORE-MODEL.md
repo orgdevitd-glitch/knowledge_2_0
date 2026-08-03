@@ -24,6 +24,9 @@ allow read, write: if false;
 | `importJobs/{id}` | Phase 6A import preview / confirm jobs |
 | `idempotencyRecords/{hash}` | Phase 6A confirm idempotency |
 | `mediaAssets/{mediaId}` | Phase 7B media metadata |
+| `searchIndexFailures/{failureId}` | Phase 8B.1 server-only index failure records (not the search documents themselves) |
+
+Search documents live in private GCS generations (not a Firestore `searchDocuments` collection).
 
 ## Persistence documents
 

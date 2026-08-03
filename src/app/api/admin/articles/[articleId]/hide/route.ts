@@ -1,7 +1,5 @@
-import { hideArticle } from "@/features/content/application/article-use-cases";
 import { UserId } from "@/domain/shared/ids";
 import { getContentPorts } from "@/server/composition/content-ports";
-import { getPublicContentInvalidation } from "@/server/content/public-invalidation";
 import {
   adminPublishLimiter,
   okJson,
@@ -9,6 +7,7 @@ import {
 } from "@/server/http/admin-mutation";
 import { revisionOnlyBodySchema } from "@/features/admin/articles/schemas/mutation-schemas";
 import { toAdminArticleDto } from "@/features/admin/articles/admin-article-dto";
+import { hideArticleAndIndex } from "@/features/search/application/content-search-orchestration";
 
 export const dynamic = "force-dynamic";
 
@@ -24,15 +23,12 @@ export async function POST(request: Request, { params }: Params) {
     async handler({ principal, requestId, data }) {
       const ports = getContentPorts();
       const actorId = UserId.parse(principal.uid);
-      const article = await hideArticle(
+      const article = await hideArticleAndIndex(
         ports,
         { actorId: actorId as string, requestId },
         articleId,
         data.expectedRevision,
       );
-      getPublicContentInvalidation().invalidateArticle({
-        slug: article.slug as string,
-      });
       return okJson({ article: toAdminArticleDto(article) });
     },
   });

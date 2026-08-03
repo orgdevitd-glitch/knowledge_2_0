@@ -1,7 +1,5 @@
-import { archivePrompt } from "@/features/content/application/prompt-use-cases";
 import { UserId } from "@/domain/shared/ids";
 import { getContentPorts } from "@/server/composition/content-ports";
-import { getPublicContentInvalidation } from "@/server/content/public-invalidation";
 import {
   adminPublishLimiter,
   okJson,
@@ -9,6 +7,7 @@ import {
 } from "@/server/http/admin-mutation";
 import { revisionOnlyBodySchema } from "@/features/admin/prompts/schemas/mutation-schemas";
 import { toAdminPromptDto } from "@/features/admin/prompts/admin-prompt-dto";
+import { archivePromptAndIndex } from "@/features/search/application/content-search-orchestration";
 
 export const dynamic = "force-dynamic";
 
@@ -24,15 +23,12 @@ export async function POST(request: Request, { params }: Params) {
     async handler({ principal, requestId, data }) {
       const ports = getContentPorts();
       const actorId = UserId.parse(principal.uid);
-      const prompt = await archivePrompt(
+      const prompt = await archivePromptAndIndex(
         ports,
         { actorId: actorId as string, requestId },
         promptId,
         data.expectedRevision,
       );
-      getPublicContentInvalidation().invalidatePrompt({
-        slug: prompt.slug as string,
-      });
       return okJson({ prompt: toAdminPromptDto(prompt) });
     },
   });

@@ -170,11 +170,30 @@ Execute **one phase per assignment**. After each phase: typecheck → lint → t
 
 **Out of scope:** Video admin, Google write-back, automatic sync (6B), WYSIWYG, autosave, new UI libraries.
 
-## Phase 8 — Search and assistant
+## Phase 8B.1 — Search Foundation
 
-- Index, filters, suggestions
-- Answer sourcing for assistant
-- Semantic search **only if confirmed necessary**
+**Status:** implemented in this repository pass (see ADR 0012).
+
+- SearchDocument v2 from published snapshots only
+- `SearchIndexPort` + Memory (tests/local) + GCS (production) adapters
+- Immutable index generations + CAS manifest flip
+- Lifecycle after Article/Prompt publish / hide / archive
+- Tombstones + sourceRevision / version guards
+- `GET /api/search` with filters, cursor pagination, live visibility gate
+- Full rebuild + reindex one entity + failure records
+- Minimal admin `/admin/search`
+- Docs: SEARCH-DOCUMENT, SEARCH-INDEX, SEARCH-API, SEARCH-OPERATIONS
+
+**Out of scope:** suggestions, autocomplete, typo/morphology, query analytics, semantic search, embeddings, assistant, Video indexing, background retry workers, automatic orphan cleanup.
+
+## Phase 8B.2 — Search experience
+
+- Taxonomy filter UI, suggestions, empty-state polish (not in 8B.1)
+
+## Phase 8C — Knowledge Assistant
+
+- Answer sourcing on top of Search Foundation
+- Semantic search / embeddings **only if confirmed necessary**
 
 ## Phase 9 — Analytics and feedback
 

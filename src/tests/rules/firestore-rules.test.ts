@@ -67,6 +67,18 @@ describe.runIf(Boolean(emulatorHost))("Firestore security rules", () => {
     expect(true).toBe(true);
   });
 
+  it("denies client access to searchIndexFailures", async () => {
+    const auth = testEnv.authenticatedContext("user1").firestore();
+    await assertFails(
+      auth.collection("searchIndexFailures").doc("f1").get(),
+    );
+    await assertFails(
+      auth.collection("searchIndexFailures").doc("f1").set({
+        failureCode: "x",
+      }),
+    );
+  });
+
   it("admin SDK bypass is out of rules scope (smoke)", async () => {
     // Rules tests only cover client SDK. Admin SDK is used by server adapters.
     await assertSucceeds(

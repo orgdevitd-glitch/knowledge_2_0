@@ -42,3 +42,5 @@ export class InProcessRateLimiter implements RateLimiter {
 
 export const authCsrfLimiter = new InProcessRateLimiter(60, 60_000);
 export const authSessionLimiter = new InProcessRateLimiter(20, 60_000);
+/** Public search API — per IP bucket key supplied by caller. */
+export const publicSearchLimiter = new InProcessRateLimiter(60, 60_000);
