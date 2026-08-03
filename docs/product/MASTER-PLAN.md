@@ -166,7 +166,7 @@ Concurrency: `updatedAt` + version number, optimistic check, conflict message �
 
 **v1 / Phase 8B.1:** Normalized SearchDocument v2 from published snapshots; immutable GCS JSON generations + CAS manifest; server `GET /api/search` with filters, cursors, live visibility gate; no drafts/hidden/archived in results. No separate managed search platform until volume justifies it.
 
-**Phase 8B.2:** search experience polish (suggestions/filters UI) — not started.
+**Phase 8B.2:** Search Experience — public `/search` UX, canonical URL state (taxonomy IDs), filter chips, suggestions endpoint + combobox, honest empty/cursor states (ADR 0013).
 
 **Later (only if needed, Phase 8C+):** Knowledge Assistant, semantic search, embeddings, Vertex AI, RAG, video transcript search.
 

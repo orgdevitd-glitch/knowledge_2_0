@@ -25,6 +25,7 @@ This directory is the journal of architectural decisions for the Corporate Knowl
 | 0010 | Prompt administration | Accepted |
 | 0011 | Media Library (Phase 7B) | Accepted |
 | 0012 | Search Foundation (Phase 8B.1) | Accepted |
+| 0013 | Search Experience (Phase 8B.2) | Accepted |
 
 ## When an ADR is required
 

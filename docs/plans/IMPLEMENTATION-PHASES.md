@@ -188,7 +188,15 @@ Execute **one phase per assignment**. After each phase: typecheck → lint → t
 
 ## Phase 8B.2 — Search experience
 
-- Taxonomy filter UI, suggestions, empty-state polish (not in 8B.1)
+**Status:** implemented in this repository pass (see ADR 0013).
+
+- Canonical Search URL state (`q` / type / taxonomy IDs / cursor)
+- `/search` SSR UX: filters, chips, result cards, empty/short/long/no-results/cursor/unavailable states
+- `GET /api/search/suggestions` (title + active taxonomy); accessible combobox
+- Forward-only cursor pagination UX; honest page count copy
+- Docs: SEARCH-EXPERIENCE, SEARCH-SUGGESTIONS
+
+**Out of scope:** assistant, semantic search, embeddings, typo/morphology, analytics, query history, personalization, Video indexing, exact totals, backward cursor, page numbers.
 
 ## Phase 8C — Knowledge Assistant
 

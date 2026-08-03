@@ -39,4 +39,4 @@ Search does **not** fall back to `previousGenerationId`. Returns safe temporary 
 
 ## Failures
 
-`searchIndexFailures` Firestore collection (server-only). No automatic background retry worker. No automatic orphan cleanup.
+See also: [SEARCH-EXPERIENCE.md](./SEARCH-EXPERIENCE.md) (Phase 8B.2 UX; no schema change).

@@ -7,7 +7,7 @@ src/
   app/
     (public)/          # Public App Router segment
     admin/             # Articles, prompts, media, taxonomy, search, Google integrations
-    api/               # health + /api/auth/* + /api/admin/* + /api/search + /media/[mediaId]
+    api/               # health + /api/auth/* + /api/admin/* + /api/search(+ /suggestions) + /media/[mediaId]
   components/
     ui/                # Design-system primitives
     layout/            # Shell, nav, breadcrumbs
@@ -15,7 +15,9 @@ src/
   features/
     content/application/   # Domain write use cases
     public-content/        # Public queries, Phase 4 search helpers, renderers, shell UI
-    search/application/    # Phase 8B.1 index lifecycle, query, rebuild
+    search/application/    # Phase 8B.1 index lifecycle, query, rebuild; 8B.2 suggestions
+    search/url/            # Canonical public Search URL state (Phase 8B.2)
+    search/ui/             # Search experience components (Phase 8B.2)
     admin/                 # Admin articles, prompts, media, taxonomy, search + auth UI
     integrations/google/   # Docs/Sheets import application + admin UI
   domain/
@@ -67,7 +69,7 @@ firestore.indexes.json
 ```
 
 Admin routes include `/admin/sign-in`, `/admin`, `/admin/articles`, `/admin/prompts` (Phase 8A), `/admin/media` (Phase 7B), `/admin/search` (Phase 8B.1), `/admin/integrations`, `/admin/taxonomy` (Phase 7A).
-Public routes include `/media/[mediaId]` for ready binary delivery (Phase 7B) and `/search` backed by Search Foundation.
+Public routes include `/media/[mediaId]` for ready binary delivery (Phase 7B) and `/search` Search Experience (Phase 8B.2) on Search Foundation.
 
 ## Placement rules
 

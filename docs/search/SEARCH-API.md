@@ -1,4 +1,4 @@
-# Search API (Phase 8B.1)
+# Search API (Phase 8B.1 + suggestions 8B.2)
 
 `GET /api/search` — `export const dynamic = "force-dynamic"`.
 
@@ -19,3 +19,13 @@ Cursor is HMAC-integrity protected (`SEARCH_CURSOR_HMAC_SECRET`; required in pro
 Cursor position is the last **scanned** candidate after live visibility filtering (not merely the last returned item). Missing generation → `SEARCH_CURSOR_EXPIRED`.
 
 Live visibility is batch-oriented with centralized batch size / scan bounds; fail-closed on repository errors.
+
+## Suggestions (Phase 8B.2)
+
+`GET /api/search/suggestions` — separate endpoint, separate rate limiter, same private no-store policy.
+
+Title suggestions honor `type` / `category` / `tag` / `audience` before limit. Taxonomy suggestions are active-only and independent of content type.
+
+Safe DTO only (no generationId, versionId, scores, body/prompt text, storage metadata). Public hrefs must be internal Article/Prompt routes.
+
+See `docs/search/SEARCH-SUGGESTIONS.md`. Public UX: `docs/search/SEARCH-EXPERIENCE.md`.

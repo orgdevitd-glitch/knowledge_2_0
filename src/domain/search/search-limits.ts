@@ -29,6 +29,13 @@ export const SEARCH_LIMIT_DEFAULTS = {
   freshnessMaxBoost: 5,
   snippetMaxLength: 220,
   cursorHmacSecretMinLength: 32,
+  /** Phase 8B.2 Search Experience */
+  suggestionsMinPrefix: 2,
+  suggestionsMaxItems: 8,
+  suggestionsTitleScanLimit: 80,
+  suggestionsDebounceMs: 250,
+  suggestionsMaxTagsOnCard: 4,
+  guidedCategoryLinks: 6,
 } as const;
 
 /** Ranking weights — transparent and tested. */

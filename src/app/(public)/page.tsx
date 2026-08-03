@@ -6,6 +6,7 @@ import { getHomePageModel } from "@/features/public-content/queries";
 import { MaterialCard, formatDate } from "@/features/public-content/ui/catalog";
 import { HeaderSearchForm } from "@/features/public-content/ui/header-search";
 import { getPublicEnv } from "@/config/public-env";
+import { getPublicSearchUiLimits } from "@/server/composition/search-ui-limits";
 
 export const metadata: Metadata = {
   title: "Главная",
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   const model = await getHomePageModel();
   const appName = getPublicEnv().NEXT_PUBLIC_APP_NAME;
+  const { queryMaxLength } = getPublicSearchUiLimits();
 
   return (
     <Container width="wide">
@@ -30,7 +32,7 @@ export default async function HomePage() {
               требуется. Доступны только опубликованные материалы.
             </p>
             <div style={{ maxWidth: "28rem" }}>
-              <HeaderSearchForm />
+              <HeaderSearchForm variant="home" queryMaxLength={queryMaxLength} />
             </div>
             <p style={{ margin: 0 }}>
               <Link href="/materials" variant="standalone">

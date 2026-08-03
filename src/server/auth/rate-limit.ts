@@ -44,3 +44,8 @@ export const authCsrfLimiter = new InProcessRateLimiter(60, 60_000);
 export const authSessionLimiter = new InProcessRateLimiter(20, 60_000);
 /** Public search API — per IP bucket key supplied by caller. */
 export const publicSearchLimiter = new InProcessRateLimiter(60, 60_000);
+/** Suggestions are chatty — separate per-IP bucket. */
+export const publicSearchSuggestionsLimiter = new InProcessRateLimiter(
+  120,
+  60_000,
+);

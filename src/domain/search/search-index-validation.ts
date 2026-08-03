@@ -14,6 +14,7 @@ import {
   type SearchDocumentId,
   type SearchTombstone,
 } from "./search-document";
+import { isSafePublicSearchHref } from "./search-href";
 import { ValidationError } from "../shared/errors";
 
 /** Path-safe prefix: no `..`, `\`, control chars, leading slash, empty segments. */
@@ -296,6 +297,11 @@ export function parseAndValidateSearchGenerationPayload(input: {
           adminCode: "SEARCH_INDEX_CORRUPT",
         });
       }
+    }
+    if (!isSafePublicSearchHref(doc.href)) {
+      throw new ValidationError("Invalid search document href", {
+        adminCode: "SEARCH_INDEX_CORRUPT",
+      });
     }
     if (typeof doc.versionNumber !== "number") {
       throw new ValidationError("Missing versionNumber", {

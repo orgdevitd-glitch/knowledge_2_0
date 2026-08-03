@@ -75,18 +75,21 @@ Security decisions must never be enforced only on the client.
 
 ## Rate limiting
 
-Apply to auth endpoints, admin mutations, import triggers, public search (`GET /api/search`), and public write-like endpoints (e.g. feedback when introduced).
+Apply to auth endpoints, admin mutations, import triggers, public search (`GET /api/search`), public search suggestions (`GET /api/search/suggestions`), and public write-like endpoints (e.g. feedback when introduced).
 
-## Search index (Phase 8B.1)
+## Search index (Phase 8B.1) / Search Experience (Phase 8B.2)
 
 - Private GCS bucket; server-only index access; no client signed URLs for index objects
 - No index storage paths, generation paths, or provider errors in public/admin DTOs
-- Query length limits + rate limiting; safe highlight segments (no raw HTML)
+- Query length limits + rate limiting (separate limiter for suggestions); safe highlight segments (no raw HTML)
 - No query persistence / full query logging by default; operational events omit query text and content bodies
 - Memory index mode forbidden in production
 - `SEARCH_CURSOR_HMAC_SECRET` required in production (min length; shared across instances; never logged)
 - `SEARCH_INDEX_BUCKET` required for gcs (explicit; no silent media-bucket fallback)
 - Indexed Prompt text is untrusted reference material (never system/developer/tool instructions for a future Assistant)
+- Suggestions: active taxonomy only; title suggestions require live visibility and honor content filters before limit; taxonomy suggestions independent of content type; no draft/hidden/archived leakage
+- Public search hrefs limited to `/articles/{slug}` and `/prompts/{slug}` (fail-closed; no open redirect)
+- Runtime query max length from server config passed to client as props (no `NEXT_PUBLIC` search limits)
 
 ## Incident-oriented practices
 

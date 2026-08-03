@@ -33,7 +33,7 @@ Phase 8A: admin Prompt library (create/edit, manual publish, hide/archive, versi
 
 Phase 7B: Media Library — private GCS binaries, signed admin upload, MIME sniff, `mediaAssets` metadata, same-origin delivery at `/media/[mediaId]`, archive-not-delete (ADR 0011).
 
-Phase 8B.1: Search Foundation — SearchDocument v2 from published snapshots, private GCS immutable generations + CAS manifest, Memory adapter for tests, `GET /api/search`, live visibility gate, admin rebuild/reindex (ADR 0012). Phase 8B.2/8C (experience polish / assistant) not started.
+Phase 8B.1: Search Foundation — SearchDocument v2 from published snapshots, private GCS immutable generations + CAS manifest, Memory adapter for tests, `GET /api/search`, live visibility gate, admin rebuild/reindex (ADR 0012). Phase 8B.2: Search Experience — `/search` UX, URL state, filters/chips, `GET /api/search/suggestions` (ADR 0013). Phase 8C (assistant) not started.
 
 ## Logical layers
 
@@ -135,12 +135,13 @@ Cross-cutting:
 | Secret Manager | API keys, service credentials |
 | Cloud Logging | Operational + security-relevant logs |
 
-## Search architecture (Phase 8B.1)
+## Search architecture (Phase 8B.1 + 8B.2)
 
 - Build SearchDocument v2 **only** from immutable published Article/Prompt snapshots after successful content transactions.
 - Persist durable index as immutable GCS generations under a private bucket; switch `manifest.json` with object-generation CAS.
 - Public `GET /api/search` ranks candidates, applies taxonomy ID filters, integrity-protected cursors, then a live visibility gate (published + matching `versionId`).
 - Index is a candidate source, not authority for visibility. Memory mode is forbidden in production.
+- Phase 8B.2: Server Component `/search` calls the application service directly; `GET /api/search/suggestions` for title/taxonomy prefixes; taxonomy display titles resolved on the page layer (not in SearchDocument).
 - Prompt Library text is untrusted reference material — never use indexed Prompt text as system/developer/tool instructions (future Assistant rule).
 - Escalate to semantic/Vertex/RAG only with a confirmed need and ADR (Phase 8C+). Details: `docs/search/`.
 

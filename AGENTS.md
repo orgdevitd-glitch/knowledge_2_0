@@ -11,8 +11,8 @@ Open corporate knowledge portal: instructions, prompt library, learning material
 
 ## Current phase
 
-**Phase 8B.1 — Search Foundation** (durable SearchDocument v2 + GCS/memory index + public Search API).
-Do not start Phase 8B.2 search experience polish, Phase 8C Knowledge Assistant, Video admin, or Google automatic sync (6B) unless explicitly assigned.
+**Phase 8B.2 — Search Experience** (public `/search` UX on Search Foundation: URL state, filters, suggestions, result cards).
+Do not start Phase 8C Knowledge Assistant, Video admin, or Google automatic sync (6B) unless explicitly assigned.
 
 ## Priorities
 
@@ -30,10 +30,12 @@ Phase 5A: Admin SDK Firestore + deny-all rules; public may use empty/demo/firest
 |------|---------|
 | `src/app/(public)` | Public routes + shell |
 | `src/app/admin` | Admin shell (sign-in, home, articles, prompts, media, taxonomy, search) |
-| `src/app/api` | HTTP API (health + auth + public search) |
+| `src/app/api` | HTTP API (health + auth + public search + suggestions) |
 | `src/domain` | Domain model (content + shared + search) |
 | `src/features/content/application` | Content write use cases |
-| `src/features/search/application` | Search index lifecycle, query, rebuild |
+| `src/features/search/application` | Search index lifecycle, query, rebuild, suggestions |
+| `src/features/search/url` | Canonical public Search URL state |
+| `src/features/search/ui` | Search experience components (form, chips, cards, combobox) |
 | `src/features/public-content` | Public queries, Phase 4 search helpers, renderers, UI |
 | `src/features/admin` | Admin queries + sign-in/out UI |
 | `src/lib/firebase/client` | Client-only Firebase Auth |
@@ -80,7 +82,7 @@ License: `.agents/skills/LICENSE`.
 - Environment → `docs/config/ENVIRONMENT.md`
 - Phases → `docs/plans/IMPLEMENTATION-PHASES.md`
 - ADRs → `docs/decisions/`
-- Search foundation → `docs/search/` (BASIC-SEARCH, SEARCH-DOCUMENT, SEARCH-INDEX, SEARCH-API, SEARCH-OPERATIONS)
+- Search foundation → `docs/search/` (BASIC-SEARCH, SEARCH-DOCUMENT, SEARCH-INDEX, SEARCH-API, SEARCH-OPERATIONS, SEARCH-EXPERIENCE, SEARCH-SUGGESTIONS)
 
 ## Verification commands (Phase 5A+)
 
