@@ -29,3 +29,7 @@ Title suggestions honor `type` / `category` / `tag` / `audience` before limit. T
 Safe DTO only (no generationId, versionId, scores, body/prompt text, storage metadata). Public hrefs must be internal Article/Prompt routes.
 
 See `docs/search/SEARCH-SUGGESTIONS.md`. Public UX: `docs/search/SEARCH-EXPERIENCE.md`.
+
+## Relationship to Knowledge Assistant (Phase 8C.1)
+
+The assistant does **not** call `GET /api/search` over HTTP. It uses `SearchIndexPort.search` in-process for lexical candidates, then hydrates authoritative published snapshots. Public Search DTOs (snippets only) are not assistant evidence. See `docs/assistant/RETRIEVAL.md`.

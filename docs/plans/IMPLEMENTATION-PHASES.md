@@ -198,9 +198,29 @@ Execute **one phase per assignment**. After each phase: typecheck → lint → t
 
 **Out of scope:** assistant, semantic search, embeddings, typo/morphology, analytics, query history, personalization, Video indexing, exact totals, backward cursor, page numbers.
 
-## Phase 8C — Knowledge Assistant
+## Phase 8C.1 — Grounded Assistant Foundation
 
-- Answer sourcing on top of Search Foundation
+**Status:** implemented in this repository pass (see ADR 0014).
+
+- `AssistantRetrievalPort` / `AssistantProviderPort` / published snapshot hydration
+- Deterministic on-request chunking + evidence budgets
+- Structured grounded answer + citation validation + final visibility revalidation
+- `POST /api/assistant/ask` (single-turn, non-streaming, plain text)
+- `ASSISTANT_MODE=disabled|fake` (fake forbidden in production; no real LLM vendor)
+- Privacy-safe operational logging; in-process rate-limit port (not distributed)
+- Docs: `docs/assistant/*`
+
+**Out of scope:** public `/assistant` UI, streaming, conversations, Q&A persistence, embeddings/vector DB, tool calling, production LLM adapter, distributed rate limiting, admin assistant UI.
+
+## Phase 8C.2 — Assistant Experience
+
+- Public assistant UX (`/assistant` or equivalent)
+- Loading / refusal / source cards / a11y / retry
+- Does not choose production LLM vendor by itself
+
+## Phase 8C+ (optional, ADR-gated)
+
+- Production provider adapter
 - Semantic search / embeddings **only if confirmed necessary**
 
 ## Phase 9 — Analytics and feedback
