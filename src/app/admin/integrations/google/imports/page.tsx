@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert, EmptyState, Link } from "@/components/ui";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 import { isGoogleWorkspaceEnabled } from "@/server/google-workspace/composition";
 import { getIntegrationPorts } from "@/server/composition/integration-ports";
@@ -46,7 +45,6 @@ export default async function GoogleImportsPage() {
               { id: "imports", label: "Импорты" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
         <header>
           <h1 style={{ margin: "0 0 0.35rem" }}>Импорты</h1>

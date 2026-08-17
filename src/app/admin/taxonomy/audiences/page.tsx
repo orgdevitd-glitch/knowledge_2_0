@@ -4,7 +4,6 @@ import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert, EmptyState, Link } from "@/components/ui";
 import { AudienceList } from "@/features/admin/taxonomy/components/audience-list";
 import { listAudiencesAdmin } from "@/features/admin/taxonomy/queries";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 import { isContentPersistenceAvailable } from "@/server/composition/content-ports";
 
@@ -59,7 +58,6 @@ export default async function AdminAudiencesPage({
               { id: "audiences", label: "Аудитории" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header

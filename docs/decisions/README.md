@@ -28,6 +28,7 @@ This directory is the journal of architectural decisions for the Corporate Knowl
 | 0013 | Search Experience (Phase 8B.2) | Accepted |
 | 0014 | Grounded Assistant Foundation (Phase 8C.1) | Accepted |
 | 0015 | Assistant Experience (Phase 8C.2) | Accepted |
+| 0016 | Admin shell and editorial pickers (Phase 8E.1) | Accepted |
 
 ## When an ADR is required
 

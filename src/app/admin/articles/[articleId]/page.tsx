@@ -5,7 +5,6 @@ import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Badge, Link } from "@/components/ui";
 import { ArticleActionsMenu } from "@/features/admin/articles/components/article-actions-menu";
 import { getAdminArticleDetail } from "@/features/admin/articles/queries";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 
 export const metadata: Metadata = {
@@ -48,7 +47,6 @@ export default async function AdminArticleDetailPage({
               { id: "current", label: article.title },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header>
@@ -64,6 +62,7 @@ export default async function AdminArticleDetailPage({
 
         <ArticleActionsMenu
           articleId={article.id}
+          title={article.title}
           slug={article.slug}
           status={article.status}
           revision={article.revision}

@@ -5,7 +5,6 @@ import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert, Link } from "@/components/ui";
 import { TagEditPanel } from "@/features/admin/taxonomy/components/tag-edit-panel";
 import { getTagDetail, getTaxonomyUsageSummary } from "@/features/admin/taxonomy/queries";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 import { isContentPersistenceAvailable } from "@/server/composition/content-ports";
 
@@ -67,7 +66,6 @@ export default async function AdminEditTagPage({ params }: Params) {
               { id: "edit", label: tag.title },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header>

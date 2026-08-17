@@ -79,6 +79,10 @@ export const updatePromptBodySchema = csrfField.merge(revisionField).extend({
     .array(z.string().min(1).max(CONTENT_LIMITS.id.max))
     .max(CONTENT_LIMITS.taxonomyIds)
     .optional(),
+  relatedArticleIds: z
+    .array(z.string().min(1).max(CONTENT_LIMITS.id.max))
+    .max(CONTENT_LIMITS.relatedIds)
+    .optional(),
   reviewDueAt: z.string().min(1).max(40).nullable().optional(),
 });
 

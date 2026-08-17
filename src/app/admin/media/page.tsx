@@ -5,7 +5,6 @@ import { Alert, Badge, EmptyState, Link } from "@/components/ui";
 import { MediaActions } from "@/features/admin/media/components/media-actions";
 import { actionsForMediaStatus } from "@/features/admin/media/queries";
 import { listAdminMedia } from "@/features/admin/media/list-admin-media";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { MEDIA_KIND_VALUES, MEDIA_STATUS_VALUES } from "@/domain/shared/media-limits";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 
@@ -70,7 +69,6 @@ export default async function AdminMediaPage({
               { id: "media", label: "Медиатека" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header

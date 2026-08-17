@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert, Link } from "@/components/ui";
 import { MediaUploadForm } from "@/features/admin/media/components/upload-form";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 import { isContentPersistenceAvailable } from "@/server/composition/content-ports";
 
@@ -33,7 +32,6 @@ export default async function AdminNewMediaPage() {
               { id: "new", label: "Загрузка" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header>

@@ -6,7 +6,7 @@ import type { ContentBlock } from "@/domain/content/blocks";
 import { IconButton } from "@/components/ui";
 import { duplicateBlock } from "@/features/admin/articles/block-factory";
 
-import { ConfirmDialog } from "../confirm-dialog";
+import { ConfirmDialog } from "@/features/admin/ui/confirm-dialog";
 import {
   BLOCK_TYPE_LABELS,
   blockHasContent,

@@ -5,7 +5,6 @@ import { Alert, Badge, EmptyState, Link, NativeSelect } from "@/components/ui";
 import { PromptActionsMenu } from "@/features/admin/prompts/components/prompt-actions-menu";
 import { actionsForStatus, listAdminTaxonomyOptions } from "@/features/admin/prompts/queries";
 import { listAdminPrompts } from "@/features/admin/prompts/list-admin-prompts";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 
 export const metadata: Metadata = {
@@ -87,7 +86,6 @@ export default async function AdminPromptsPage({
               { id: "prompts", label: "Промты" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header
@@ -295,6 +293,7 @@ export default async function AdminPromptsPage({
                     <td>
                       <PromptActionsMenu
                         promptId={item.id}
+                        title={item.title}
                         slug={item.slug}
                         status={item.status}
                         revision={item.revision}

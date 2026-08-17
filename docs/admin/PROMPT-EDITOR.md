@@ -14,7 +14,7 @@ Administrators create and edit prompts as drafts, then publish via the domain pu
 
 ## Fields
 
-Working copy includes: `title`, `slug`, `summary`, `promptText`, `inputRequirements`, `outputRequirements`, `restrictions`, `usageExample`, `categoryIds`, `tagIds`, `audienceIds`, `reviewDueAt`.
+Working copy includes: `title`, `slug`, `summary`, `promptText`, `inputRequirements`, `outputRequirements`, `restrictions`, `usageExample`, `categoryIds`, `tagIds`, `audienceIds`, `relatedArticleIds`, `reviewDueAt`.
 
 Clients cannot set `ownerId`, `status`, `publishedVersion`, or `source` directly on create (server assigns `ownerId` from session; `source` defaults to portal).
 
@@ -30,6 +30,10 @@ Clients cannot set `ownerId`, `status`, `publishedVersion`, or `source` directly
 - Checkbox + SearchField over active taxonomy (reuses Article editor taxonomy query).
 - Linked archived values remain visible, labeled, and removable.
 - New attachment of archived taxonomy is rejected server-side (`TAXONOMY_ARCHIVED`).
+
+## Related articles
+
+Editors pick published articles by title (`relatedArticleIds`). Search is a bounded title filter, not full-text. Public still shows only published-visible related materials. IDs stay in the stored document. An absent `relatedArticleIds` on PATCH does not clear existing links; `[]` is an explicit clear.
 
 ## Unsaved changes
 

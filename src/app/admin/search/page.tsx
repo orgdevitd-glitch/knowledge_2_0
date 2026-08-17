@@ -51,7 +51,9 @@ export default async function AdminSearchPage() {
         <header>
           <h1 style={{ margin: "0 0 0.35rem" }}>Поисковый индекс</h1>
           <p style={{ margin: 0, color: "var(--color-text-muted)" }}>
-            Phase 8B.1 — foundation (без suggestions и ассистента).
+            Операционный экран индекса опубликованных материалов. Подсказки
+            поиска уже работают на публичной странице поиска. Generation ID
+            нужен для диагностики поколения индекса.
           </p>
         </header>
 

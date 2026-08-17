@@ -5,7 +5,6 @@ import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert, Link } from "@/components/ui";
 import { requireAdminPrompt } from "@/features/admin/prompts/queries";
 import { PromptCopyButton } from "@/features/public-content/rendering/prompt-copy-button";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 
 export const metadata: Metadata = {
@@ -52,7 +51,6 @@ export default async function AdminPromptPreviewPage({
               { id: "preview", label: "Предпросмотр" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <Alert tone="information" title="Режим предпросмотра">

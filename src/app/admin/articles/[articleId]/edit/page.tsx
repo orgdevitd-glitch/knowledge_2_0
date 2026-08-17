@@ -8,7 +8,6 @@ import {
   getAdminArticleDetail,
   listAdminTaxonomyOptionsForArticle,
 } from "@/features/admin/articles/queries";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 
 export const metadata: Metadata = {
@@ -83,7 +82,6 @@ export default async function AdminArticleEditPage({
               { id: "edit", label: "Редактор" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <ArticleEditor

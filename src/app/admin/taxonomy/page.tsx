@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert, Link } from "@/components/ui";
 import { getTaxonomyDashboard } from "@/features/admin/taxonomy/queries";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 import { isContentPersistenceAvailable } from "@/server/composition/content-ports";
 
@@ -46,7 +45,6 @@ export default async function AdminTaxonomyDashboardPage() {
               { id: "taxonomy", label: "Таксономия" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header>

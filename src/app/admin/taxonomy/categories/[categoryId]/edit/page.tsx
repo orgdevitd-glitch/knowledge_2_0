@@ -9,7 +9,6 @@ import {
   getTaxonomyUsageSummary,
   listParentCategoryOptions,
 } from "@/features/admin/taxonomy/queries";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 import { isContentPersistenceAvailable } from "@/server/composition/content-ports";
 
@@ -81,7 +80,6 @@ export default async function AdminEditCategoryPage({ params }: Params) {
               { id: "edit", label: category.title },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header>

@@ -12,6 +12,7 @@ import {
   adminMediaApi,
   uploadMediaBinary,
 } from "@/features/admin/media/client/admin-media-api";
+import { ConfirmDialog } from "@/features/admin/ui/confirm-dialog";
 
 export type MediaActionsProps = {
   mediaId: string;
@@ -30,6 +31,7 @@ export function MediaActions({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState<string | null>(null);
   const [pendingRetry, setPendingRetry] = useState(false);
+  const [archiveOpen, setArchiveOpen] = useState(false);
 
   const linkVariant = compact ? "subtle" : "standalone";
 
@@ -38,6 +40,7 @@ export function MediaActions({
     fn: () => Promise<unknown>,
     redirect?: string,
   ) => {
+    if (loading) return;
     setLoading(key);
     try {
       await fn();
@@ -110,11 +113,8 @@ export function MediaActions({
           size="small"
           variant="outline"
           loading={loading === "archive"}
-          onClick={() =>
-            runAction("archive", () =>
-              adminMediaApi.archive(mediaId, media.revision),
-            )
-          }
+          disabled={Boolean(loading)}
+          onClick={() => setArchiveOpen(true)}
         >
           В архив
         </Button>
@@ -154,6 +154,21 @@ export function MediaActions({
       <span style={{ color: "var(--color-text-muted)", fontSize: "0.8rem" }}>
         rev {media.revision}
       </span>
+      <ConfirmDialog
+        open={archiveOpen}
+        title={`Архивировать медиа «${media.title}»?`}
+        body="Файл перестанет быть доступен для новых материалов. Уже сохранённые ссылки останутся в черновиках, но публикация может потребовать замены."
+        confirmLabel="В архив"
+        tone="danger"
+        loading={loading === "archive"}
+        onCancel={() => (loading ? undefined : setArchiveOpen(false))}
+        onConfirm={() =>
+          runAction("archive", async () => {
+            await adminMediaApi.archive(mediaId, media.revision);
+            setArchiveOpen(false);
+          })
+        }
+      />
     </Inline>
   );
 }

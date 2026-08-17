@@ -11,7 +11,7 @@ Open corporate knowledge portal: instructions, prompt library, learning material
 
 ## Current phase
 
-**Phase 8C.2 — Assistant Experience** (`/assistant` public workspace on `POST /api/assistant/ask`; production remains disabled).
+**Phase 8E.1 — Content Operations Hardening** (admin shell, media/related pickers; see ADR 0016).
 Do not start a production LLM vendor adapter, Video admin, or Google automatic sync (6B) unless explicitly assigned.
 
 ## Priorities
@@ -29,7 +29,7 @@ Phase 5A: Admin SDK Firestore + deny-all rules; public may use empty/demo/firest
 | Path | Purpose |
 |------|---------|
 | `src/app/(public)` | Public routes + shell |
-| `src/app/admin` | Admin shell (sign-in, home, articles, prompts, media, taxonomy, search) |
+| `src/app/admin` | Admin shell (sign-in, home, articles, prompts, media, taxonomy, search, import) |
 | `src/app/api` | HTTP API (health + auth + public search + suggestions + assistant ask) |
 | `src/domain` | Domain model (content + shared + search + assistant) |
 | `src/features/content/application` | Content write use cases |

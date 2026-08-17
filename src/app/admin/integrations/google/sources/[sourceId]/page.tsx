@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 
 import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert, Badge, Link } from "@/components/ui";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { SourceActions } from "@/features/integrations/google/components/source-actions";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 import { isGoogleWorkspaceEnabled } from "@/server/google-workspace/composition";
@@ -53,7 +52,6 @@ export default async function GoogleSourceDetailPage({ params }: Params) {
               { id: "source", label: source.displayName },
             ]}
           />
-          <AdminSignOutButton />
         </div>
         <header>
           <h1 style={{ margin: "0 0 0.35rem" }}>{source.displayName}</h1>

@@ -7,7 +7,6 @@ import type { ContentBlock } from "@/domain/content/blocks";
 import { RestoreVersionButton } from "@/features/admin/articles/components/restore-version-button";
 import { getAdminVersionDetail } from "@/features/admin/articles/queries";
 import { ArticleBlocks } from "@/features/public-content/rendering/block-registry";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 
 export const metadata: Metadata = {
@@ -70,7 +69,6 @@ export default async function AdminVersionDetailPage({
               { id: "version", label: `v${version.versionNumber}` },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header>

@@ -6,7 +6,6 @@ import { Alert, Link } from "@/components/ui";
 import type { ContentBlock } from "@/domain/content/blocks";
 import { requireAdminArticle } from "@/features/admin/articles/queries";
 import { ArticleBlocks } from "@/features/public-content/rendering/block-registry";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 
 export const metadata: Metadata = {
@@ -55,7 +54,6 @@ export default async function AdminArticlePreviewPage({
               { id: "preview", label: "Предпросмотр" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <Alert tone="information" title="Режим предпросмотра">

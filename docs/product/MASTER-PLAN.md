@@ -152,7 +152,7 @@ UI must not call Firestore or Google APIs directly.
 | 9 | Analytics and feedback | Views, searches, feedback, admin report |
 | 10 | Content migration | Move textual materials, completeness check, acceptance |
 
-Do not auto-advance phases. See `docs/plans/IMPLEMENTATION-PHASES.md`.
+Do not auto-advance phases. See `docs/plans/IMPLEMENTATION-PHASES.md`. Phase 8E.1 (admin shell and editorial pickers) is a completion slice before content onboarding; it is not Phase 9 Analytics.
 
 ## 8. Admin page builder (target)
 

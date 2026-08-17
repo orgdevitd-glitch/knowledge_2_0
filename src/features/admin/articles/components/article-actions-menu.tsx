@@ -11,9 +11,11 @@ import {
   AdminMutationClientError,
   adminArticlesApi,
 } from "@/features/admin/articles/client/admin-articles-api";
+import { ConfirmDialog } from "@/features/admin/ui/confirm-dialog";
 
 export type ArticleActionsMenuProps = {
   articleId: string;
+  title: string;
   slug: string;
   status: ContentStatus;
   revision: number;
@@ -23,6 +25,7 @@ export type ArticleActionsMenuProps = {
 
 export function ArticleActionsMenu({
   articleId,
+  title,
   slug,
   status,
   revision,
@@ -31,15 +34,18 @@ export function ArticleActionsMenu({
 }: ArticleActionsMenuProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
+  const [pending, setPending] = useState<"hide" | "archive" | null>(null);
 
   const runAction = async (
     key: string,
     fn: () => Promise<unknown>,
     redirect?: string,
   ) => {
+    if (loading) return;
     setLoading(key);
     try {
       await fn();
+      setPending(null);
       if (redirect) {
         router.push(redirect);
       } else {
@@ -88,9 +94,8 @@ export function ArticleActionsMenu({
           size="small"
           variant="outline"
           loading={loading === "hide"}
-          onClick={() =>
-            runAction("hide", () => adminArticlesApi.hide(articleId, revision))
-          }
+          disabled={Boolean(loading)}
+          onClick={() => setPending("hide")}
         >
           Скрыть
         </Button>
@@ -100,11 +105,8 @@ export function ArticleActionsMenu({
           size="small"
           variant="outline"
           loading={loading === "archive"}
-          onClick={() =>
-            runAction("archive", () =>
-              adminArticlesApi.archive(articleId, revision),
-            )
-          }
+          disabled={Boolean(loading)}
+          onClick={() => setPending("archive")}
         >
           В архив
         </Button>
@@ -114,6 +116,7 @@ export function ArticleActionsMenu({
           size="small"
           variant="secondary"
           loading={loading === "restore"}
+          disabled={Boolean(loading)}
           onClick={() =>
             runAction("restore", () =>
               adminArticlesApi.restoreArchive(articleId, revision),
@@ -128,6 +131,33 @@ export function ArticleActionsMenu({
           rev {revision}
         </span>
       ) : null}
+
+      <ConfirmDialog
+        open={pending === "hide"}
+        title={`Скрыть статью «${title}»?`}
+        body="Статья перестанет быть видна в публичном портале. Это не удаление и не архив: её можно снова опубликовать."
+        confirmLabel="Скрыть"
+        tone="danger"
+        loading={loading === "hide"}
+        onCancel={() => (loading ? undefined : setPending(null))}
+        onConfirm={() =>
+          runAction("hide", () => adminArticlesApi.hide(articleId, revision))
+        }
+      />
+      <ConfirmDialog
+        open={pending === "archive"}
+        title={`Архивировать статью «${title}»?`}
+        body="Статья будет снята с публикации и уйдёт в архив. Восстановление вернёт её как черновик, не на сайт."
+        confirmLabel="В архив"
+        tone="danger"
+        loading={loading === "archive"}
+        onCancel={() => (loading ? undefined : setPending(null))}
+        onConfirm={() =>
+          runAction("archive", () =>
+            adminArticlesApi.archive(articleId, revision),
+          )
+        }
+      />
     </Inline>
   );
 }

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert, Badge, EmptyState, Link } from "@/components/ui";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { SourceActions } from "@/features/integrations/google/components/source-actions";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 import { isGoogleWorkspaceEnabled } from "@/server/google-workspace/composition";
@@ -51,7 +50,6 @@ export default async function GoogleSourcesPage() {
               { id: "sources", label: "Источники" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header

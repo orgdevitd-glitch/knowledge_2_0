@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert, Badge, Link } from "@/components/ui";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 import { getGoogleWorkspaceMode } from "@/config/env";
 import { isGoogleWorkspaceEnabled } from "@/server/google-workspace/composition";
@@ -34,7 +33,6 @@ export default async function AdminIntegrationsPage() {
               { id: "integrations", label: "Интеграции" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header>

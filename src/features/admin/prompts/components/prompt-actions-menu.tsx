@@ -11,9 +11,11 @@ import {
   AdminMutationClientError,
   adminPromptsApi,
 } from "@/features/admin/prompts/client/admin-prompts-api";
+import { ConfirmDialog } from "@/features/admin/ui/confirm-dialog";
 
 export type PromptActionsMenuProps = {
   promptId: string;
+  title: string;
   slug: string;
   status: ContentStatus;
   revision: number;
@@ -23,6 +25,7 @@ export type PromptActionsMenuProps = {
 
 export function PromptActionsMenu({
   promptId,
+  title,
   slug,
   status,
   revision,
@@ -31,15 +34,18 @@ export function PromptActionsMenu({
 }: PromptActionsMenuProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
+  const [pending, setPending] = useState<"hide" | "archive" | null>(null);
 
   const runAction = async (
     key: string,
     fn: () => Promise<unknown>,
     redirect?: string,
   ) => {
+    if (loading) return;
     setLoading(key);
     try {
       await fn();
+      setPending(null);
       if (redirect) {
         router.push(redirect);
       } else {
@@ -88,9 +94,8 @@ export function PromptActionsMenu({
           size="small"
           variant="outline"
           loading={loading === "hide"}
-          onClick={() =>
-            runAction("hide", () => adminPromptsApi.hide(promptId, revision))
-          }
+          disabled={Boolean(loading)}
+          onClick={() => setPending("hide")}
         >
           Скрыть
         </Button>
@@ -100,11 +105,8 @@ export function PromptActionsMenu({
           size="small"
           variant="outline"
           loading={loading === "archive"}
-          onClick={() =>
-            runAction("archive", () =>
-              adminPromptsApi.archive(promptId, revision),
-            )
-          }
+          disabled={Boolean(loading)}
+          onClick={() => setPending("archive")}
         >
           В архив
         </Button>
@@ -114,6 +116,7 @@ export function PromptActionsMenu({
           size="small"
           variant="secondary"
           loading={loading === "restore"}
+          disabled={Boolean(loading)}
           onClick={() =>
             runAction("restore", () =>
               adminPromptsApi.restoreArchive(promptId, revision),
@@ -128,6 +131,33 @@ export function PromptActionsMenu({
           rev {revision}
         </span>
       ) : null}
+
+      <ConfirmDialog
+        open={pending === "hide"}
+        title={`Скрыть промт «${title}»?`}
+        body="Промт перестанет быть виден в публичном портале. Это не удаление и не архив: его можно снова опубликовать."
+        confirmLabel="Скрыть"
+        tone="danger"
+        loading={loading === "hide"}
+        onCancel={() => (loading ? undefined : setPending(null))}
+        onConfirm={() =>
+          runAction("hide", () => adminPromptsApi.hide(promptId, revision))
+        }
+      />
+      <ConfirmDialog
+        open={pending === "archive"}
+        title={`Архивировать промт «${title}»?`}
+        body="Промт будет снят с публикации и уйдёт в архив. Восстановление вернёт его как черновик, не на сайт."
+        confirmLabel="В архив"
+        tone="danger"
+        loading={loading === "archive"}
+        onCancel={() => (loading ? undefined : setPending(null))}
+        onConfirm={() =>
+          runAction("archive", () =>
+            adminPromptsApi.archive(promptId, revision),
+          )
+        }
+      />
     </Inline>
   );
 }

@@ -21,7 +21,7 @@ src/
     assistant/application/ # Phase 8C.1 grounded ask orchestration
     assistant/client/      # Phase 8C.2 browser ask client + public DTO parser
     assistant/ui/          # Phase 8C.2 /assistant workspace
-    admin/                 # Admin articles, prompts, media, taxonomy, search + auth UI
+    admin/                 # Admin articles, prompts, media, taxonomy, search, auth UI, shell, pickers
     integrations/google/   # Docs/Sheets import application + admin UI
   domain/
     content/           # Article, blocks, prompt, video, taxonomy, versions
@@ -73,7 +73,7 @@ firestore.rules
 firestore.indexes.json
 ```
 
-Admin routes include `/admin/sign-in`, `/admin`, `/admin/articles`, `/admin/prompts` (Phase 8A), `/admin/media` (Phase 7B), `/admin/search` (Phase 8B.1), `/admin/integrations`, `/admin/taxonomy` (Phase 7A).
+Admin routes include `/admin/sign-in`, `/admin`, `/admin/articles`, `/admin/prompts` (Phase 8A), `/admin/media` (Phase 7B), `/admin/search` (Phase 8B.1), `/admin/integrations`, `/admin/taxonomy` (Phase 7A). Admin chrome (Phase 8E.1) is `features/admin/ui/admin-shell.tsx`; picker APIs are `/api/admin/pickers/media` and `/api/admin/pickers/materials`.
 Public routes include `/media/[mediaId]` for ready binary delivery (Phase 7B), `/search` Search Experience (Phase 8B.2), and `/assistant` Assistant Experience (Phase 8C.2; hidden from navigation while capability is disabled).
 
 ## Placement rules

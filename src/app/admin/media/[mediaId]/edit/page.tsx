@@ -5,7 +5,6 @@ import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert, Link } from "@/components/ui";
 import { MediaEditor } from "@/features/admin/media/components/media-editor";
 import { getAdminMediaDetail } from "@/features/admin/media/queries";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 
 export const metadata: Metadata = {
@@ -76,7 +75,6 @@ export default async function AdminMediaEditPage({
               { id: "edit", label: "Редактор" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <MediaEditor initialMedia={media} actions={actions} />
