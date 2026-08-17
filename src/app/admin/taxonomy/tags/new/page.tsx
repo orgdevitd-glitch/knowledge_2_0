@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert, Link } from "@/components/ui";
 import { TagForm } from "@/features/admin/taxonomy/components/tag-form";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 import { isContentPersistenceAvailable } from "@/server/composition/content-ports";
 
@@ -35,7 +34,6 @@ export default async function AdminNewTagPage() {
               { id: "new", label: "Новый тег" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header>

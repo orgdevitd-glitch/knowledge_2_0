@@ -3,7 +3,6 @@
 import type { ContentBlock } from "@/domain/content/blocks";
 import { richTextFromPlain, richTextToPlain } from "@/domain/shared/rich-text";
 import {
-  Alert,
   Button,
   Checkbox,
   Input,
@@ -11,6 +10,9 @@ import {
   NativeSelect,
   Textarea,
 } from "@/components/ui";
+import { MediaPickerField } from "@/features/admin/pickers/ui/media-picker-field";
+import { RelatedPickerField } from "@/features/admin/pickers/ui/related-picker-field";
+import { isUnsetReferenceId } from "@/features/admin/pickers/placeholder-id";
 
 import { newItemId } from "./block-utils";
 import styles from "./editor.module.css";
@@ -18,6 +20,7 @@ import styles from "./editor.module.css";
 export type BlockFormProps = {
   block: ContentBlock;
   onChange: (block: ContentBlock) => void;
+  currentArticleId?: string;
 };
 
 function TocAnchorsEditor({
@@ -182,30 +185,22 @@ function SharedSettings({
   );
 }
 
-function MediaPlaceholder({ type }: { type: string }) {
-  return (
-    <Alert tone="information" title="Медиатека">
-      Загрузите {type} в{" "}
-      <Link href="/admin/media" variant="standalone">
-        медиатеке
-      </Link>{" "}
-      и вставьте Media ID вручную.
-    </Alert>
-  );
-}
-
-function MediaIdHint() {
+function MediaLibraryHint() {
   return (
     <p style={{ margin: "0.25rem 0 0", fontSize: "0.8125rem" }}>
+      Нет нужного файла?{" "}
       <Link href="/admin/media" variant="subtle">
         Открыть медиатеку
-      </Link>{" "}
-      для загрузки и копирования ID.
+      </Link>
     </p>
   );
 }
 
-export function BlockForm({ block, onChange }: BlockFormProps) {
+export function BlockForm({
+  block,
+  onChange,
+  currentArticleId,
+}: BlockFormProps) {
   const renderData = () => {
     switch (block.type) {
       case "heading":
@@ -684,13 +679,16 @@ export function BlockForm({ block, onChange }: BlockFormProps) {
       case "prompt":
         return (
           <>
-            <Input
-              label="ID промта"
+            <RelatedPickerField
+              label="Промт"
+              entityType="prompt"
               value={block.data.promptId}
-              onChange={(e) =>
+              emptyValue="prompt_pending"
+              allowEmpty
+              onChange={(entityId) =>
                 onChange({
                   ...block,
-                  data: { ...block.data, promptId: e.target.value },
+                  data: { ...block.data, promptId: entityId || "prompt_pending" },
                 })
               }
             />
@@ -758,55 +756,61 @@ export function BlockForm({ block, onChange }: BlockFormProps) {
         return (
           <div className={styles.formSection}>
             <ul className={styles.itemList}>
-              {block.data.items.map((item, idx) => (
-                <li key={idx} className={styles.itemRow}>
-                  <NativeSelect
-                    label="Тип"
-                    value={item.entityType}
-                    onChange={(e) => {
-                      const items = block.data.items.map((r, i) =>
-                        i === idx
-                          ? {
-                              ...r,
-                              entityType: e.target.value as
-                                | "article"
-                                | "prompt"
-                                | "video",
+              {block.data.items.map((item, idx) => {
+                const selectedIds = block.data.items
+                  .map((r) => r.entityId)
+                  .filter((id, i) => i !== idx && !isUnsetReferenceId(id));
+                if (item.entityType === "video") {
+                  return (
+                    <li key={idx} className={styles.itemRow}>
+                      <p style={{ margin: 0 }}>
+                        Видео в связанных материалах пока недоступно.
+                      </p>
+                      <Button
+                        size="small"
+                        variant="ghost"
+                        type="button"
+                        disabled={block.data.items.length <= 1}
+                        onClick={() => {
+                          const items = block.data.items.filter((_, i) => i !== idx);
+                          onChange({ ...block, data: { ...block.data, items } });
+                        }}
+                      >
+                        Удалить
+                      </Button>
+                    </li>
+                  );
+                }
+                return (
+                  <li key={idx} className={styles.itemRow}>
+                    <RelatedPickerField
+                      label={`Связанный материал ${idx + 1}`}
+                      entityType={item.entityType}
+                      value={item.entityId}
+                      excludeId={currentArticleId}
+                      excludeIds={selectedIds}
+                      typeLocked={false}
+                      emptyValue="article_pending"
+                      onChange={(entityId, entityType) => {
+                        const items = block.data.items.map((r, i) =>
+                          i === idx ? { ...r, entityType, entityId } : r,
+                        );
+                        onChange({ ...block, data: { ...block.data, items } });
+                      }}
+                      onRemove={
+                        block.data.items.length > 1
+                          ? () => {
+                              const items = block.data.items.filter(
+                                (_, i) => i !== idx,
+                              );
+                              onChange({ ...block, data: { ...block.data, items } });
                             }
-                          : r,
-                      );
-                      onChange({ ...block, data: { ...block.data, items } });
-                    }}
-                    options={[
-                      { value: "article", label: "Статья" },
-                      { value: "prompt", label: "Промт" },
-                      { value: "video", label: "Видео" },
-                    ]}
-                  />
-                  <Input
-                    label="ID сущности"
-                    value={item.entityId}
-                    onChange={(e) => {
-                      const items = block.data.items.map((r, i) =>
-                        i === idx ? { ...r, entityId: e.target.value } : r,
-                      );
-                      onChange({ ...block, data: { ...block.data, items } });
-                    }}
-                  />
-                  <Button
-                    size="small"
-                    variant="ghost"
-                    type="button"
-                    disabled={block.data.items.length <= 1}
-                    onClick={() => {
-                      const items = block.data.items.filter((_, i) => i !== idx);
-                      onChange({ ...block, data: { ...block.data, items } });
-                    }}
-                  >
-                    Удалить
-                  </Button>
-                </li>
-              ))}
+                          : undefined
+                      }
+                    />
+                  </li>
+                );
+              })}
             </ul>
             <Button
               size="small"
@@ -819,7 +823,7 @@ export function BlockForm({ block, onChange }: BlockFormProps) {
                     ...block.data,
                     items: [
                       ...block.data.items,
-                      { entityType: "article" as const, entityId: "" },
+                      { entityType: "article" as const, entityId: "article_pending" },
                     ],
                   },
                 })
@@ -957,18 +961,20 @@ export function BlockForm({ block, onChange }: BlockFormProps) {
       case "image":
         return (
           <>
-            <MediaPlaceholder type="изображения" />
-            <Input
-              label="Media ID"
+            <MediaPickerField
+              label="Изображение"
               value={block.data.mediaId}
-              onChange={(e) =>
+              kind="image"
+              emptyValue="media_pending"
+              allowEmpty
+              onChange={(mediaId) =>
                 onChange({
                   ...block,
-                  data: { ...block.data, mediaId: e.target.value },
+                  data: { ...block.data, mediaId: mediaId || "media_pending" },
                 })
               }
             />
-            <MediaIdHint />
+            <MediaLibraryHint />
             <Input
               label="Alt-текст"
               value={block.data.alt}
@@ -1002,17 +1008,21 @@ export function BlockForm({ block, onChange }: BlockFormProps) {
       case "gallery":
         return (
           <div className={styles.formSection}>
-            <MediaPlaceholder type="галереи" />
-            <MediaIdHint />
+            <MediaLibraryHint />
             <ul className={styles.itemList}>
               {block.data.items.map((item, idx) => (
                 <li key={idx} className={styles.itemRow}>
-                  <Input
-                    label={`Media ID ${idx + 1}`}
+                  <MediaPickerField
+                    label={`Изображение ${idx + 1}`}
                     value={item.mediaId}
-                    onChange={(e) => {
+                    kind="image"
+                    emptyValue="media_pending"
+                    allowEmpty
+                    onChange={(mediaId) => {
                       const items = block.data.items.map((img, i) =>
-                        i === idx ? { ...img, mediaId: e.target.value } : img,
+                        i === idx
+                          ? { ...img, mediaId: mediaId || "media_pending" }
+                          : img,
                       );
                       onChange({ ...block, data: { ...block.data, items } });
                     }}
@@ -1063,7 +1073,7 @@ export function BlockForm({ block, onChange }: BlockFormProps) {
                     ...block.data,
                     items: [
                       ...block.data.items,
-                      { mediaId: "", alt: "", decorative: true },
+                      { mediaId: "media_pending", alt: "", decorative: true },
                     ],
                   },
                 })
@@ -1077,7 +1087,7 @@ export function BlockForm({ block, onChange }: BlockFormProps) {
       case "video":
         return (
           <>
-            <MediaPlaceholder type="видео" />
+            <MediaLibraryHint />
             <Input
               label="Заголовок"
               value={block.data.title}
@@ -1085,50 +1095,46 @@ export function BlockForm({ block, onChange }: BlockFormProps) {
                 onChange({ ...block, data: { ...block.data, title: e.target.value } })
               }
             />
-            <Input
-              label="Media ID"
-              value={block.data.mediaId ?? ""}
-              onChange={(e) =>
+            <MediaPickerField
+              label="Постер"
+              value={block.data.posterMediaId ?? ""}
+              kind="image"
+              allowEmpty
+              emptyValue=""
+              onChange={(mediaId) =>
                 onChange({
                   ...block,
                   data: {
                     ...block.data,
-                    mediaId: e.target.value || undefined,
+                    posterMediaId: mediaId || undefined,
                   },
                 })
               }
             />
-            <Input
-              label="Video ID"
-              value={block.data.videoId ?? ""}
-              onChange={(e) =>
-                onChange({
-                  ...block,
-                  data: {
-                    ...block.data,
-                    videoId: e.target.value || undefined,
-                  },
-                })
-              }
-            />
+            <p style={{ margin: 0, color: "var(--color-text-muted)", fontSize: "0.8125rem" }}>
+              Загрузка видеофайлов в медиатеке пока недоступна. Постер — обычное
+              изображение.
+            </p>
           </>
         );
 
       case "file":
         return (
           <>
-            <MediaPlaceholder type="файла" />
-            <Input
-              label="Media ID"
+            <MediaPickerField
+              label="Файл"
               value={block.data.mediaId}
-              onChange={(e) =>
+              kind="document"
+              emptyValue="media_pending"
+              allowEmpty
+              onChange={(mediaId) =>
                 onChange({
                   ...block,
-                  data: { ...block.data, mediaId: e.target.value },
+                  data: { ...block.data, mediaId: mediaId || "media_pending" },
                 })
               }
             />
-            <MediaIdHint />
+            <MediaLibraryHint />
             <Input
               label="Название"
               value={block.data.title}

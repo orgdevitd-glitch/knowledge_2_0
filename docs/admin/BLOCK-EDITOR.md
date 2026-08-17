@@ -16,8 +16,10 @@ Text, Structure, Information, Interactive, Related, Media.
 
 ## Media / prompt limits
 
-- Image, gallery, video, file: editable captions/titles; media library deferred — blocks typically fail publish until real MediaIds exist.
-- Prompt block: PromptId only; library not wired — unresolved references fail publish validation.
+- Image, gallery, file: choose ready assets from the Media Library picker (title → stored `mediaId`). Draft placeholders such as `media_pending` remain until a file is selected.
+- Video block: poster image via the same picker (`posterMediaId`). Video binary / Video admin is still out of scope.
+- Related-content block: pick published articles/prompts by title (stored `entityId`). Video related items are not added. Title search is a bounded admin scan (not full-text).
+- Prompt block: pick a published prompt by title (stored `promptId`).
 
 ## Rich text
 

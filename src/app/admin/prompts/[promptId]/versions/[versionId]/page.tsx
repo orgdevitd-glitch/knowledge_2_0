@@ -7,7 +7,6 @@ import type { PromptSnapshot } from "@/domain/content/prompt";
 import { RestorePromptVersionButton } from "@/features/admin/prompts/components/restore-prompt-version-button";
 import { getAdminPromptVersionDetail } from "@/features/admin/prompts/queries";
 import { PromptCopyButton } from "@/features/public-content/rendering/prompt-copy-button";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 
 export const metadata: Metadata = {
@@ -79,7 +78,6 @@ export default async function AdminPromptVersionDetailPage({
               { id: "version", label: `v${version.versionNumber}` },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header>

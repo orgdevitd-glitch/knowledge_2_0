@@ -4,7 +4,6 @@ import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert, Link } from "@/components/ui";
 import { CreateArticleForm } from "@/features/admin/articles/components/create-article-form";
 import { listAdminTaxonomyOptions } from "@/features/admin/articles/queries";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 import { isContentPersistenceAvailable } from "@/server/composition/content-ports";
 
@@ -35,7 +34,6 @@ export default async function AdminNewArticlePage() {
               { id: "new", label: "Новая статья" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header>

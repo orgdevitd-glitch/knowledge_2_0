@@ -17,6 +17,7 @@ export type AdminPromptDto = {
   categoryIds: string[];
   tagIds: string[];
   audienceIds: string[];
+  relatedArticleIds: string[];
   reviewDueAt: string | null;
   sourceType: string;
   sourceExternalId: string | null;
@@ -47,6 +48,7 @@ export function toAdminPromptDto(prompt: Prompt): AdminPromptDto {
     categoryIds: prompt.categoryIds.map(String),
     tagIds: prompt.tagIds.map(String),
     audienceIds: prompt.audienceIds.map(String),
+    relatedArticleIds: prompt.relatedArticleIds.map(String),
     reviewDueAt: (prompt.reviewDueAt as string | null) ?? null,
     sourceType: prompt.source.type,
     sourceExternalId: prompt.source.externalId ?? null,

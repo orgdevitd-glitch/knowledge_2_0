@@ -6,7 +6,6 @@ import { Alert, Badge, Link } from "@/components/ui";
 import { CopyTextButton } from "@/features/admin/media/components/copy-text-button";
 import { MediaActions } from "@/features/admin/media/components/media-actions";
 import { getAdminMediaDetail } from "@/features/admin/media/queries";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 
 export const metadata: Metadata = {
@@ -60,7 +59,6 @@ export default async function AdminMediaDetailPage({
               { id: "current", label: media.title },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header>

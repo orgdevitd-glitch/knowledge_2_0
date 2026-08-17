@@ -224,6 +224,20 @@ Execute **one phase per assignment**. After each phase: typecheck → lint → t
 
 **Out of scope:** production LLM adapter, streaming, conversations, Q&A persistence, embeddings, tools, admin assistant UI, analytics, production enablement.
 
+## Phase 8E.1 — Content Operations Hardening
+
+**Status:** implemented / pending acceptance (see ADR 0016).
+
+- Admin shell: desktop/mobile nav (Главная, Статьи, Промты, Медиа, Таксономия, Импорт, Поиск) + Sign out
+- Admin home describes the current CMS (no Phase 5A / “editor later” copy)
+- Search admin copy updated; Generation ID kept as operational diagnostics
+- Media picker and related-material picker (title → stored ID); admin-only GET `/api/admin/pickers/*`
+- Picker responses are allowlisted DTOs with `Cache-Control: private, no-store`; title search is a bounded admin scan (not full-text)
+- Archive/hide confirmation via shared `ConfirmDialog`
+- Article related-content block remains the article related editor; prompt `relatedArticleIds` is the prompt related editor
+
+**Out of scope:** public tags / search nav / mobile article TOC / preview=public renderer (8E.2); Gemini; deployment; analytics; Video admin; 6B; embeddings.
+
 ## Phase 8C+ (optional, ADR-gated)
 
 - Production provider adapter

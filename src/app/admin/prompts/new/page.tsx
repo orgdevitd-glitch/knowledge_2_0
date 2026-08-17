@@ -4,7 +4,6 @@ import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert, Link } from "@/components/ui";
 import { CreatePromptForm } from "@/features/admin/prompts/components/create-prompt-form";
 import { listAdminTaxonomyOptions } from "@/features/admin/prompts/queries";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 import { isContentPersistenceAvailable } from "@/server/composition/content-ports";
 
@@ -35,7 +34,6 @@ export default async function AdminNewPromptPage() {
               { id: "new", label: "Новый промт" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header>

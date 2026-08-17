@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert, Link } from "@/components/ui";
 import { AudienceForm } from "@/features/admin/taxonomy/components/audience-form";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 import { isContentPersistenceAvailable } from "@/server/composition/content-ports";
 
@@ -39,7 +38,6 @@ export default async function AdminNewAudiencePage() {
               { id: "new", label: "Новая аудитория" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header>

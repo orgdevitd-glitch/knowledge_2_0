@@ -33,7 +33,7 @@ Phase 8A: admin Prompt library (create/edit, manual publish, hide/archive, versi
 
 Phase 7B: Media Library — private GCS binaries, signed admin upload, MIME sniff, `mediaAssets` metadata, same-origin delivery at `/media/[mediaId]`, archive-not-delete (ADR 0011).
 
-Phase 8B.1: Search Foundation — SearchDocument v2 from published snapshots, private GCS immutable generations + CAS manifest, Memory adapter for tests, `GET /api/search`, live visibility gate, admin rebuild/reindex (ADR 0012). Phase 8B.2: Search Experience — `/search` UX, URL state, filters/chips, `GET /api/search/suggestions` (ADR 0013). Phase 8C.1: Grounded Assistant Foundation — `POST /api/assistant/ask`, retrieval/provider ports, disabled/fake adapters (ADR 0014). Phase 8C.2: Assistant Experience — public `/assistant` workspace (ADR 0015). Production LLM adapter not started.
+Phase 8B.1: Search Foundation — SearchDocument v2 from published snapshots, private GCS immutable generations + CAS manifest, Memory adapter for tests, `GET /api/search`, live visibility gate, admin rebuild/reindex (ADR 0012). Phase 8B.2: Search Experience — `/search` UX, URL state, filters/chips, `GET /api/search/suggestions` (ADR 0013). Phase 8C.1: Grounded Assistant Foundation — `POST /api/assistant/ask`, retrieval/provider ports, disabled/fake adapters (ADR 0014). Phase 8C.2: Assistant Experience — public `/assistant` workspace (ADR 0015). Phase 8E.1: admin shell + editorial media/related pickers (ADR 0016). Production LLM adapter not started.
 
 ## Logical layers
 

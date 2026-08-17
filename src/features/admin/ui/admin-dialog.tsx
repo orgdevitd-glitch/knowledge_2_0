@@ -1,45 +1,54 @@
 "use client";
 
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 
-import { Button } from "@/components/ui";
+import { cn } from "@/lib/cn";
 
-import styles from "./confirm-dialog.module.css";
+import styles from "./admin-dialog.module.css";
 
-export type ConfirmDialogProps = {
+export type AdminDialogProps = {
   open: boolean;
   title: string;
-  body: string;
-  confirmLabel?: string;
-  cancelLabel?: string;
-  tone?: "default" | "danger";
-  onConfirm: () => void;
-  onCancel: () => void;
+  description?: string;
+  role?: "dialog" | "alertdialog";
+  wide?: boolean;
+  onClose: () => void;
+  children?: ReactNode;
+  footer?: ReactNode;
 };
 
-export function ConfirmDialog({
+export function AdminDialog({
   open,
   title,
-  body,
-  confirmLabel = "Подтвердить",
-  cancelLabel = "Отмена",
-  tone = "default",
-  onConfirm,
-  onCancel,
-}: ConfirmDialogProps) {
+  description,
+  role = "dialog",
+  wide = false,
+  onClose,
+  children,
+  footer,
+}: AdminDialogProps) {
   const titleId = useId();
   const descId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (open) {
+      triggerRef.current = document.activeElement as HTMLElement | null;
+      dialogRef.current?.focus();
+    } else if (triggerRef.current) {
+      triggerRef.current.focus();
+      triggerRef.current = null;
+    }
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
 
-    dialogRef.current?.focus();
-
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
-        onCancel();
+        onClose();
         return;
       }
       if (e.key === "Tab" && dialogRef.current) {
@@ -67,39 +76,32 @@ export function ConfirmDialog({
       document.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = prevOverflow;
     };
-  }, [open, onCancel]);
+  }, [open, onClose]);
 
   if (!open) return null;
 
   return (
-    <div className={styles.overlay} role="presentation" onClick={onCancel}>
+    <div className={styles.overlay} role="presentation" onClick={onClose}>
       <div
         ref={dialogRef}
-        className={styles.dialog}
-        role="alertdialog"
+        className={cn(styles.dialog, wide && styles.wide)}
+        role={role}
         aria-modal="true"
         aria-labelledby={titleId}
-        aria-describedby={descId}
+        aria-describedby={description ? descId : undefined}
         tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
       >
         <h2 id={titleId} className={styles.title}>
           {title}
         </h2>
-        <p id={descId} className={styles.body}>
-          {body}
-        </p>
-        <div className={styles.actions}>
-          <Button variant="outline" onClick={onCancel}>
-            {cancelLabel}
-          </Button>
-          <Button
-            variant={tone === "danger" ? "danger" : "primary"}
-            onClick={onConfirm}
-          >
-            {confirmLabel}
-          </Button>
-        </div>
+        {description ? (
+          <p id={descId} className={styles.body}>
+            {description}
+          </p>
+        ) : null}
+        {children}
+        {footer ? <div className={styles.actions}>{footer}</div> : null}
       </div>
     </div>
   );

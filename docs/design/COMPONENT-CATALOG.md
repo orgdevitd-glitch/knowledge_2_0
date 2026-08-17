@@ -54,6 +54,9 @@
 | `PromptBlock` | Промт + copy callback | публичный блок в статье |
 | Prompt Admin forms | create/edit/list Phase 8A | feature components under `features/admin/prompts` — не отдельный UI-kit |
 | Media Admin forms | upload/list/edit Phase 7B | feature components under `features/admin/media` |
+| Admin shell | header + sidebar + mobile panel | `features/admin/ui/admin-shell.tsx` (Phase 8E.1); Sign out in chrome |
+| Admin dialog / confirm | modal, Escape, focus restore | `features/admin/ui/admin-dialog.tsx`, `confirm-dialog.tsx` |
+| Media / related pickers | title → stored ID | `features/admin/pickers`; bounded GET `/api/admin/pickers/*` |
 | Search experience | form, chips, result card, suggestions combobox | `features/search/ui` (Phase 8B.2); runtime `maxLength` via server props; one filter control set; unique combobox IDs per instance |
 | Assistant experience | `/assistant` Q&A workspace | `features/assistant/ui` (Phase 8C.2); capability-gated; not a chat; citations as chips + vertical sources |
 | `TableOfContents` | Список якорей | без scroll spy |

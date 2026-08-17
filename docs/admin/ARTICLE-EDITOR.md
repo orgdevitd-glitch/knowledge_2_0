@@ -22,6 +22,7 @@ Administrators create and edit articles as drafts, then publish via the domain p
 - Autosave is not used in Phase 5B.
 - `expectedRevision` on every mutation; `CONFLICT` never force-overwrites.
 - Dirty leave guard: `beforeunload` + in-app confirm.
+- Media and related references: pickers write existing IDs; editors do not paste Media/entity IDs.
 
 ## Actor IDs
 

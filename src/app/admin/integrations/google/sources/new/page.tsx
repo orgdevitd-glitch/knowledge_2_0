@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert } from "@/components/ui";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { NewSourceForm } from "@/features/integrations/google/components/new-source-form";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 import { isGoogleWorkspaceEnabled } from "@/server/google-workspace/composition";
@@ -44,7 +43,6 @@ export default async function NewGoogleSourcePage() {
               { id: "new", label: "Новый" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
         <header>
           <h1 style={{ margin: "0 0 0.35rem" }}>Новый источник</h1>

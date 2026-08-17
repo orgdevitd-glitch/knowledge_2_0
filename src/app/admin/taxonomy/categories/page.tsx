@@ -4,7 +4,6 @@ import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert, EmptyState, Link } from "@/components/ui";
 import { CategoryTree } from "@/features/admin/taxonomy/components/category-tree";
 import { listCategoryTree } from "@/features/admin/taxonomy/queries";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 import { isContentPersistenceAvailable } from "@/server/composition/content-ports";
 
@@ -59,7 +58,6 @@ export default async function AdminCategoriesPage({
               { id: "categories", label: "Категории" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header

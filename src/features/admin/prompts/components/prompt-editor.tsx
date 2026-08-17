@@ -21,6 +21,9 @@ import {
   adminPromptsApi,
 } from "@/features/admin/prompts/client/admin-prompts-api";
 import { ConflictAlert } from "@/features/admin/articles/components/conflict-alert";
+import { ConfirmDialog } from "@/features/admin/ui/confirm-dialog";
+import { RelatedPickerField } from "@/features/admin/pickers/ui/related-picker-field";
+import { isUnsetReferenceId } from "@/features/admin/pickers/placeholder-id";
 
 import { PromptPublishDialog } from "./prompt-publish-dialog";
 
@@ -36,6 +39,7 @@ export type EditorPromptFields = {
   categoryIds: string[];
   tagIds: string[];
   audienceIds: string[];
+  relatedArticleIds: string[];
   reviewDueAt: string | null;
 };
 
@@ -81,6 +85,7 @@ export function fieldsFromPrompt(prompt: AdminPromptDto): EditorPromptFields {
     categoryIds: [...prompt.categoryIds],
     tagIds: [...prompt.tagIds],
     audienceIds: [...prompt.audienceIds],
+    relatedArticleIds: [...prompt.relatedArticleIds],
     reviewDueAt: prompt.reviewDueAt,
   };
 }
@@ -98,7 +103,8 @@ function fieldsEqual(a: EditorPromptFields, b: EditorPromptFields): boolean {
     a.reviewDueAt === b.reviewDueAt &&
     a.categoryIds.join() === b.categoryIds.join() &&
     a.tagIds.join() === b.tagIds.join() &&
-    a.audienceIds.join() === b.audienceIds.join()
+    a.audienceIds.join() === b.audienceIds.join() &&
+    a.relatedArticleIds.join() === b.relatedArticleIds.join()
   );
 }
 
@@ -230,6 +236,9 @@ export function PromptEditor({
   const [publishOpen, setPublishOpen] = useState(false);
   const [publishLoading, setPublishLoading] = useState(false);
   const [statusLoading, setStatusLoading] = useState<string | null>(null);
+  const [pendingStatus, setPendingStatus] = useState<"hide" | "archive" | null>(
+    null,
+  );
 
   const isDirty = !fieldsEqual(state.fields, state.savedFields);
 
@@ -293,6 +302,9 @@ export function PromptEditor({
     categoryIds: state.fields.categoryIds,
     tagIds: state.fields.tagIds,
     audienceIds: state.fields.audienceIds,
+    relatedArticleIds: state.fields.relatedArticleIds.filter(
+      (id) => !isUnsetReferenceId(id),
+    ),
     reviewDueAt: state.fields.reviewDueAt,
   });
 
@@ -351,9 +363,11 @@ export function PromptEditor({
     key: string,
     fn: () => Promise<{ prompt: AdminPromptDto }>,
   ) => {
+    if (statusLoading) return;
     setStatusLoading(key);
     try {
       const result = await fn();
+      setPendingStatus(null);
       dispatch({ type: "LOAD_PROMPT", prompt: result.prompt });
       router.refresh();
     } catch (err) {
@@ -414,11 +428,8 @@ export function PromptEditor({
             size="small"
             variant="outline"
             loading={statusLoading === "hide"}
-            onClick={() =>
-              runStatusAction("hide", () =>
-                adminPromptsApi.hide(initialPrompt.id, state.revision),
-              )
-            }
+            disabled={Boolean(statusLoading)}
+            onClick={() => setPendingStatus("hide")}
           >
             Скрыть
           </Button>
@@ -428,11 +439,8 @@ export function PromptEditor({
             size="small"
             variant="outline"
             loading={statusLoading === "archive"}
-            onClick={() =>
-              runStatusAction("archive", () =>
-                adminPromptsApi.archive(initialPrompt.id, state.revision),
-              )
-            }
+            disabled={Boolean(statusLoading)}
+            onClick={() => setPendingStatus("archive")}
           >
             В архив
           </Button>
@@ -520,6 +528,56 @@ export function PromptEditor({
           onChange={(audienceIds) => patch({ audienceIds })}
         />
 
+        <fieldset style={{ border: "none", margin: 0, padding: 0 }}>
+          <legend style={{ fontWeight: 600, marginBottom: "0.5rem" }}>
+            Связанные статьи
+          </legend>
+          {state.fields.relatedArticleIds.length === 0 ? (
+            <p style={{ margin: "0 0 0.5rem", color: "var(--color-text-muted)" }}>
+              Пока не выбрано. На сайте будут показаны только опубликованные
+              статьи.
+            </p>
+          ) : (
+            <Stack gap={2}>
+              {state.fields.relatedArticleIds.map((id, idx) => (
+                <RelatedPickerField
+                  key={`${id}-${idx}`}
+                  label={`Статья ${idx + 1}`}
+                  entityType="article"
+                  value={id}
+                  excludeIds={state.fields.relatedArticleIds.filter(
+                    (_, i) => i !== idx,
+                  )}
+                  onChange={(entityId) => {
+                    const next = [...state.fields.relatedArticleIds];
+                    next[idx] = entityId;
+                    patch({ relatedArticleIds: next });
+                  }}
+                  onRemove={() =>
+                    patch({
+                      relatedArticleIds: state.fields.relatedArticleIds.filter(
+                        (_, i) => i !== idx,
+                      ),
+                    })
+                  }
+                />
+              ))}
+            </Stack>
+          )}
+          <Button
+            size="small"
+            variant="outline"
+            type="button"
+            onClick={() =>
+              patch({
+                relatedArticleIds: [...state.fields.relatedArticleIds, ""],
+              })
+            }
+          >
+            Добавить статью
+          </Button>
+        </fieldset>
+
         <Input
           label="Дата пересмотра"
           type="date"
@@ -535,6 +593,34 @@ export function PromptEditor({
         loading={publishLoading}
         onConfirm={handlePublish}
         onCancel={() => setPublishOpen(false)}
+      />
+      <ConfirmDialog
+        open={pendingStatus === "hide"}
+        title={`Скрыть промт «${state.fields.title || "Без названия"}»?`}
+        body="Промт перестанет быть виден в публичном портале. Это не удаление и не архив: его можно снова опубликовать."
+        confirmLabel="Скрыть"
+        tone="danger"
+        loading={statusLoading === "hide"}
+        onCancel={() => (statusLoading ? undefined : setPendingStatus(null))}
+        onConfirm={() =>
+          runStatusAction("hide", () =>
+            adminPromptsApi.hide(initialPrompt.id, state.revision),
+          )
+        }
+      />
+      <ConfirmDialog
+        open={pendingStatus === "archive"}
+        title={`Архивировать промт «${state.fields.title || "Без названия"}»?`}
+        body="Промт будет снят с публикации и уйдёт в архив. Восстановление вернёт его как черновик, не на сайт."
+        confirmLabel="В архив"
+        tone="danger"
+        loading={statusLoading === "archive"}
+        onCancel={() => (statusLoading ? undefined : setPendingStatus(null))}
+        onConfirm={() =>
+          runStatusAction("archive", () =>
+            adminPromptsApi.archive(initialPrompt.id, state.revision),
+          )
+        }
       />
     </Stack>
   );

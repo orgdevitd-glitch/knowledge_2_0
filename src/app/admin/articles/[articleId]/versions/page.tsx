@@ -8,7 +8,6 @@ import {
   getAdminArticleDetail,
   listAdminVersions,
 } from "@/features/admin/articles/queries";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 
 export const metadata: Metadata = {
@@ -73,7 +72,6 @@ export default async function AdminArticleVersionsPage({
               { id: "versions", label: "Версии" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header>
@@ -86,6 +84,7 @@ export default async function AdminArticleVersionsPage({
 
         <ArticleActionsMenu
           articleId={articleId}
+          title={article.title}
           slug={article.slug}
           status={article.status}
           revision={article.revision}

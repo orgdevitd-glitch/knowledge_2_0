@@ -138,6 +138,7 @@ export const googleDriveBrowseLimiter = new InProcessRateLimiter(60, 60_000);
 export const googleSourceTestLimiter = new InProcessRateLimiter(20, 60_000);
 export const googlePreviewLimiter = new InProcessRateLimiter(10, 60_000);
 export const googleConfirmLimiter = new InProcessRateLimiter(10, 60_000);
+export const adminPickerLimiter = new InProcessRateLimiter(60, 60_000);
 
 const GOOGLE_USER_MESSAGES: Record<GoogleWorkspaceError["code"], string> = {
   GOOGLE_WORKSPACE_DISABLED: "Интеграция Google Workspace отключена.",

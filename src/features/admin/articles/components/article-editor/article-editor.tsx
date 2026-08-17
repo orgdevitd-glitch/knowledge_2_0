@@ -22,6 +22,7 @@ import {
 
 import { ConflictAlert } from "../conflict-alert";
 import { PublishDialog } from "../publish-dialog";
+import { ConfirmDialog } from "@/features/admin/ui/confirm-dialog";
 import { BlockForm } from "./block-form";
 import { BlockList } from "./block-list";
 import { BlockPalette } from "./block-palette";
@@ -173,6 +174,9 @@ export function ArticleEditor({
   const [publishOpen, setPublishOpen] = useState(false);
   const [publishLoading, setPublishLoading] = useState(false);
   const [statusLoading, setStatusLoading] = useState<string | null>(null);
+  const [pendingStatus, setPendingStatus] = useState<"hide" | "archive" | null>(
+    null,
+  );
 
   const dirtyMetadata = !metadataEquals(state.metadata, state.savedMetadata);
   const dirtyBlocks = !blocksEqual(state.blocks, state.savedBlocks);
@@ -332,9 +336,11 @@ export function ArticleEditor({
     key: string,
     fn: () => Promise<{ article: AdminArticleDto }>,
   ) => {
+    if (statusLoading) return;
     setStatusLoading(key);
     try {
       const result = await fn();
+      setPendingStatus(null);
       dispatch({ type: "LOAD_ARTICLE", article: result.article });
       router.refresh();
     } catch (err) {
@@ -395,11 +401,8 @@ export function ArticleEditor({
             size="small"
             variant="outline"
             loading={statusLoading === "hide"}
-            onClick={() =>
-              runStatusAction("hide", () =>
-                adminArticlesApi.hide(initialArticle.id, state.revision),
-              )
-            }
+            disabled={Boolean(statusLoading)}
+            onClick={() => setPendingStatus("hide")}
           >
             Скрыть
           </Button>
@@ -409,11 +412,8 @@ export function ArticleEditor({
             size="small"
             variant="outline"
             loading={statusLoading === "archive"}
-            onClick={() =>
-              runStatusAction("archive", () =>
-                adminArticlesApi.archive(initialArticle.id, state.revision),
-              )
-            }
+            disabled={Boolean(statusLoading)}
+            onClick={() => setPendingStatus("archive")}
           >
             В архив
           </Button>
@@ -493,6 +493,7 @@ export function ArticleEditor({
               {selectedBlock ? (
                 <BlockForm
                   block={selectedBlock}
+                  currentArticleId={initialArticle.id}
                   onChange={(block) =>
                     dispatch({ type: "UPDATE_BLOCK", block })
                   }
@@ -527,6 +528,34 @@ export function ArticleEditor({
         loading={publishLoading}
         onConfirm={handlePublish}
         onCancel={() => setPublishOpen(false)}
+      />
+      <ConfirmDialog
+        open={pendingStatus === "hide"}
+        title={`Скрыть статью «${state.metadata.title || "Без названия"}»?`}
+        body="Статья перестанет быть видна в публичном портале. Это не удаление и не архив: её можно снова опубликовать."
+        confirmLabel="Скрыть"
+        tone="danger"
+        loading={statusLoading === "hide"}
+        onCancel={() => (statusLoading ? undefined : setPendingStatus(null))}
+        onConfirm={() =>
+          runStatusAction("hide", () =>
+            adminArticlesApi.hide(initialArticle.id, state.revision),
+          )
+        }
+      />
+      <ConfirmDialog
+        open={pendingStatus === "archive"}
+        title={`Архивировать статью «${state.metadata.title || "Без названия"}»?`}
+        body="Статья будет снята с публикации и уйдёт в архив. Восстановление вернёт её как черновик, не на сайт."
+        confirmLabel="В архив"
+        tone="danger"
+        loading={statusLoading === "archive"}
+        onCancel={() => (statusLoading ? undefined : setPendingStatus(null))}
+        onConfirm={() =>
+          runStatusAction("archive", () =>
+            adminArticlesApi.archive(initialArticle.id, state.revision),
+          )
+        }
       />
     </div>
   );

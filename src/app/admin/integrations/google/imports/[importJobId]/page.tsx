@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 
 import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert, Badge } from "@/components/ui";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { ImportConfirmPanel } from "@/features/integrations/google/components/import-confirm-panel";
 import { SheetsPreviewTable } from "@/features/integrations/google/components/sheets-preview-table";
 import { StructuralDiffSummary } from "@/features/integrations/google/components/structural-diff-summary";
@@ -72,7 +71,6 @@ export default async function GoogleImportJobPage({ params }: Params) {
               { id: "job", label: job.id },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header>

@@ -4,7 +4,6 @@ import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert, EmptyState, Link } from "@/components/ui";
 import { TagList } from "@/features/admin/taxonomy/components/tag-list";
 import { listTagsAdmin } from "@/features/admin/taxonomy/queries";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 import { isContentPersistenceAvailable } from "@/server/composition/content-ports";
 
@@ -69,7 +68,6 @@ export default async function AdminTagsPage({
               { id: "tags", label: "Теги" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header

@@ -8,7 +8,6 @@ import {
   getAdminPromptDetail,
   listAdminPromptVersions,
 } from "@/features/admin/prompts/queries";
-import { AdminSignOutButton } from "@/features/admin/ui/sign-out-button";
 import { requireAdminPrincipal } from "@/server/auth/guard";
 
 export const metadata: Metadata = {
@@ -73,7 +72,6 @@ export default async function AdminPromptVersionsPage({
               { id: "versions", label: "Версии" },
             ]}
           />
-          <AdminSignOutButton />
         </div>
 
         <header>
@@ -86,6 +84,7 @@ export default async function AdminPromptVersionsPage({
 
         <PromptActionsMenu
           promptId={promptId}
+          title={prompt.title}
           slug={prompt.slug}
           status={prompt.status}
           revision={prompt.revision}

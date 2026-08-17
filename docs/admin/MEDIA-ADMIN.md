@@ -50,7 +50,8 @@ See [MEDIA-MUTATION-FLOW.md](../architecture/MEDIA-MUTATION-FLOW.md).
 
 - Draft saves may reference uploading/failed media.
 - **Publish** requires every referenced `mediaId` to exist, `status: ready`, and matching kind (`image` for cover/image/gallery/poster; `document` for file blocks).
-- Video blocks: `mediaId` for video file rejected; use `videoId` or remove.
+- Video blocks: `mediaId` for video file rejected; use `videoId` or remove. Poster uses `posterMediaId` (image picker).
+- Article editor attaches media through the Media picker (Phase 8E.1), not by copying Media ID. Picker search is a bounded title/filename filter over `listAdmin`, not a full-text index.
 
 ## List pagination
 
