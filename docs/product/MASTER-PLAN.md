@@ -168,7 +168,11 @@ Concurrency: `updatedAt` + version number, optimistic check, conflict message �
 
 **Phase 8B.2:** Search Experience — public `/search` UX, canonical URL state (taxonomy IDs), filter chips, suggestions endpoint + combobox, honest empty/cursor states (ADR 0013).
 
-**Later (only if needed, Phase 8C+):** Knowledge Assistant, semantic search, embeddings, Vertex AI, RAG, video transcript search.
+**Phase 8C.1:** Grounded Assistant Foundation — provider-neutral `POST /api/assistant/ask`, Search-backed retrieval, citation validation, disabled/fake providers (ADR 0014). No production LLM yet.
+
+**Phase 8C.2:** Assistant Experience UI (planned).
+
+**Later (only if needed, Phase 8C+):** production LLM adapter, semantic search, embeddings, Vertex AI, RAG, video transcript search — each ADR-gated.
 
 ## 10. Design & motion
 

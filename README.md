@@ -6,12 +6,13 @@ Public users read **published** content without registration. Administrators sig
 
 ## Current status
 
-**Phase 8B.2 — Search Experience** is the current public search UX slice (on top of Phase 8B.1 Search Foundation).
+**Phase 8C.1 — Grounded Assistant Foundation** is the current assistant slice (on top of Search Foundation + Search Experience).
 
-- Durable SearchDocument v2 + private GCS/memory index + `GET /api/search` (Foundation)
-- Public `/search` UX: URL state, taxonomy ID filters, chips, suggestions, result cards, cursor UX
-- `GET /api/search/suggestions` (title + active taxonomy); admin `/admin/search` rebuild/reindex
-- Live visibility gate; Phase 4 in-process helpers retained for ranking/highlight primitives
+- Durable SearchDocument v2 + private GCS/memory index + `GET /api/search` (8B.1)
+- Public `/search` UX + suggestions (8B.2)
+- `POST /api/assistant/ask` — grounded single-turn ask with citation validation (8C.1)
+- Provider modes: `disabled` (default) and `fake` (test/dev only); no production LLM vendor yet
+- No public `/assistant` UI yet (Phase 8C.2)
 - Media Library, Prompt admin, and article editor retained
 - Mutation APIs protected by session + CSRF
 

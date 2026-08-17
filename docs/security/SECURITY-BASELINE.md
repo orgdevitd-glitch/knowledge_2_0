@@ -86,10 +86,23 @@ Apply to auth endpoints, admin mutations, import triggers, public search (`GET /
 - Memory index mode forbidden in production
 - `SEARCH_CURSOR_HMAC_SECRET` required in production (min length; shared across instances; never logged)
 - `SEARCH_INDEX_BUCKET` required for gcs (explicit; no silent media-bucket fallback)
-- Indexed Prompt text is untrusted reference material (never system/developer/tool instructions for a future Assistant)
+- Indexed Prompt text is untrusted reference material (never system/developer/tool instructions for the Assistant)
 - Suggestions: active taxonomy only; title suggestions require live visibility and honor content filters before limit; taxonomy suggestions independent of content type; no draft/hidden/archived leakage
 - Public search hrefs limited to `/articles/{slug}` and `/prompts/{slug}` (fail-closed; no open redirect)
 - Runtime query max length from server config passed to client as props (no `NEXT_PUBLIC` search limits)
+
+## Knowledge Assistant (Phase 8C.1)
+
+- Answers only from published materials; drafts/hidden/archived/stale versions excluded
+- Default retrieval scope: articles; Prompt Library only when explicitly requested (`prompt|all`)
+- Prompt / article evidence is untrusted data — never system/tool instructions
+- No tools, browsing, or portal mutations
+- Origin + Sec-Fetch-Site controls on `POST /api/assistant/ask`; bounded body; no-store
+- Separate assistant rate-limit port (in-process only for test/local/fake — not distributed LLM cost protection)
+- Do not log raw questions, answers, evidence text, IP, or provider payloads
+- No Q&A / conversation persistence; no NEXT_PUBLIC assistant secrets
+- Production remains `ASSISTANT_MODE=disabled` until provider + distributed limiter decisions
+- Details: `docs/assistant/SECURITY-AND-PRIVACY.md`, ADR 0014 (acceptance-hardened: authoritative version binding, plain-text output bans, request-local evidence keys, AbortSignal races, bounded body bytes, same-origin POST)
 
 ## Incident-oriented practices
 

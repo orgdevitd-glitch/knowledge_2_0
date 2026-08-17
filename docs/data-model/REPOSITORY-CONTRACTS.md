@@ -40,6 +40,26 @@ See [MEDIA-MODEL.md](./MEDIA-MODEL.md) and ADR 0011.
 
 See `docs/search/` and ADR 0012.
 
+## Knowledge Assistant (Phase 8C.1)
+
+`AssistantRetrievalPort`:
+
+- `retrieve`, `revalidate` — Search-backed adapter hydrates published snapshots; no HTTP Search API dependency
+
+`PublicAssistantContentPort`:
+
+- batched `loadPublishedSnapshots` for article/prompt version references
+
+`AssistantProviderPort`:
+
+- `generateGroundedAnswer(request, signal)` — disabled/fake adapters only in 8C.1
+
+`AssistantRateLimitPort`:
+
+- `take`, `acquireConcurrency` — in-process for test/local/fake; not distributed production cost control
+
+See `docs/assistant/` and ADR 0014. No Firestore assistant conversation/message collections.
+
 ## Versions
 
 `VersionRepository`:
