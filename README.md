@@ -6,13 +6,13 @@ Public users read **published** content without registration. Administrators sig
 
 ## Current status
 
-**Phase 8C.1 — Grounded Assistant Foundation** is the current assistant slice (on top of Search Foundation + Search Experience).
+**Phase 8C.2 — Assistant Experience** is the current public assistant slice (on top of 8C.1 Foundation).
 
 - Durable SearchDocument v2 + private GCS/memory index + `GET /api/search` (8B.1)
 - Public `/search` UX + suggestions (8B.2)
 - `POST /api/assistant/ask` — grounded single-turn ask with citation validation (8C.1)
-- Provider modes: `disabled` (default) and `fake` (test/dev only); no production LLM vendor yet
-- No public `/assistant` UI yet (Phase 8C.2)
+- Public `/assistant` workspace (8C.2); production remains `ASSISTANT_MODE=disabled`
+- Provider modes: `disabled` (default) and `fake` (test/dev demonstration only); no production LLM vendor yet
 - Media Library, Prompt admin, and article editor retained
 - Mutation APIs protected by session + CSRF
 

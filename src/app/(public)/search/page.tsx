@@ -25,6 +25,8 @@ import { SearchPageForm } from "@/features/search/ui/search-page-form";
 import { SearchResultCard } from "@/features/search/ui/search-result-card";
 import { SearchResultsFocus } from "@/features/search/ui/search-results-focus";
 import { SearchFocusLink } from "@/features/search/ui/search-focus-link";
+import { getPublicAssistantCapability } from "@/server/composition/assistant-ui-capability";
+import { AssistantEntryLink } from "@/features/assistant/ui/assistant-entry-link";
 
 import styles from "@/features/search/ui/search.module.css";
 
@@ -94,6 +96,7 @@ export default async function SearchPage({
   const state = parseSearchUrlState(params);
   const limits = getSearchLimits();
   const maps = await loadSearchTaxonomyMaps();
+  const assistant = getPublicAssistantCapability();
   const chips = buildChips(state, maps);
   const filtersActive = hasActiveSearchFilters(state);
   const categoryResolved = resolveTaxonomyTitle(
@@ -309,6 +312,9 @@ export default async function SearchPage({
                       К каталогу
                     </Link>
                   )
+                }
+                secondaryAction={
+                  assistant.available ? <AssistantEntryLink /> : undefined
                 }
               />
             ) : (

@@ -11,8 +11,8 @@ Open corporate knowledge portal: instructions, prompt library, learning material
 
 ## Current phase
 
-**Phase 8C.1 — Grounded Assistant Foundation** (`POST /api/assistant/ask`, retrieval/provider ports, fake/disabled adapters; no public UI).
-Do not start Phase 8C.2 Assistant Experience UI, production LLM vendor adapter, Video admin, or Google automatic sync (6B) unless explicitly assigned.
+**Phase 8C.2 — Assistant Experience** (`/assistant` public workspace on `POST /api/assistant/ask`; production remains disabled).
+Do not start a production LLM vendor adapter, Video admin, or Google automatic sync (6B) unless explicitly assigned.
 
 ## Priorities
 
@@ -37,6 +37,8 @@ Phase 5A: Admin SDK Firestore + deny-all rules; public may use empty/demo/firest
 | `src/features/search/url` | Canonical public Search URL state |
 | `src/features/search/ui` | Search experience components (form, chips, cards, combobox) |
 | `src/features/assistant/application` | Grounded ask orchestration (8C.1) |
+| `src/features/assistant/ui` | Public `/assistant` experience (8C.2) |
+| `src/features/assistant/client` | Browser ask client + public DTO parser |
 | `src/server/assistant` | Retrieval adapter, providers, assistant rate limit |
 | `src/features/public-content` | Public queries, Phase 4 search helpers, renderers, UI |
 | `src/features/admin` | Admin queries + sign-in/out UI |
@@ -85,7 +87,7 @@ License: `.agents/skills/LICENSE`.
 - Phases → `docs/plans/IMPLEMENTATION-PHASES.md`
 - ADRs → `docs/decisions/`
 - Search foundation → `docs/search/` (BASIC-SEARCH, SEARCH-DOCUMENT, SEARCH-INDEX, SEARCH-API, SEARCH-OPERATIONS, SEARCH-EXPERIENCE, SEARCH-SUGGESTIONS, ASSISTANT-TRUST-BOUNDARY)
-- Knowledge Assistant → `docs/assistant/` (architecture, retrieval, chunking, grounding, security, provider, operations)
+- Knowledge Assistant → `docs/assistant/` (architecture, retrieval, chunking, grounding, security, provider, operations, **experience**, UI states)
 
 ## Verification commands (Phase 5A+)
 

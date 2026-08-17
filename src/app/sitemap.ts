@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { getContentSourceMode, getSiteUrl } from "@/config/env";
 import { getPublicContentSource } from "@/server/composition/public-content";
+import { getPublicAssistantCapability } from "@/server/composition/assistant-ui-capability";
 import { filterPublished } from "@/features/public-content/visibility";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -17,6 +18,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/prompts`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${siteUrl}/search`, changeFrequency: "monthly", priority: 0.4 },
   ];
+
+  if (getPublicAssistantCapability().available) {
+    entries.push({
+      url: `${siteUrl}/assistant`,
+      changeFrequency: "monthly",
+      priority: 0.3,
+    });
+  }
 
   // Never include demo-only content when empty; when demo (dev) still only published.
   if (getContentSourceMode() === "empty") {

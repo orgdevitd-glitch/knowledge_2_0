@@ -727,6 +727,8 @@ describe("8C.1 acceptance: timeouts concurrency body origin", () => {
     expect(assertSafeAssistantSearchHref("//evil")).toBeNull();
     expect(assertSafeAssistantSearchHref("https://x")).toBeNull();
     expect(assertSafeAssistantSearchHref("/articles/x")).toBeNull();
+    expect(assertSafeAssistantSearchHref("/search-evil")).toBeNull();
+    expect(assertSafeAssistantSearchHref("/search/../admin")).toBeNull();
   });
 });
 

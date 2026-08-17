@@ -102,7 +102,7 @@ Apply to auth endpoints, admin mutations, import triggers, public search (`GET /
 - Do not log raw questions, answers, evidence text, IP, or provider payloads
 - No Q&A / conversation persistence; no NEXT_PUBLIC assistant secrets
 - Production remains `ASSISTANT_MODE=disabled` until provider + distributed limiter decisions
-- Details: `docs/assistant/SECURITY-AND-PRIVACY.md`, ADR 0014 (acceptance-hardened: authoritative version binding, plain-text output bans, request-local evidence keys, AbortSignal races, bounded body bytes, same-origin POST)
+- Details: `docs/assistant/SECURITY-AND-PRIVACY.md`, ADR 0014 (foundation) and ADR 0015 (experience: capability-gated `/assistant`, no status API, no Q&A persistence, browser cancel ≠ server stop)
 
 ## Incident-oriented practices
 

@@ -5,6 +5,7 @@ import { getPublicEnv } from "@/config/public-env";
 import { PublicShellChrome } from "@/features/public-content/ui/public-shell";
 import { HeaderSearchForm } from "@/features/public-content/ui/header-search";
 import { getPublicSearchUiLimits } from "@/server/composition/search-ui-limits";
+import { getPublicAssistantCapability } from "@/server/composition/assistant-ui-capability";
 
 export const metadata: Metadata = {
   title: {
@@ -27,9 +28,11 @@ export default async function PublicLayout({
   // Request-time resolution so SEARCH_QUERY_MAX_LENGTH env overrides apply.
   await connection();
   const { queryMaxLength } = getPublicSearchUiLimits();
+  const assistant = getPublicAssistantCapability();
 
   return (
     <PublicShellChrome
+      assistantAvailable={assistant.available}
       headerSearch={
         <HeaderSearchForm variant="header" queryMaxLength={queryMaxLength} />
       }

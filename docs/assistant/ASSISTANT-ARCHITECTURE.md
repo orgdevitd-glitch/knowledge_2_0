@@ -2,7 +2,7 @@
 
 ## Scope
 
-**Phase 8C.1 — Grounded Assistant Foundation** provides a provider-neutral, citation-validated ask pipeline. It does **not** include public UI (8C.2), a production LLM adapter, streaming, conversations, embeddings, or tools.
+**Phase 8C.1 — Grounded Assistant Foundation** provides a provider-neutral, citation-validated ask pipeline. **Phase 8C.2 — Assistant Experience** adds the public `/assistant` workspace on that API. Neither phase includes a production LLM adapter, streaming, conversations, embeddings, or tools.
 
 Related surfaces:
 
@@ -11,7 +11,7 @@ Related surfaces:
 | Phase 8B.1 Search Foundation | Lexical candidate retrieval + durable index |
 | Phase 8B.2 Search Experience | Public `/search` UX |
 | Phase 8C.1 Assistant Foundation | Grounded ask API + retrieval/provider ports |
-| Phase 8C.2 Assistant Experience | Public `/assistant` UI (future) |
+| Phase 8C.2 Assistant Experience | Public `/assistant` workspace (this phase) |
 | Prompt Library | Published reference materials (untrusted for assistant) |
 | Assistant System Policy | Versioned in-code server policy (not Prompt Admin) |
 
@@ -32,8 +32,11 @@ Related surfaces:
 - `src/features/assistant/application/*` — `askAssistant` orchestration.
 - `src/server/repositories/interfaces/assistant-*-port.ts` — ports.
 - `src/server/assistant/*` — retrieval, content binding, providers, rate limit, full system policy (`server-only`).
-- `src/app/api/assistant/ask/route.ts` — thin HTTP adapter (origin/body only; no rate-limit-only path).
+- `src/app/api/assistant/ask/route.ts` — thin HTTP adapter (origin/body only).
+- `src/features/assistant/ui/*` — public workspace (8C.2 client island).
+- `src/features/assistant/client/*` — browser POST client + public DTO parser.
+- `src/app/(public)/assistant/page.tsx` — Server Component; capability + taxonomy props only.
 
-## Explicit non-goals (8C.1)
+## Explicit non-goals (8C.1 + 8C.2)
 
-Real LLM vendor, streaming, UI, conversation history, Q&A persistence, analytics, personalization, embeddings/vector DB, tool calling, web browsing, portal mutations, production deployment enablement.
+Real LLM vendor, streaming, conversation history, Q&A persistence, analytics, personalization, embeddings/vector DB, tool calling, web browsing, portal mutations, production deployment enablement.

@@ -214,9 +214,15 @@ Execute **one phase per assignment**. After each phase: typecheck → lint → t
 
 ## Phase 8C.2 — Assistant Experience
 
-- Public assistant UX (`/assistant` or equivalent)
-- Loading / refusal / source cards / a11y / retry
-- Does not choose production LLM vendor by itself
+**Status:** implemented in this repository pass (see ADR 0015).
+
+- Public `/assistant` single-turn Q&A workspace (not a chat)
+- Server capability projection; conditional nav/homepage/search CTAs
+- Disabled production: 200 EmptyState, no form/Retry, noindex, sitemap omit
+- Demonstration badge for fake/dev/test only
+- Client POST to existing `POST /api/assistant/ask` (unchanged contract)
+
+**Out of scope:** production LLM adapter, streaming, conversations, Q&A persistence, embeddings, tools, admin assistant UI, analytics, production enablement.
 
 ## Phase 8C+ (optional, ADR-gated)
 

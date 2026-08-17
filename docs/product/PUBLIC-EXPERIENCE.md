@@ -12,7 +12,8 @@ Public users read published materials without registration.
 | `/articles/[slug]` | Article detail (Editorial Knowledge) |
 | `/prompts` | Prompts catalog |
 | `/prompts/[slug]` | Prompt detail + copy |
-| `/search` | Basic full-text search |
+| `/search` | Search Experience |
+| `/assistant` | Knowledge Assistant (capability-gated; disabled production shows unavailable) |
 
 ## Visibility
 
