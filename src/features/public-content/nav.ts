@@ -10,6 +10,7 @@ export const PUBLIC_NAV_ITEMS: PublicNavItem[] = [
   { id: "materials", label: "Все материалы", href: "/materials" },
   { id: "articles", label: "Статьи", href: "/articles" },
   { id: "prompts", label: "Промты", href: "/prompts" },
+  { id: "search", label: "Поиск", href: "/search" },
 ];
 
 export function buildPublicNavItems(input: {
@@ -27,12 +28,12 @@ export function buildPublicNavItems(input: {
 }
 
 export function resolveActiveNavId(pathname: string): string {
-  if (pathname === "/") return "home";
-  if (pathname.startsWith("/assistant")) return "assistant";
-  if (pathname.startsWith("/articles")) return "articles";
-  if (pathname.startsWith("/prompts")) return "prompts";
-  if (pathname.startsWith("/materials") || pathname.startsWith("/search")) {
-    return "materials";
-  }
+  const path = pathname.split(/[?#]/)[0] ?? pathname;
+  if (path === "/") return "home";
+  if (path.startsWith("/assistant")) return "assistant";
+  if (path.startsWith("/articles")) return "articles";
+  if (path.startsWith("/prompts")) return "prompts";
+  if (path === "/search" || path.startsWith("/search/")) return "search";
+  if (path.startsWith("/materials")) return "materials";
   return "home";
 }

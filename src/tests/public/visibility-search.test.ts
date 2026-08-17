@@ -120,15 +120,27 @@ describe("search", () => {
 });
 
 describe("review status", () => {
-  it("maps due dates to user labels", () => {
-    expect(resolveReviewStatus(null, "2024-06-15T12:00:00.000Z")).toBe("current");
-    expect(
-      resolveReviewStatus("2024-06-20T12:00:00.000Z", "2024-06-15T12:00:00.000Z"),
-    ).toBe("due-soon");
-    expect(
-      resolveReviewStatus("2024-06-01T12:00:00.000Z", "2024-06-15T12:00:00.000Z"),
-    ).toBe("overdue");
+  const now = "2024-06-15T12:00:00.000Z";
+
+  it("does not treat a missing schedule as current", () => {
+    expect(resolveReviewStatus(null, now)).toBeNull();
+    expect(resolveReviewStatus(undefined, now)).toBeNull();
+    expect(resolveReviewStatus("", now)).toBeNull();
+    expect(resolveReviewStatus("not-a-date", now)).toBeNull();
+    expect(reviewStatusLabel(null)).toBeNull();
+  });
+
+  it("maps due dates with a deterministic clock", () => {
+    expect(resolveReviewStatus("2024-06-15T12:00:00.000Z", now)).toBe("overdue");
+    expect(resolveReviewStatus("2024-06-28T12:00:00.000Z", now)).toBe("due-soon");
+    expect(resolveReviewStatus("2024-06-29T12:00:00.000Z", now)).toBe("due-soon");
+    expect(resolveReviewStatus("2024-06-29T12:00:01.000Z", now)).toBe("current");
+    expect(resolveReviewStatus("2024-06-01T12:00:00.000Z", now)).toBe("overdue");
+    expect(resolveReviewStatus("2025-01-01T00:00:00.000Z", now)).toBe("current");
     expect(reviewStatusLabel("overdue")).toBe("Требуется проверка");
+    expect(reviewStatusLabel("current")).toBe("Актуально");
+    expect(reviewStatusLabel("due-soon")).toBe("Скоро потребуется проверка");
+    expect(reviewStatusLabel(null)).toBeNull();
   });
 });
 

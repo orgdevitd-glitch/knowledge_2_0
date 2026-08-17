@@ -14,7 +14,7 @@ src/
     content/           # ArticleHeader, Prose, Callout, PromptBlock, …
   features/
     content/application/   # Domain write use cases
-    public-content/        # Public queries, Phase 4 search helpers, renderers, shell UI
+    public-content/        # Public queries, read-model builders, renderers, shell UI, catalog URL
     search/application/    # Phase 8B.1 index lifecycle, query, rebuild; 8B.2 suggestions
     search/url/            # Canonical public Search URL state (Phase 8B.2)
     search/ui/             # Search experience components (Phase 8B.2)
@@ -74,7 +74,7 @@ firestore.indexes.json
 ```
 
 Admin routes include `/admin/sign-in`, `/admin`, `/admin/articles`, `/admin/prompts` (Phase 8A), `/admin/media` (Phase 7B), `/admin/search` (Phase 8B.1), `/admin/integrations`, `/admin/taxonomy` (Phase 7A). Admin chrome (Phase 8E.1) is `features/admin/ui/admin-shell.tsx`; picker APIs are `/api/admin/pickers/media` and `/api/admin/pickers/materials`.
-Public routes include `/media/[mediaId]` for ready binary delivery (Phase 7B), `/search` Search Experience (Phase 8B.2), and `/assistant` Assistant Experience (Phase 8C.2; hidden from navigation while capability is disabled).
+Public routes include `/media/[mediaId]` for ready binary delivery (Phase 7B), `/search` Search Experience (Phase 8B.2), and `/assistant` Assistant Experience (Phase 8C.2; hidden from navigation while capability is disabled). Public chrome includes «Поиск» (Phase 8E.2). Admin article/prompt preview reuses public views (ADR 0017).
 
 ## Placement rules
 

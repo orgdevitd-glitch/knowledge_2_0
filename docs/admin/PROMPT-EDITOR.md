@@ -10,7 +10,7 @@ Administrators create and edit prompts as drafts, then publish via the domain pu
 |-------|------|
 | `/admin/prompts/new` | Explicit create form |
 | `/admin/prompts/[promptId]/edit` | Metadata + `promptText` and optional fields |
-| `/admin/prompts/[promptId]/preview` | Saved draft preview (`noindex`) |
+| `/admin/prompts/[promptId]/preview` | Saved draft preview (`noindex`); same `PromptPublicView` as public (ADR 0017) |
 
 ## Fields
 
@@ -38,6 +38,10 @@ Editors pick published articles by title (`relatedArticleIds`). Search is a boun
 ## Unsaved changes
 
 Local React reducer tracks `fields` vs `savedFields`. Save button disabled when clean. Navigation away warns when dirty.
+
+## Preview
+
+`/admin/prompts/[promptId]/preview` is admin-only and `noindex`. It builds `PromptDetail` from the working copy via `buildPromptDetail` and renders `PromptPublicView` (same as the public prompt page). Related articles hydrate published-only (ADR 0017). Banner: «Предпросмотр черновика».
 
 ## Conflicts
 

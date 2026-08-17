@@ -12,7 +12,7 @@ Administrators create and edit articles as drafts, then publish via the domain p
 | `/admin/articles/new` | Explicit create form |
 | `/admin/articles/[id]` | Detail + recent audit |
 | `/admin/articles/[id]/edit` | Metadata + block editor |
-| `/admin/articles/[id]/preview` | Saved draft preview (`noindex`) |
+| `/admin/articles/[id]/preview` | Saved draft preview (`noindex`); same `ArticlePublicView` as public (ADR 0017) |
 | `/admin/articles/[id]/versions` | Version list |
 | `/admin/articles/[id]/versions/[versionId]` | Snapshot + restore |
 
@@ -23,6 +23,10 @@ Administrators create and edit articles as drafts, then publish via the domain p
 - `expectedRevision` on every mutation; `CONFLICT` never force-overwrites.
 - Dirty leave guard: `beforeunload` + in-app confirm.
 - Media and related references: pickers write existing IDs; editors do not paste Media/entity IDs.
+
+## Preview
+
+`/admin/articles/[id]/preview` is admin-only and `noindex`. It builds `ArticleDetail` from the working copy via `buildArticleDetail` and renders `ArticlePublicView` (same as the public article page). Related/prompt/media hydration follows the published/public boundary (ADR 0017). Banner: «Предпросмотр черновика».
 
 ## Actor IDs
 

@@ -1,24 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { Breadcrumbs, Container } from "@/components/layout";
-import { ArticleHeader } from "@/components/content";
+import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { getPublishedArticleBySlug } from "@/features/public-content/queries";
-import { ArticleBlocks } from "@/features/public-content/rendering/block-registry";
-import {
-  collectMediaIdsFromBlocks,
-  resolveMediaPresentations,
-} from "@/features/public-content/rendering/resolve-block-media";
-import {
-  reviewStatusLabel,
-  reviewStatusTone,
-} from "@/features/public-content/review-status";
-import { formatDate } from "@/features/public-content/ui/catalog";
-import { Link } from "@/components/ui/Link";
+import { hydrateResolvedMedia } from "@/features/public-content/rendering/resolve-block-media";
+import { ArticlePublicView } from "@/features/public-content/ui/article-public-view";
 import { getSiteUrl } from "@/config/env";
 import { getPublicMediaPresentationResolver } from "@/server/composition/public-media";
-
-import styles from "./article.module.css";
 
 type Params = Promise<{ slug: string }>;
 
@@ -54,89 +42,23 @@ export default async function ArticlePage({ params }: { params: Params }) {
     notFound();
   }
 
-  const metadataItems = [
-    { id: "type", label: "Тип", value: article.metadata.typeLabel },
-    {
-      id: "updated",
-      label: "Обновлено",
-      value: formatDate(article.updatedAt),
-    },
-    ...article.metadata.categories.map((c) => ({
-      id: `cat-${c.id}`,
-      label: "Категория",
-      value: c.title,
-    })),
-    ...article.metadata.audiences.map((a) => ({
-      id: `aud-${a.id}`,
-      label: "Аудитория",
-      value: a.title,
-    })),
-  ];
-
-  const mediaIds = collectMediaIdsFromBlocks(article.blocks);
-  const resolvedMedia = await resolveMediaPresentations(
-    mediaIds,
+  const resolvedMedia = await hydrateResolvedMedia(
+    article.blocks,
     getPublicMediaPresentationResolver(),
   );
 
   return (
     <Container width="editorial">
-      <div className={styles.layout}>
-        <div className={styles.main}>
-          <Breadcrumbs
-            items={[
-              { id: "home", label: "Главная", href: "/" },
-              { id: "articles", label: "Статьи", href: "/articles" },
-              { id: "current", label: article.title },
-            ]}
-          />
-          <ArticleHeader
-            title={article.title}
-            summary={article.summary ?? undefined}
-            metadata={metadataItems}
-            statusLabel={reviewStatusLabel(article.reviewStatus)}
-            statusTone={reviewStatusTone(article.reviewStatus)}
-          />
-          <ArticleBlocks
-            blocks={article.blocks}
-            ctx={{
-              toc: article.tableOfContents,
-              promptLookup: article.promptLookup,
-              relatedMaterials: article.relatedMaterials,
-              resolvedMedia,
-            }}
-          />
-          {article.relatedMaterials.length > 0 ? (
-            <aside className={styles.related} aria-label="Связанные материалы">
-              <h2>Связанные материалы</h2>
-              <ul>
-                {article.relatedMaterials.map((item) => (
-                  <li key={item.id}>
-                    <Link href={item.url}>{item.title}</Link>
-                  </li>
-                ))}
-              </ul>
-            </aside>
-          ) : null}
-        </div>
-        {article.tableOfContents.length > 0 ? (
-          <nav className={styles.toc} aria-label="Оглавление">
-            <h2 className={styles.tocTitle}>Содержание</h2>
-            <ol>
-              {article.tableOfContents.map((item) => (
-                <li
-                  key={item.id}
-                  style={{
-                    marginInlineStart: `${(item.level - 2) * 0.75}rem`,
-                  }}
-                >
-                  <a href={`#${item.anchor}`}>{item.text}</a>
-                </li>
-              ))}
-            </ol>
-          </nav>
-        ) : null}
-      </div>
+      <Stack gap={4}>
+        <Breadcrumbs
+          items={[
+            { id: "home", label: "Главная", href: "/" },
+            { id: "articles", label: "Статьи", href: "/articles" },
+            { id: "current", label: article.title },
+          ]}
+        />
+        <ArticlePublicView article={article} resolvedMedia={resolvedMedia} />
+      </Stack>
     </Container>
   );
 }

@@ -28,6 +28,7 @@ export default async function MaterialsPage({
   const model = await getCatalogPage({
     type: first(params.type),
     category: first(params.category),
+    tag: first(params.tag),
     audience: first(params.audience),
     sort: first(params.sort),
     q: first(params.q),

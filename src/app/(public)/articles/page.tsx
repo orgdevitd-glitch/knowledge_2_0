@@ -27,6 +27,7 @@ export default async function ArticlesPage({
   const params = await searchParams;
   const model = await getArticlesCatalogPage({
     category: first(params.category),
+    tag: first(params.tag),
     audience: first(params.audience),
     sort: first(params.sort),
     q: first(params.q),

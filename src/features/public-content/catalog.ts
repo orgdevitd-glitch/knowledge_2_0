@@ -2,6 +2,7 @@ import type { Article } from "@/domain/content/article";
 import type { Prompt } from "@/domain/content/prompt";
 import type { Audience, Category, Tag } from "@/domain/content/taxonomy";
 import type { IsoDateTime } from "@/domain/shared/value-objects";
+import { parseCatalogQuery, parseCatalogSlug } from "./catalog-url";
 import {
   PUBLIC_CONTENT_LIMITS,
   PUBLIC_SORTS,
@@ -26,6 +27,7 @@ import { filterPublished } from "./visibility";
 export type CatalogQueryInput = {
   type?: string | null;
   category?: string | null;
+  tag?: string | null;
   audience?: string | null;
   sort?: string | null;
   q?: string | null;
@@ -101,10 +103,11 @@ export function buildCatalogPage(
   fixedType?: PublicMaterialType,
 ): CatalogPageModel {
   const type = fixedType ?? parseType(input.type);
-  const category = input.category?.trim() || null;
-  const audience = input.audience?.trim() || null;
+  const category = parseCatalogSlug(input.category);
+  const tag = parseCatalogSlug(input.tag);
+  const audience = parseCatalogSlug(input.audience);
   const sort = parseSort(input.sort);
-  const q = input.q?.trim() || null;
+  const q = parseCatalogQuery(input.q);
   const page = parsePage(input.page);
   const pageSize = PUBLIC_CONTENT_LIMITS.catalogPageSize;
 
@@ -121,11 +124,10 @@ export function buildCatalogPage(
     items = items.filter((i) => i.type === type);
   }
   if (category) {
-    items = items.filter(
-      (i) =>
-        i.category?.slug === category ||
-        i.tags.some((t) => t.slug === category),
-    );
+    items = items.filter((i) => i.category?.slug === category);
+  }
+  if (tag) {
+    items = items.filter((i) => i.tags.some((t) => t.slug === tag));
   }
   if (audience) {
     items = items.filter((i) => i.audiences.some((a) => a.slug === audience));
@@ -165,6 +167,7 @@ export function buildCatalogPage(
     filters: {
       type,
       category,
+      tag,
       audience,
       sort,
       q,
@@ -184,6 +187,7 @@ export function buildCatalogPage(
       },
     ].filter((o) => o.count > 0),
     categoryOptions: buildCategoryOptions(categories, baseForCounts),
+    tagOptions: buildTagOptions(tags, baseForCounts),
     audienceOptions: buildAudienceOptions(audiences, baseForCounts),
   };
 }
@@ -210,6 +214,23 @@ function buildCategoryOptions(
       count: items.filter((i) => i.category?.id === c.id).length,
     }))
     // Include archived only when still used by visible catalog items (legacy).
+    .filter((o) => o.count > 0)
+    .map(({ id, slug, title, count }) => ({ id, slug, title, count }))
+    .sort((a, b) => a.title.localeCompare(b.title, "ru"));
+}
+
+function buildTagOptions(
+  tags: readonly Tag[],
+  items: MaterialSummary[],
+): TaxonomyOption[] {
+  return tags
+    .map((t) => ({
+      id: t.id,
+      slug: t.slug,
+      title: t.title,
+      status: t.status,
+      count: items.filter((i) => i.tags.some((x) => x.id === t.id)).length,
+    }))
     .filter((o) => o.count > 0)
     .map(({ id, slug, title, count }) => ({ id, slug, title, count }))
     .sort((a, b) => a.title.localeCompare(b.title, "ru"));

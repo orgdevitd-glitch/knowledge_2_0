@@ -7,12 +7,10 @@ import type { IsoDateTime } from "@/domain/shared/value-objects";
 import { PUBLIC_CONTENT_LIMITS } from "./limits";
 import type {
   MaterialSummary,
+  PublicTaxonomyRef,
   TocItem,
 } from "./read-models";
-import {
-  resolveReviewStatus,
-  type ReviewStatus,
-} from "./review-status";
+import { resolveReviewStatus } from "./review-status";
 
 export function articleUrl(slug: string): string {
   return `/articles/${slug}`;
@@ -40,15 +38,19 @@ export function buildTaxonomyMaps(
   };
 }
 
-function mapRefs<T extends { id: string; slug: string; title: string }>(
-  ids: readonly string[],
-  map: Map<string, T>,
-): { id: string; slug: string; title: string }[] {
-  const out: { id: string; slug: string; title: string }[] = [];
+export function mapTaxonomyRefs<
+  T extends { id: string; slug: string; title: string; status: "active" | "archived" },
+>(ids: readonly string[], map: Map<string, T>): PublicTaxonomyRef[] {
+  const out: PublicTaxonomyRef[] = [];
   for (const id of ids) {
     const item = map.get(id);
     if (item) {
-      out.push({ id: item.id, slug: item.slug, title: item.title });
+      out.push({
+        id: item.id,
+        slug: item.slug,
+        title: item.title,
+        status: item.status,
+      });
     }
   }
   return out;
@@ -59,11 +61,8 @@ export function toArticleSummary(
   maps: TaxonomyMaps,
   now: IsoDateTime | string,
 ): MaterialSummary {
-  const categories = mapRefs(article.categoryIds, maps.categories);
-  const reviewStatus: ReviewStatus = resolveReviewStatus(
-    article.reviewDueAt,
-    now,
-  );
+  const categories = mapTaxonomyRefs(article.categoryIds, maps.categories);
+  const reviewStatus = resolveReviewStatus(article.reviewDueAt, now);
   return {
     id: article.id,
     type: "article",
@@ -71,8 +70,8 @@ export function toArticleSummary(
     title: article.title,
     summary: article.summary,
     category: categories[0] ?? null,
-    tags: mapRefs(article.tagIds, maps.tags),
-    audiences: mapRefs(article.audienceIds, maps.audiences),
+    tags: mapTaxonomyRefs(article.tagIds, maps.tags),
+    audiences: mapTaxonomyRefs(article.audienceIds, maps.audiences),
     updatedAt: article.updatedAt,
     publishedAt: article.publishedAt ?? article.updatedAt,
     reviewStatus,
@@ -85,7 +84,7 @@ export function toPromptSummary(
   maps: TaxonomyMaps,
   now: IsoDateTime | string,
 ): MaterialSummary {
-  const categories = mapRefs(prompt.categoryIds, maps.categories);
+  const categories = mapTaxonomyRefs(prompt.categoryIds, maps.categories);
   return {
     id: prompt.id,
     type: "prompt",
@@ -93,8 +92,8 @@ export function toPromptSummary(
     title: prompt.title,
     summary: prompt.summary,
     category: categories[0] ?? null,
-    tags: mapRefs(prompt.tagIds, maps.tags),
-    audiences: mapRefs(prompt.audienceIds, maps.audiences),
+    tags: mapTaxonomyRefs(prompt.tagIds, maps.tags),
+    audiences: mapTaxonomyRefs(prompt.audienceIds, maps.audiences),
     updatedAt: prompt.updatedAt,
     publishedAt: prompt.publishedAt ?? prompt.updatedAt,
     reviewStatus: resolveReviewStatus(prompt.reviewDueAt, now),

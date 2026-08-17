@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { Container, Stack } from "@/components/layout";
 import { EmptyState, Link } from "@/components/ui";
+import { catalogFilterHref } from "@/features/public-content/catalog-url";
 import { getHomePageModel } from "@/features/public-content/queries";
 import { MaterialCard, formatDate } from "@/features/public-content/ui/catalog";
 import { HeaderSearchForm } from "@/features/public-content/ui/header-search";
@@ -61,7 +62,7 @@ export default async function HomePage() {
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: "0.75rem" }}>
               {model.categories.map((c) => (
                 <li key={c.id}>
-                  <Link href={`/materials?category=${c.slug}`}>
+                  <Link href={catalogFilterHref("/materials", { category: c.slug })}>
                     {c.title}
                   </Link>{" "}
                   <span style={{ color: "var(--color-text-muted)" }}>
@@ -127,7 +128,7 @@ export default async function HomePage() {
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
               {model.audiences.map((a) => (
                 <li key={a.id}>
-                  <Link href={`/materials?audience=${a.slug}`} variant="standalone">
+                  <Link href={catalogFilterHref("/materials", { audience: a.slug })} variant="standalone">
                     {a.title}
                   </Link>
                 </li>

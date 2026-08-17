@@ -16,6 +16,7 @@ describe("public navigation assistant item", () => {
       "/materials",
       "/articles",
       "/prompts",
+      "/search",
     ]);
   });
 
@@ -62,6 +63,7 @@ describe("public navigation assistant item", () => {
     expect(resolveActiveNavId("/articles/hello")).toBe("articles");
     expect(resolveActiveNavId("/prompts/p")).toBe("prompts");
     expect(resolveActiveNavId("/materials")).toBe("materials");
-    expect(resolveActiveNavId("/search")).toBe("materials");
+    expect(resolveActiveNavId("/search")).toBe("search");
+    expect(resolveActiveNavId("/search?q=test")).toBe("search");
   });
 });
