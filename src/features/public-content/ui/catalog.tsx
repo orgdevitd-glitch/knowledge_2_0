@@ -1,11 +1,13 @@
 import { Link } from "@/components/ui/Link";
 import { Badge, EmptyState, Status } from "@/components/ui";
 import { Stack } from "@/components/layout";
+import { catalogFilterHref, catalogFilterSearchParams, type CatalogPath } from "../catalog-url";
 import type { CatalogPageModel, MaterialSummary } from "../read-models";
 import {
   reviewStatusLabel,
   reviewStatusTone,
 } from "../review-status";
+import { CardTagList, TaxonomyRefList } from "./taxonomy-links";
 
 import styles from "./catalog.module.css";
 
@@ -20,25 +22,30 @@ export function formatDate(iso: string): string {
 }
 
 export function MaterialCard({ item }: { item: MaterialSummary }) {
+  const statusLabel = reviewStatusLabel(item.reviewStatus);
+  const statusTone = reviewStatusTone(item.reviewStatus);
+
   return (
     <article className={styles.card}>
       <div className={styles.cardMeta}>
         <Badge>
           {item.type === "article" ? "Статья" : "Промт"}
         </Badge>
-        <Status
-          tone={reviewStatusTone(item.reviewStatus)}
-          label={reviewStatusLabel(item.reviewStatus)}
-        />
+        {statusLabel && statusTone ? (
+          <Status tone={statusTone} label={statusLabel} />
+        ) : null}
       </div>
       <h2 className={styles.cardTitle}>
         <Link href={item.url}>{item.title}</Link>
       </h2>
       {item.summary ? <p className={styles.cardSummary}>{item.summary}</p> : null}
-      <p className={styles.cardFooter}>
-        {item.category ? <span>{item.category.title}</span> : null}
+      <div className={styles.cardFooter}>
+        {item.category ? (
+          <TaxonomyRefList refs={[item.category]} kind="category" />
+        ) : null}
+        {item.tags.length > 0 ? <CardTagList tags={item.tags} /> : null}
         <span>Обновлено {formatDate(item.updatedAt)}</span>
-      </p>
+      </div>
     </article>
   );
 }
@@ -48,27 +55,21 @@ export function CatalogFilters({
   model,
   showTypeFilter = true,
 }: {
-  basePath: string;
+  basePath: CatalogPath;
   model: CatalogPageModel;
   showTypeFilter?: boolean;
 }) {
   const { filters } = model;
 
-  function hrefFor(patch: Record<string, string | null>) {
-    const params = new URLSearchParams();
-    const next = {
-      type: filters.type,
-      category: filters.category,
-      audience: filters.audience,
-      sort: filters.sort,
-      q: filters.q,
-      ...patch,
-    };
-    for (const [key, value] of Object.entries(next)) {
-      if (value && key !== "page") params.set(key, value);
-    }
-    const qs = params.toString();
-    return qs ? `${basePath}?${qs}` : basePath;
+  function hrefFor(patch: Partial<typeof filters>) {
+    return catalogFilterHref(basePath, {
+      type: showTypeFilter ? (patch.type !== undefined ? patch.type : filters.type) : null,
+      category: patch.category !== undefined ? patch.category : filters.category,
+      tag: patch.tag !== undefined ? patch.tag : filters.tag,
+      audience: patch.audience !== undefined ? patch.audience : filters.audience,
+      sort: patch.sort !== undefined ? patch.sort : filters.sort,
+      q: patch.q !== undefined ? patch.q : filters.q,
+    });
   }
 
   return (
@@ -100,6 +101,17 @@ export function CatalogFilters({
         <select name="category" defaultValue={filters.category ?? ""}>
           <option value="">Все категории</option>
           {model.categoryOptions.map((o) => (
+            <option key={o.id} value={o.slug}>
+              {o.title} ({o.count})
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className={styles.filterField}>
+        <span>Тег</span>
+        <select name="tag" defaultValue={filters.tag ?? ""}>
+          <option value="">Все теги</option>
+          {model.tagOptions.map((o) => (
             <option key={o.id} value={o.slug}>
               {o.title} ({o.count})
             </option>
@@ -180,12 +192,14 @@ function CatalogPagination({
 }) {
   if (model.totalPages <= 1) return null;
 
-  const params = new URLSearchParams();
-  if (model.filters.type) params.set("type", model.filters.type);
-  if (model.filters.category) params.set("category", model.filters.category);
-  if (model.filters.audience) params.set("audience", model.filters.audience);
-  if (model.filters.sort) params.set("sort", model.filters.sort);
-  if (model.filters.q) params.set("q", model.filters.q);
+  const params = catalogFilterSearchParams({
+    type: model.filters.type,
+    category: model.filters.category,
+    tag: model.filters.tag,
+    audience: model.filters.audience,
+    sort: model.filters.sort,
+    q: model.filters.q,
+  });
 
   function pageHref(page: number) {
     const next = new URLSearchParams(params);

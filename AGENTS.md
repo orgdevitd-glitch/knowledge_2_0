@@ -11,7 +11,7 @@ Open corporate knowledge portal: instructions, prompt library, learning material
 
 ## Current phase
 
-**Phase 8E.1 — Content Operations Hardening** (admin shell, media/related pickers; see ADR 0016).
+**Phase 8E.2 — Public Experience Hardening** (search nav, public tags, mobile TOC, review status, preview=public renderer; see ADR 0017).
 Do not start a production LLM vendor adapter, Video admin, or Google automatic sync (6B) unless explicitly assigned.
 
 ## Priorities

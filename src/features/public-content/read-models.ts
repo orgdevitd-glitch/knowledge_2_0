@@ -13,18 +13,26 @@ export type TaxonomyOption = {
   count: number;
 };
 
+/** Public taxonomy label. `id` is a React key only — never shown. */
+export type PublicTaxonomyRef = {
+  id: string;
+  slug: string;
+  title: string;
+  status: "active" | "archived";
+};
+
 export type MaterialSummary = {
   id: string;
   type: PublicMaterialType;
   slug: string;
   title: string;
   summary: string | null;
-  category: { id: string; slug: string; title: string } | null;
-  tags: { id: string; slug: string; title: string }[];
-  audiences: { id: string; slug: string; title: string }[];
+  category: PublicTaxonomyRef | null;
+  tags: PublicTaxonomyRef[];
+  audiences: PublicTaxonomyRef[];
   updatedAt: string;
   publishedAt: string;
-  reviewStatus: ReviewStatus;
+  reviewStatus: ReviewStatus | null;
   url: string;
 };
 
@@ -42,12 +50,12 @@ export type ArticleDetail = {
   summary: string | null;
   metadata: {
     typeLabel: string;
-    categories: { id: string; slug: string; title: string }[];
-    audiences: { id: string; slug: string; title: string }[];
-    tags: { id: string; slug: string; title: string }[];
+    categories: PublicTaxonomyRef[];
+    audiences: PublicTaxonomyRef[];
+    tags: PublicTaxonomyRef[];
     updatedAt: string;
     publishedAt: string;
-    reviewStatus: ReviewStatus;
+    reviewStatus: ReviewStatus | null;
   };
   blocks: ContentBlock[];
   tableOfContents: TocItem[];
@@ -66,7 +74,7 @@ export type ArticleDetail = {
   >;
   updatedAt: string;
   publishedAt: string;
-  reviewStatus: ReviewStatus;
+  reviewStatus: ReviewStatus | null;
 };
 
 export type PromptDetail = {
@@ -81,17 +89,17 @@ export type PromptDetail = {
   usageExample: string | null;
   metadata: {
     typeLabel: string;
-    categories: { id: string; slug: string; title: string }[];
-    audiences: { id: string; slug: string; title: string }[];
-    tags: { id: string; slug: string; title: string }[];
+    categories: PublicTaxonomyRef[];
+    audiences: PublicTaxonomyRef[];
+    tags: PublicTaxonomyRef[];
     updatedAt: string;
     publishedAt: string;
-    reviewStatus: ReviewStatus;
+    reviewStatus: ReviewStatus | null;
   };
   relatedMaterials: MaterialSummary[];
   updatedAt: string;
   publishedAt: string;
-  reviewStatus: ReviewStatus;
+  reviewStatus: ReviewStatus | null;
 };
 
 export type SearchDocument = {
@@ -131,11 +139,13 @@ export type CatalogPageModel = {
   filters: {
     type: PublicMaterialType | null;
     category: string | null;
+    tag: string | null;
     audience: string | null;
     sort: string;
     q: string | null;
   };
   typeOptions: TaxonomyOption[];
   categoryOptions: TaxonomyOption[];
+  tagOptions: TaxonomyOption[];
   audienceOptions: TaxonomyOption[];
 };

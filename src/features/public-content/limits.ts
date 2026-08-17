@@ -12,6 +12,8 @@ export const PUBLIC_CONTENT_LIMITS = {
   searchMaxQueryLength: 120,
   searchMaxIndexedChars: 20_000,
   tocMaxItems: 40,
+  /** Visible tags on catalog/home cards; full set remains on detail. */
+  cardMaxVisibleTags: 3,
 } as const;
 
 export const SEARCH_SCORE_WEIGHTS = {

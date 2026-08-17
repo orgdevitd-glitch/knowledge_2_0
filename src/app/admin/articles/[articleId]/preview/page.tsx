@@ -3,10 +3,13 @@ import { notFound } from "next/navigation";
 
 import { Breadcrumbs, Container, Stack } from "@/components/layout";
 import { Alert, Link } from "@/components/ui";
-import type { ContentBlock } from "@/domain/content/blocks";
 import { requireAdminArticle } from "@/features/admin/articles/queries";
-import { ArticleBlocks } from "@/features/public-content/rendering/block-registry";
+import { buildArticleDetail } from "@/features/public-content/build-detail";
+import { hydrateResolvedMedia } from "@/features/public-content/rendering/resolve-block-media";
+import { ArticlePublicView } from "@/features/public-content/ui/article-public-view";
 import { requireAdminPrincipal } from "@/server/auth/guard";
+import { getPublicClock, getPublicContentSource } from "@/server/composition/public-content";
+import { getPublicMediaPresentationResolver } from "@/server/composition/public-media";
 
 export const metadata: Metadata = {
   title: "Предпросмотр · Админ",
@@ -29,55 +32,36 @@ export default async function AdminArticlePreviewPage({
     notFound();
   }
 
-  const blocks = article.blocks as ContentBlock[];
+  const catalog = await getPublicContentSource().loadCatalog();
+  const now = getPublicClock().now();
+  const detail = buildArticleDetail(article, catalog, now);
+  const resolvedMedia = await hydrateResolvedMedia(
+    detail.blocks,
+    getPublicMediaPresentationResolver(),
+  );
 
   return (
     <Container width="editorial">
       <Stack gap={4}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            gap: "1rem",
-            flexWrap: "wrap",
-          }}
-        >
-          <Breadcrumbs
-            items={[
-              { id: "admin", label: "Админ", href: "/admin" },
-              { id: "articles", label: "Статьи", href: "/admin/articles" },
-              {
-                id: "detail",
-                label: article.title,
-                href: `/admin/articles/${articleId}`,
-              },
-              { id: "preview", label: "Предпросмотр" },
-            ]}
-          />
-        </div>
+        <Breadcrumbs
+          items={[
+            { id: "admin", label: "Админ", href: "/admin" },
+            { id: "articles", label: "Статьи", href: "/admin/articles" },
+            {
+              id: "detail",
+              label: article.title,
+              href: `/admin/articles/${articleId}`,
+            },
+            { id: "preview", label: "Предпросмотр" },
+          ]}
+        />
 
-        <Alert tone="information" title="Режим предпросмотра">
-          Это черновик или текущее состояние статьи. На публичном сайте может
-          отображаться другая опубликованная версия.
+        <Alert tone="information" title="Предпросмотр черновика">
+          Это текущее состояние статьи в админке. Посетители публичного сайта
+          видят только опубликованную версию.
         </Alert>
 
-        <header>
-          <h1 style={{ margin: "0 0 0.35rem" }}>{article.title}</h1>
-          {article.summary ? (
-            <p style={{ margin: 0, color: "var(--color-text-muted)" }}>
-              {article.summary}
-            </p>
-          ) : null}
-        </header>
-
-        <ArticleBlocks
-          blocks={blocks}
-          ctx={{
-            toc: [],
-            promptLookup: {},
-            relatedMaterials: [],
-          }}
-        />
+        <ArticlePublicView article={detail} resolvedMedia={resolvedMedia} />
 
         <p style={{ margin: 0 }}>
           <Link href={`/admin/articles/${articleId}/edit`} variant="standalone">

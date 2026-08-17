@@ -13,14 +13,14 @@ const DUE_SOON_DAYS = 14;
 export function resolveReviewStatus(
   reviewDueAt: IsoDateTime | string | null | undefined,
   now: IsoDateTime | string,
-): ReviewStatus {
+): ReviewStatus | null {
   if (!reviewDueAt) {
-    return "current";
+    return null;
   }
   const due = Date.parse(reviewDueAt);
   const current = Date.parse(now);
   if (Number.isNaN(due) || Number.isNaN(current)) {
-    return "current";
+    return null;
   }
   if (current >= due) {
     return "overdue";
@@ -31,28 +31,30 @@ export function resolveReviewStatus(
   return "current";
 }
 
-export function reviewStatusLabel(status: ReviewStatus): ReviewStatusLabel {
+export function reviewStatusLabel(
+  status: ReviewStatus | null | undefined,
+): ReviewStatusLabel | null {
+  if (!status) return null;
   switch (status) {
     case "due-soon":
       return "Скоро потребуется проверка";
     case "overdue":
       return "Требуется проверка";
     case "current":
-    default:
       return "Актуально";
   }
 }
 
 export function reviewStatusTone(
-  status: ReviewStatus,
-): "success" | "warning" | "error" {
+  status: ReviewStatus | null | undefined,
+): "success" | "warning" | "error" | null {
+  if (!status) return null;
   switch (status) {
     case "due-soon":
       return "warning";
     case "overdue":
       return "error";
     case "current":
-    default:
       return "success";
   }
 }

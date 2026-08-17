@@ -37,7 +37,7 @@ Positive: editors pick media and related materials by title; archive/hide confir
 
 Negative: picker search is a bounded title substring over existing admin lists (article scan cap 100), not a new search index. Empty picker copy must not claim “no matches in the entire catalog.”
 
-Follow-up: Phase 8E.2 public tags/TOC/search-nav and preview=public renderer. Gemini/provider remains deferred (8C+ / not 8D in this slice).
+Follow-up: Phase 8E.2 public tags/TOC/search-nav and preview=public renderer (ADR 0017). Gemini/provider remains deferred (8C+ / not 8D in this slice).
 
 ## Alternatives considered
 

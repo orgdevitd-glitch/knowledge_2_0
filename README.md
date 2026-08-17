@@ -6,7 +6,7 @@ Public users read **published** content without registration. Administrators sig
 
 ## Current status
 
-**Phase 8E.1 — Content Operations Hardening** is the current CMS-usability slice (admin shell, media/related pickers, archive/hide confirmation). Public assistant remains 8C.2 (`ASSISTANT_MODE=disabled` in production). Gemini/provider and Phase 9 Analytics are not this slice.
+**Phase 8E.2 — Public Experience Hardening** is the current public-UX slice (Search in nav, tags/category catalog links, mobile article TOC, honest review status, admin preview using the public renderer). Public assistant remains 8C.2 (`ASSISTANT_MODE=disabled` in production). Gemini/provider and Phase 9 Analytics are not this slice.
 
 - Durable SearchDocument v2 + private GCS/memory index + `GET /api/search` (8B.1)
 - Public `/search` UX + suggestions (8B.2)
@@ -15,6 +15,7 @@ Public users read **published** content without registration. Administrators sig
 - Provider modes: `disabled` (default) and `fake` (test/dev demonstration only); no production LLM vendor yet
 - Media Library, Prompt admin, and article editor retained
 - Media / related pickers by title (Phase 8E.1); IDs remain stored, not copied by the editor
+- Public Search nav, tags, mobile TOC, and preview=public renderer (Phase 8E.2)
 - Mutation APIs protected by session + CSRF
 
 **Google Workspace**

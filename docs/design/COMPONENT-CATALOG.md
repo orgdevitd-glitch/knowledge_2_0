@@ -48,6 +48,9 @@
 | Component | Назначение | Заметки |
 |-----------|------------|---------|
 | `ArticleHeader` | Заголовок статьи + meta/status | Workspace meta + editorial title |
+| `ArticlePublicView` / `PromptPublicView` | Публичная статья / промт | Phase 8E.2; тот же view в admin preview |
+| `ArticleTableOfContents` | TOC desktop + mobile `<details>` | Один `TocItem[]`; native anchors |
+| Public taxonomy chips | Категория / тег / аудитория | Catalog slug links; archived = text |
 | `Prose` | Editorial reading | `.ds-prose` / Source Serif 4 |
 | `Callout` | information/tip/warning/important | не всё жёлтое |
 | `StepList` | Шаги инструкции | completed visual only |

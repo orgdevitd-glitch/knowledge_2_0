@@ -72,7 +72,15 @@ export function PublicShellChrome({
         onClose={() => setNavOpen(false)}
         title="Навигация"
       >
-        <Sidebar groups={groups} />
+        <div
+          onClick={(event) => {
+            if ((event.target as HTMLElement | null)?.closest("a")) {
+              setNavOpen(false);
+            }
+          }}
+        >
+          <Sidebar groups={groups} />
+        </div>
       </MobileNavigationPanel>
     </div>
   );

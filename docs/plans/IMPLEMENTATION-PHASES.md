@@ -238,6 +238,20 @@ Execute **one phase per assignment**. After each phase: typecheck → lint → t
 
 **Out of scope:** public tags / search nav / mobile article TOC / preview=public renderer (8E.2); Gemini; deployment; analytics; Video admin; 6B; embeddings.
 
+## Phase 8E.2 — Public Experience Hardening
+
+**Status:** implemented / pending acceptance (see ADR 0017).
+
+- «Поиск» in public navigation (`/search`); `/search` is no longer an active state of «Все материалы»
+- Public tags and clickable category/audience metadata linking to catalog slug filters (`/materials?tag=` / `?category=` / `?audience=`)
+- Catalog single-select Tag filter; Search Experience keeps ID-based `?tag=` (unchanged)
+- Mobile article TOC via `<details>` / «Содержание»; same `TocItem[]` as desktop
+- Review status omitted when `reviewDueAt` is absent (no false «Актуально»)
+- Admin article/prompt preview uses `buildArticleDetail` / `buildPromptDetail` and the same `ArticlePublicView` / `PromptPublicView` as public pages
+- Preview related/prompt/media hydration stays on the published/public boundary
+
+**Out of scope:** Gemini; deployment; analytics; Video admin; 6B; embeddings; taxonomy landing pages; new page builder.
+
 ## Phase 8C+ (optional, ADR-gated)
 
 - Production provider adapter

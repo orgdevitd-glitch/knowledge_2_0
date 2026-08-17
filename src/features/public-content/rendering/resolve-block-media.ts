@@ -30,3 +30,17 @@ export async function resolveMediaPresentations(
   );
   return out;
 }
+
+export async function hydrateResolvedMedia(
+  blocks: readonly ContentBlock[],
+  resolver: MediaPresentationResolver,
+): Promise<Record<string, MediaPresentation>> {
+  try {
+    return await resolveMediaPresentations(
+      collectMediaIdsFromBlocks(blocks),
+      resolver,
+    );
+  } catch {
+    return {};
+  }
+}

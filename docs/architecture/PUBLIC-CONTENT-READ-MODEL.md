@@ -5,12 +5,15 @@
 ```text
 Public route
   → public query (src/features/public-content/queries.ts)
+  → buildArticleDetail / buildPromptDetail (src/features/public-content/build-detail.ts)
   → composition root (src/server/composition/public-content.ts)
   → PublicContentSource (empty | demo | firestore)
   → visibility filter (published only)
   → public DTOs (MaterialSummary, ArticleDetail, PromptDetail, …)
-  → UI
+  → ArticlePublicView / PromptPublicView
 ```
+
+Admin preview uses the same builders and views with the working copy as source (ADR 0017). Related/prompt/media hydration remains published-only.
 
 ## Sources
 
