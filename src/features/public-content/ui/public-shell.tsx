@@ -10,16 +10,16 @@ import {
   type SidebarGroup,
 } from "@/components/layout";
 import { getPublicEnv } from "@/config/public-env";
-import { PUBLIC_NAV_ITEMS, resolveActiveNavId } from "../nav";
+import { buildPublicNavItems, resolveActiveNavId } from "../nav";
 
 import styles from "./shell.module.css";
 
-function buildGroups(activeId: string): SidebarGroup[] {
+function buildGroups(activeId: string, assistantAvailable: boolean): SidebarGroup[] {
   return [
     {
       id: "main",
       label: "Разделы",
-      items: PUBLIC_NAV_ITEMS.map((item) => ({
+      items: buildPublicNavItems({ assistantAvailable }).map((item) => ({
         ...item,
         active: item.id === activeId,
       })),
@@ -30,13 +30,15 @@ function buildGroups(activeId: string): SidebarGroup[] {
 export function PublicShellChrome({
   children,
   headerSearch,
+  assistantAvailable = false,
 }: {
   children: React.ReactNode;
   headerSearch?: React.ReactNode;
+  assistantAvailable?: boolean;
 }) {
   const pathname = usePathname() ?? "/";
   const activeId = resolveActiveNavId(pathname);
-  const groups = buildGroups(activeId);
+  const groups = buildGroups(activeId, assistantAvailable);
   const [navOpen, setNavOpen] = useState(false);
   const { NEXT_PUBLIC_APP_NAME: appName } = getPublicEnv();
 

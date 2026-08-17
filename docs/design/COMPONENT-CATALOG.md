@@ -55,6 +55,7 @@
 | Prompt Admin forms | create/edit/list Phase 8A | feature components under `features/admin/prompts` — не отдельный UI-kit |
 | Media Admin forms | upload/list/edit Phase 7B | feature components under `features/admin/media` |
 | Search experience | form, chips, result card, suggestions combobox | `features/search/ui` (Phase 8B.2); runtime `maxLength` via server props; one filter control set; unique combobox IDs per instance |
+| Assistant experience | `/assistant` Q&A workspace | `features/assistant/ui` (Phase 8C.2); capability-gated; not a chat; citations as chips + vertical sources |
 | `TableOfContents` | Список якорей | без scroll spy |
 | `RelatedContent` | Связанные ссылки | typed items |
 | `Progress` | Прогресс | `role="progressbar"` |

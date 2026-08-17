@@ -170,7 +170,7 @@ Concurrency: `updatedAt` + version number, optimistic check, conflict message �
 
 **Phase 8C.1:** Grounded Assistant Foundation — provider-neutral `POST /api/assistant/ask`, Search-backed retrieval, citation validation, disabled/fake providers (ADR 0014). No production LLM yet.
 
-**Phase 8C.2:** Assistant Experience UI (planned).
+**Phase 8C.2:** Assistant Experience — public `/assistant` workspace, capability-gated navigation, fake/dev demonstration, production remains disabled (ADR 0015).
 
 **Later (only if needed, Phase 8C+):** production LLM adapter, semantic search, embeddings, Vertex AI, RAG, video transcript search — each ADR-gated.
 

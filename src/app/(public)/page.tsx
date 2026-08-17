@@ -7,6 +7,8 @@ import { MaterialCard, formatDate } from "@/features/public-content/ui/catalog";
 import { HeaderSearchForm } from "@/features/public-content/ui/header-search";
 import { getPublicEnv } from "@/config/public-env";
 import { getPublicSearchUiLimits } from "@/server/composition/search-ui-limits";
+import { getPublicAssistantCapability } from "@/server/composition/assistant-ui-capability";
+import { AssistantEntryLink } from "@/features/assistant/ui/assistant-entry-link";
 
 export const metadata: Metadata = {
   title: "Главная",
@@ -18,6 +20,7 @@ export default async function HomePage() {
   const model = await getHomePageModel();
   const appName = getPublicEnv().NEXT_PUBLIC_APP_NAME;
   const { queryMaxLength } = getPublicSearchUiLimits();
+  const assistant = getPublicAssistantCapability();
 
   return (
     <Container width="wide">
@@ -34,6 +37,11 @@ export default async function HomePage() {
             <div style={{ maxWidth: "28rem" }}>
               <HeaderSearchForm variant="home" queryMaxLength={queryMaxLength} />
             </div>
+            {assistant.available ? (
+              <p style={{ margin: 0 }}>
+                <AssistantEntryLink />
+              </p>
+            ) : null}
             <p style={{ margin: 0 }}>
               <Link href="/materials" variant="standalone">
                 Открыть каталог материалов

@@ -28,7 +28,9 @@ Logs may include: requestId, status, duration bucket, evidence/source/chunk/bloc
 
 Do **not** log: question text (raw or normalized), answer text, evidence text, source excerpts, IP, Origin, request body, provider payloads, system policy body, Error.message from providers/repos.
 
-No question hashing. No analytics events.
+No question hashing. No analytics events. The public UI does not write questions to URL, localStorage, sessionStorage, cookies, or console.
+
+Browser **Cancel** aborts the in-flight `fetch`; it is not a promise that server/provider execution has already stopped. See `docs/assistant/ASSISTANT-UI-STATES.md`.
 
 ## Rate limiting caveat
 

@@ -19,6 +19,8 @@ src/
     search/url/            # Canonical public Search URL state (Phase 8B.2)
     search/ui/             # Search experience components (Phase 8B.2)
     assistant/application/ # Phase 8C.1 grounded ask orchestration
+    assistant/client/      # Phase 8C.2 browser ask client + public DTO parser
+    assistant/ui/          # Phase 8C.2 /assistant workspace
     admin/                 # Admin articles, prompts, media, taxonomy, search + auth UI
     integrations/google/   # Docs/Sheets import application + admin UI
   domain/
@@ -72,7 +74,7 @@ firestore.indexes.json
 ```
 
 Admin routes include `/admin/sign-in`, `/admin`, `/admin/articles`, `/admin/prompts` (Phase 8A), `/admin/media` (Phase 7B), `/admin/search` (Phase 8B.1), `/admin/integrations`, `/admin/taxonomy` (Phase 7A).
-Public routes include `/media/[mediaId]` for ready binary delivery (Phase 7B) and `/search` Search Experience (Phase 8B.2) on Search Foundation. Assistant foundation exposes `POST /api/assistant/ask` only (no `/assistant` page until 8C.2).
+Public routes include `/media/[mediaId]` for ready binary delivery (Phase 7B), `/search` Search Experience (Phase 8B.2), and `/assistant` Assistant Experience (Phase 8C.2; hidden from navigation while capability is disabled).
 
 ## Placement rules
 
